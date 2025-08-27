@@ -13,34 +13,34 @@ export class UserAdapter implements UserPort{
     }
     private toDomain(user:UserEntity):Users{
      return{
-        id: user.id_users,
-        name: user.name_users,
-        lastname: user.lastname_users,
-        doc_type: user.doc_type_users,
-        doc_number: user.doc_number_users,
-        address: user.address_users,
-        phone: user.phone_users,
-        department: user.department_users,
-        city: user.city_users,
-        email: user.email_users,
-        password: user.password_users,
-        role: user.role_users
+        id: user.id_user,
+        name: user.name_user,
+        lastname: user.lastname_user,
+        doc_type: user.doc_type_user,
+        doc_number: user.doc_number_user,
+        address: user.address_user,
+        phone: user.phone_user,
+        department: user.department_user,
+        city: user.city_user,
+        email: user.email_user,
+        password: user.password_user,
+        role: user.role_user
      }   
     }
 
     private toEntity(user: Omit<Users, "id">): UserEntity{
         const userEntity = new UserEntity();
-        userEntity.name_users = user.name;
-        userEntity.lastname_users = user.lastname;
-        userEntity.doc_type_users = user.doc_type;
-        userEntity.doc_number_users = user.doc_number;
-        userEntity.address_users = user.address;
-        userEntity.phone_users = user.phone;
-        userEntity.department_users = user.department;
-        userEntity.city_users = user.city;
-        userEntity.email_users = user.email;
-        userEntity.password_users = user.password;
-        userEntity.role_users =user.role;
+        userEntity.name_user = user.name;
+        userEntity.lastname_user = user.lastname;
+        userEntity.doc_type_user = user.doc_type;
+        userEntity.doc_number_user = user.doc_number;
+        userEntity.address_user = user.address;
+        userEntity.phone_user = user.phone;
+        userEntity.department_user = user.department;
+        userEntity.city_user = user.city;
+        userEntity.email_user = user.email;
+        userEntity.password_user = user.password;
+        userEntity.role_user =user.role;
         return userEntity;
     }
 

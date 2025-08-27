@@ -6,5 +6,4 @@ export interface UserPort{
      getAllUsers(): Promise<Users[]>;
      getUserById(id:number): Promise<Users | null>;
      getUserByEmail(email:string): Promise <Users | null>;
-
 }
