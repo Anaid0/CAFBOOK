@@ -1,14 +1,14 @@
-import { Role } from "../domain/Role";
-import { RolePort } from "../domain/RolePort";
+import { Roles } from "../domain/Roles";
+import { RolesPort } from "../domain/RolesPort";
 
 
-export class RoleApplication{
-    private port: RolePort;
+export class RolesApplication{
+    private port: RolesPort;
 
-    constructor(port: RolePort){
+    constructor(port: RolesPort){
         this.port = port;
     }
-    async createRole(role: Omit<Role, "id">): Promise<number> {
+    async createRole(role: Omit<Roles, "id">): Promise<number> {
         const existingRole = await this.port.getRoleByDescription(role.description); 
         if (!existingRole) {
             return await this.port.createRole(role);
@@ -16,7 +16,7 @@ export class RoleApplication{
         throw new Error("El rol ya existe");
     }
 
-    async updateRole(id:number, role:Partial<Role>):Promise<boolean>{
+    async updateRole(id:number, role:Partial<Roles>):Promise<boolean>{
         const existingRole= await this.port.getRoleById(id);
         if(!existingRole){
             throw new Error("El usuario no existe")
@@ -41,12 +41,16 @@ export class RoleApplication{
     }
 
     //consultas get
-    async getRoleById(id:number): Promise<Role | null>{
+    async getRoleById(id:number): Promise<Roles | null>{
         return await this.port.getRoleById(id);
 
     }
 
-    async getRoleByDescription(description:string): Promise<Role | null>{
+    async getAllRoles(): Promise<Roles []>{
+        return await this.port.getAllRoles();
+    }
+
+    async getRoleByDescription(description:string): Promise<Roles | null>{
         return await this.port.getRoleByDescription(description);
 
     }

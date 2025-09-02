@@ -11,10 +11,10 @@ export class UserEntity {
     @Column({type: "character varying", length:255})
     lastname_user!:string;
 
-    @Column({type: "int", length: 10})
+    @Column({type: "int"})
     doc_type_user!: number;
 
-    @Column({type: "int", length: 100})
+    @Column({type: "int"})
     doc_number_user!: number;
 
     @Column({type: "character varying", length:255, unique: true})
@@ -35,7 +35,7 @@ export class UserEntity {
     @Column({type: "character varying", length:255})
     password_user!:string;
 
-    @Column({type: "int", length:10})
+    @Column({type: "int"})
     role_user!: number;
      
 }

@@ -1,5 +1,6 @@
 import express,{Request, Response} from "express";
 import usersRoutes from "../routers/UsersRoutes";
+import rolesRoutes from "../routers/RolesRoutes";
 
 class App{
     private app: express.Application;
@@ -12,17 +13,15 @@ class App{
 
     private middleware():void{
         this.app.use(express.json());
-
     }
 
     private routes():void{
         this.app.use("/api",usersRoutes);
+        this.app.use("/api", rolesRoutes);
     }
     getApp(){
         return this.app;
-    
     }
 }
-
 
 export default new App().getApp();
