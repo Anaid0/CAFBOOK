@@ -1,5 +1,5 @@
 export interface Document_types{
-    id: number;
+    doc_type_id: number;
     description: string;
     
 }
