@@ -17,10 +17,8 @@ export class Document_typesController{
             return response.status(400).json({ message: "Descripción inválida, debe tener entre 10 y 500 caracteres y no contener símbolos no permitidos." });
 }
     
-                const document_types: Omit<Document_types, "id"> = {
-                     description
-                };
-                const document_typesId = await this.app.createDocument_types(document_types);
+                const doc_type: Omit<Document_types, "doc_type_id"> = {description: description.trim()};
+                const document_typesId = await this.app.createDocument_types(doc_type);
                 return response
                     .status(201)
                     .json({ message: "Tipo de documento registrado correctamente", document_typesId });

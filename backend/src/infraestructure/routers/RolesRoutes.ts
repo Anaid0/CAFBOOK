@@ -6,8 +6,8 @@ import { RolesController } from "../controller/RolesController";
 //Expreps
 const router = Router();
 //Inicialización de capas
-const roleAdapter = new RolesAdapter();
-const roleApp = new RolesApplication(roleAdapter);
+const rolesAdapter = new RolesAdapter();
+const roleApp = new RolesApplication(rolesAdapter);
 const roleController = new RolesController(roleApp);
 
 //Definición de rutas > endPoints ->especificacion de url

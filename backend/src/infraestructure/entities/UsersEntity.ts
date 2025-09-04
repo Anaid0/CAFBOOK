@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 @Entity({name: 'users'})
 export class UserEntity {
     @PrimaryGeneratedColumn()
-    id_user!: number;   
+    user_id_user!: number;   
     
     @Column({type: "character varying", length:255})
     name_user!:string;
@@ -12,7 +12,7 @@ export class UserEntity {
     lastname_user!:string;
 
     @Column({type: "int"})
-    doc_type_user!: number;
+    doc_type_id_user!: number;
 
     @Column({type: "int"})
     doc_number_user!: number;
@@ -36,6 +36,6 @@ export class UserEntity {
     password_user!:string;
 
     @Column({type: "int"})
-    role_user!: number;
+    role_id_user!: number;
      
 }

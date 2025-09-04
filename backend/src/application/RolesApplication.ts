@@ -8,7 +8,7 @@ export class RolesApplication{
     constructor(port: RolesPort){
         this.port = port;
     }
-    async createRole(role: Omit<Roles, "id">): Promise<number> {
+    async createRole(role: Omit<Roles, "role_id">): Promise<number> {
         const existingRole = await this.port.getRoleByDescription(role.description); 
         if (!existingRole) {
             return await this.port.createRole(role);
@@ -16,33 +16,33 @@ export class RolesApplication{
         throw new Error("El rol ya existe");
     }
 
-    async updateRole(id:number, role:Partial<Roles>):Promise<boolean>{
-        const existingRole= await this.port.getRoleById(id);
+    async updateRole(role_id:number, role:Partial<Roles>):Promise<boolean>{
+        const existingRole= await this.port.getRoleById(role_id);
         if(!existingRole){
             throw new Error("El usuario no existe")
         }
 
         if(role.description){
             const descriptionTaken = await this.port.getRoleByDescription(role.description);
-            if(descriptionTaken && descriptionTaken.id !== id){
+            if(descriptionTaken && descriptionTaken.role_id !== role_id){
                 throw new Error("Error en actualizar la descripción NO SE PUEDE!")
             }
         }
-        return await this.port.updateRole(id,role);
+        return await this.port.updateRole(role_id,role);
     }
 
-    async deleteRole(id:number): Promise<boolean>{
-        const existingRole = await this.port.getRoleById(id);
+    async deleteRole(role_id:number): Promise<boolean>{
+        const existingRole = await this.port.getRoleById(role_id);
         if(!existingRole){
             throw new Error("No se encontró el rol");
         }
-        return await this.port.deleteRole(id);
+        return await this.port.deleteRole(role_id);
 
     }
 
     //consultas get
-    async getRoleById(id:number): Promise<Roles | null>{
-        return await this.port.getRoleById(id);
+    async getRoleById(role_id:number): Promise<Roles | null>{
+        return await this.port.getRoleById(role_id);
 
     }
 

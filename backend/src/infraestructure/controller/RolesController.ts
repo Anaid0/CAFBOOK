@@ -16,7 +16,7 @@ async registerRole(req: Request, res: Response): Promise <Response>{
             if (!descriptionRegex.test(description?.trim())) {
             return res.status(400).json({ message: "Descripción inválida, debe tener entre 3 y 500 caracteres y no contener símbolos no permitidos." });
         }
-        const role: Omit<Roles, "id"> = {description};
+        const role: Omit<Roles, "role_id"> = {description};
         const roleId = await this.app.createRole(role);
         return res.status(201).json({ message: "Role registrado correctamente", roleId });
     } catch (error) {

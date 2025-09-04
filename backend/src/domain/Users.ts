@@ -1,8 +1,8 @@
 export interface Users{
-    id: number;
+    user_id: number;
     name: string;
     lastname: string;
-    doc_type: number;
+    doc_type_id: number;
     doc_number: number;
     address: string;
     phone: string;
@@ -10,5 +10,5 @@ export interface Users{
     city: string;
     email: string;
     password:string;
-    role: number;
+    role_id: number;
 }

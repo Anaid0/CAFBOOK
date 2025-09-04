@@ -8,7 +8,7 @@ export class UserApplication{
     constructor(port: UserPort){
         this.port = port;
     }
-    async createUser(user:Omit<Users,"id">):Promise<number>{
+    async createUser(user:Omit<Users,"user_id">):Promise<number>{
         const existingUser= await this.port.getUserByEmail(user.email);
         if(!existingUser){
             return await this.port.createUser(user);
@@ -24,7 +24,7 @@ export class UserApplication{
 
         if(user.email){
             const emailTaken = await this.port.getUserByEmail(user.email);
-            if(emailTaken && emailTaken.id !== id){
+            if(emailTaken && emailTaken.user_id !== id){
                 throw new Error("Error en actualizar el email NO SE PUEDE!")
             }
         }

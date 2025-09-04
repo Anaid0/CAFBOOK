@@ -9,8 +9,8 @@ export class UserController{
     }
 
     async registerUser(request: Request, response: Response): Promise <Response>{
-        const { name, lastname, doc_type, doc_number, address, phone,
-             department, city, email, password, role } = request.body;
+        const { name, lastname, doc_type_id, doc_number, address, phone,
+             department, city, email, password, role_id } = request.body;
              try {
                 // Validaciones
                 const nameRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{3,}$/;
@@ -21,7 +21,7 @@ export class UserController{
                     return response.status(400).json({ message: "Apellido inválido" });
     
                 const docTypeRegex = /^(CC|CE|TI|PP)$/; // ejemplo
-                if (!docTypeRegex.test(doc_type))
+                if (!docTypeRegex.test(doc_type_id))
                     return response.status(400).json({ message: "Tipo de documento inválido" });
     
                 const docNumberRegex = /^\d{6,15}$/;
@@ -53,14 +53,14 @@ export class UserController{
                     });
     
                 const roleRegex = /^(admin|user|manager)$/; // ejemplo de roles
-                if (!roleRegex.test(role))
+                if (!roleRegex.test(role_id))
                     return response.status(400).json({ message: "Rol inválido" });
     
-                const user: Omit<Users, "id"> = {
-                    name, lastname, doc_type, doc_number, address,
-                    phone, department, city, email, password, role
+                const user_id: Omit<Users, "user_id"> = {
+                    name, lastname, doc_type_id, doc_number, address,
+                    phone, department, city, email, password, role_id
                 };
-                const userId = await this.app.createUser(user);
+                const userId = await this.app.createUser(user_id);
                 return response
                     .status(201)
                     .json({ message: "Usuario registrado correctamente", userId });
@@ -144,8 +144,8 @@ export class UserController{
         if (isNaN(userId))
             return response.status(400).json({ message: "error en parámetro" });
 
-        let { name, lastname, doc_type, doc_number, address, phone,
-            department, city, email, password, role } = request.body;
+        let { name, lastname, doc_type_id, doc_number, address, phone,
+            department, city, email, password, role_id } = request.body;
 
         // Validaciones antes de actualizar
         const nameRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{3,}$/;
@@ -157,7 +157,7 @@ export class UserController{
             return response.status(400).json({ message: "Apellido inválido" });
 
         const docTypeRegex = /^(CC|CE|TI|PP)$/;
-        if (doc_type && !docTypeRegex.test(doc_type))
+        if (doc_type_id && !docTypeRegex.test(doc_type_id))
             return response.status(400).json({ message: "Tipo de documento inválido" });
 
         const docNumberRegex = /^\d{6,15}$/;
@@ -189,12 +189,12 @@ export class UserController{
             });
 
         const roleRegex = /^(admin|user|manager)$/;
-        if (role && !roleRegex.test(role))
+        if (role_id && !roleRegex.test(role_id))
             return response.status(400).json({ message: "Rol inválido" });
 
         const updated = await this.app.updateUser(userId, {
-            name, lastname, doc_type, doc_number, address,
-            phone, department, city, email, password, role
+            name, lastname, doc_type_id, doc_number, address,
+            phone, department, city, email, password, role_id
         });
 
         if (!updated)
