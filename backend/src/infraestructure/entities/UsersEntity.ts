@@ -1,41 +1,44 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, Timestamp } from "typeorm";
 
 @Entity({name: 'users'})
 export class UserEntity {
     @PrimaryGeneratedColumn()
-    user_id_user!: number;   
+    user_id!: number;   
     
     @Column({type: "character varying", length:255})
-    name_user!:string;
+    firts_name!:string;
 
     @Column({type: "character varying", length:255})
-    lastname_user!:string;
+    last_name!:string;
 
     @Column({type: "int"})
-    doc_type_id_user!: number;
+    doc_type_id!: number;
 
     @Column({type: "int"})
-    doc_number_user!: number;
+    document_number!: number;
 
     @Column({type: "character varying", length:255, unique: true})
-    address_user!:string;
+    address!:string;
 
     @Column({type: "character varying", length:255, unique: true})
-    phone_user!:string;
+    phone!:string;
 
     @Column({type: "character varying", length:255, unique: true})
-    department_user!:string;
+    state!:string;
 
     @Column({type: "character varying", length:255, unique: true})
-    city_user!:string;
+    city!:string;
 
     @Column({type: "character varying", length:255, unique: true})
-    email_user!:string;
+    email!:string;
 
     @Column({type: "character varying", length:255})
-    password_user!:string;
+    password!:string;
 
     @Column({type: "int"})
-    role_id_user!: number;
+    role_id!: number;
+
+    @Column({type: "time"})
+    create_at!: Timestamp;
      
 }

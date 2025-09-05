@@ -1,6 +1,8 @@
 import { DataSource } from "typeorm";
 import { UserEntity } from "../entities/UsersEntity";
 import envs from "../config/enviroments-vars";
+import { RolesEntity } from "../entities/RolesEntity";
+import { Document_typesEntity } from "../entities/Document_typesEntity";
 
 export const AppDataSource = new DataSource({
  type: "postgres",
@@ -12,7 +14,7 @@ export const AppDataSource = new DataSource({
  schema: envs.DB_SCHEMA,
  synchronize: true,
  logging: true,
- entities:[UserEntity]
+ entities:[UserEntity, RolesEntity, Document_typesEntity]
 });
 
 //Conectar a la Base de Datos

@@ -48,4 +48,8 @@ export class Document_typesApplication {
     async getDocument_typesByDescription(description: string): Promise<Document_types | null> {
         return await this.port.getDocument_typesByDescription(description);
     }
+
+    async getAllDocument_type(): Promise <Document_types[]>{
+        return await this.port.getAllDocument_type();
+    }
 }

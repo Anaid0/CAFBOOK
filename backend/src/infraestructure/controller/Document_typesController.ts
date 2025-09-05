@@ -118,4 +118,16 @@ export class Document_typesController{
     }
     return response.status(400).json({ message: "error en la petición" });
 }
+
+ async allRoles(req:Request, res: Response): Promise<Response>{
+    try {
+        const documents = await this.app.getAllDocument_type();
+        return res.status(200).json(documents);
+    } catch (error) {
+        if (error instanceof Error){
+            return res.status(500).json({message:"error en servidor"});
+        }
+    }
+    return res.status(400).json({message:"error en la petición"});
+ }
 } 

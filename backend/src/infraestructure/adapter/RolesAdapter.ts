@@ -16,13 +16,13 @@ export class RolesAdapter implements RolesPort {
     private toDomain(role: RolesEntity): Roles {
         return {
             role_id: role.role_id,
-            description: role.role_description,
+            description: role.description,
         };
     }
 
     private toEntity(role: Omit<Roles, "role_id">): RolesEntity {
         const roleEntity = new RolesEntity();
-        roleEntity.role_description = role.description;
+        roleEntity.description = role.description;
         return roleEntity;
     }
 
@@ -45,7 +45,7 @@ export class RolesAdapter implements RolesPort {
             }
 
             Object.assign(existingRole, {
-                role_description: role.description ?? existingRole.role_description,
+                role_description: role.description ?? existingRole.description,
             });
 
             await this.roleRepository.save(existingRole);
@@ -99,7 +99,7 @@ export class RolesAdapter implements RolesPort {
 
     async getRoleByDescription(description: string): Promise<Roles | null> {
         try {
-            const role = await this.roleRepository.findOne({ where: { role_description: description } });
+            const role = await this.roleRepository.findOne({ where: { description: description } });
             return role ? this.toDomain(role) : null;
         } catch (error) {
             console.error("Error fetching role by description ", error);

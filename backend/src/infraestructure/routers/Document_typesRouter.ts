@@ -10,6 +10,7 @@ const document_typesAdapter = new Document_typesAdapter();
 const document_typesApp = new Document_typesApplication(document_typesAdapter);
 const document_typesController = new Document_typesController(document_typesApp);
 //Definición de rutas > endPoints ->especificacion de url
+
 router.post("/document_types", async (Request, Response)=>{
     try {
       await  document_typesController.registerDocument_types(Request, Response);
@@ -49,6 +50,15 @@ router.delete("/document_types/:id", async (Request, Response) => {
   router.put("/document_types/:id", async (Request, Response) => {
     try {
       await document_typesController.updateDocument_types(Request, Response);
+    } catch (error) {
+      console.error("Error actualizando tipo de documento: " + error);
+      Response.status(400).json({ message: "Error actualizando tipo de documento" });
+    }
+  });
+
+  router.get("document_types", async (Request, Response)=>{
+    try {
+      await document_typesController.allRoles(Request, Response);
     } catch (error) {
       console.error("Error actualizando tipo de documento: " + error);
       Response.status(400).json({ message: "Error actualizando tipo de documento" });

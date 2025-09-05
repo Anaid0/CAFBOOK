@@ -45,7 +45,7 @@ router.delete("/role/:id", async (req, res) => {
       console.error("Error eliminando rol: " + error);
       res.status(400).json({ message: "Error eliminando rol" });
     }
-  });
+  }); 
   
   router.put("/rol/:id", async (req, res) => {
     try {

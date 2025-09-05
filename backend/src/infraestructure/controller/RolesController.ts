@@ -71,7 +71,7 @@ async searchRoleById(req:Request, res: Response): Promise<Response>{
 
  async allRoles(req:Request, res: Response): Promise<Response>{
     try {
-        const roles = await this.app.getAllRoles;
+        const roles = await this.app.getAllRoles();
         return res.status(200).json(roles);
     } catch (error) {
         if (error instanceof Error){

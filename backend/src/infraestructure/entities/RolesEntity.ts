@@ -6,7 +6,7 @@ export class RolesEntity {
     role_id!: number;   
     
     @Column({type: "character varying", length:255})
-    role_description!:string;
+    description!:string;
 
      
 }
