@@ -3,18 +3,21 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 @Entity({name: 'crops'})
 export class CropsEntity {
     @PrimaryGeneratedColumn()
-    crop_id_crop!: number;   
+    crop_id!: number;   
     
     @Column({type: "int"})
-    user_id_crop!:number;
+    user_id!:number;
 
     @Column({type: "character varying", length:255})
-    crop_type_crop!:string;
+    crop_type!:string;
 
     @Column({type: "int"})
-    latitude_crop!:number;
+    latitude!:number;
 
     @Column({type: "int"})
-    longitude_crop!:number;
+    longitude!:number;
+
+    @Column({type:"time"})
+    created_at!:string;
         
 }

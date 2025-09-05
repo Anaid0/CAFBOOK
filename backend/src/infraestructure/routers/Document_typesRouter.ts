@@ -58,10 +58,10 @@ router.delete("/document_types/:id", async (Request, Response) => {
 
   router.get("document_types", async (Request, Response)=>{
     try {
-      await document_typesController.allRoles(Request, Response);
+      await document_typesController.allDocument_types(Request, Response);
     } catch (error) {
-      console.error("Error actualizando tipo de documento: " + error);
-      Response.status(400).json({ message: "Error actualizando tipo de documento" });
+      console.error("Error en documento: " + error);
+      Response.status(400).json({ message: "Error en documento" });
     }
   });
   
