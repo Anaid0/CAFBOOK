@@ -20,11 +20,13 @@ export class UserAdapter implements UserPort {
             doc_number: user.document_number,
             address: user.address,
             phone: user.phone,
-            department: user.state,
+            state: user.state,
             city: user.city,
             email: user.email,
             password: user.password,
             role_id: user.role_id,
+            create_at: user.create_at,
+            status: user.status
         };
     }
 
@@ -36,11 +38,13 @@ export class UserAdapter implements UserPort {
         userEntity.document_number = user.doc_number;
         userEntity.address = user.address;
         userEntity.phone = user.phone;
-        userEntity.state = user.department;
+        userEntity.state = user.state;
         userEntity.city = user.city;
         userEntity.email = user.email;
         userEntity.password = user.password;
         userEntity.role_id = user.role_id;
+        userEntity.create_at = user.create_at;
+        userEntity.status = user.status;
         return userEntity;
     }
 
@@ -70,12 +74,14 @@ export class UserAdapter implements UserPort {
                 document_number: user.doc_number ?? existingUser.document_number,
                 address: user.address ?? existingUser.address,
                 phone: user.phone ?? existingUser.phone,
-                state: user.department ?? existingUser.state,
+                state: user.state ?? existingUser.state,
                 city: user.city ?? existingUser.city,
                 email: user.email ?? existingUser.email,
-                password_user: user.password ?? existingUser.password,
-                role_user: user.role_id ?? existingUser.role_id,
-                status_user: 1, // reactivación en caso de estar deshabilitado
+                password: user.password ?? existingUser.password,
+                role: user.role_id ?? existingUser.role_id,
+                create_at: user.create_at ?? existingUser.create_at,
+                status: user.status ?? existingUser.status
+                
             });
 
             await this.userRepository.save(existingUser);

@@ -40,5 +40,8 @@ export class UserEntity {
 
     @Column({type: "time"})
     create_at!: Timestamp;
+
+    @Column({type: "int"})
+    status!: number;
      
 }
