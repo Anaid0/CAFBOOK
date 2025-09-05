@@ -12,4 +12,5 @@ export interface Companies{
     password: string;
     role_id: number;
     created_at: Timestamp;
+    status: number;
 }
