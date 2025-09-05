@@ -10,7 +10,7 @@ export class UserController{
 
     async registerUser(request: Request, response: Response): Promise <Response>{
         const { name, lastname, doc_type_id, doc_number, address, phone,
-             department, city, email, password, role_id } = request.body;
+             state, city, email, password, role_id, create_at, status  } = request.body;
              try {
                 // Validaciones
                 const nameRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{3,}$/;
@@ -36,8 +36,8 @@ export class UserController{
                 if (!phoneRegex.test(phone))
                     return response.status(400).json({ message: "Teléfono inválido" });
     
-                if (!nameRegex.test(department?.trim()))
-                    return response.status(400).json({ message: "Departamento inválido" });
+                if (!nameRegex.test(state?.trim()))
+                    return response.status(400).json({ message: "Estado inválido" });
     
                 if (!nameRegex.test(city?.trim()))
                     return response.status(400).json({ message: "Ciudad inválida" });
@@ -58,7 +58,7 @@ export class UserController{
     
                 const user_id: Omit<Users, "user_id"> = {
                     name, lastname, doc_type_id, doc_number, address,
-                    phone, department, city, email, password, role_id,
+                    phone, department, city, email, password, role_id
                 };
                 const userId = await this.app.createUser(user_id);
                 return response
@@ -145,9 +145,9 @@ export class UserController{
             return response.status(400).json({ message: "error en parámetro" });
 
         let { name, lastname, doc_type_id, doc_number, address, phone,
-            department, city, email, password, role_id } = request.body;
+            state, city, email, password, role_id, create_at, status } = request.body;
 
-        // Validaciones antes de actualizar
+        
         const nameRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{3,}$/;
 
         if (name && !nameRegex.test(name.trim()))
@@ -172,7 +172,7 @@ export class UserController{
         if (phone && !phoneRegex.test(phone))
             return response.status(400).json({ message: "Teléfono inválido" });
 
-        if (department && !nameRegex.test(department.trim()))
+        if (state && !nameRegex.test(state.trim()))
             return response.status(400).json({ message: "Departamento inválido" });
 
         if (city && !nameRegex.test(city.trim()))
@@ -194,7 +194,7 @@ export class UserController{
 
         const updated = await this.app.updateUser(userId, {
             name, lastname, doc_type_id, doc_number, address,
-            phone, department, city, email, password, role_id
+            phone, state, city, email, password, role_id, create_at, status
         });
 
         if (!updated)

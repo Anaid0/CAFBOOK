@@ -1,3 +1,5 @@
+import { Timestamp } from "typeorm";
+
 export interface Companies{
     company_id: number;
     business_name: string;
@@ -9,4 +11,5 @@ export interface Companies{
     email: string;
     password: string;
     role_id: number;
+    created_at: Timestamp;
 }
