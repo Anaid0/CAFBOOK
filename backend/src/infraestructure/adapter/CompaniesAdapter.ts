@@ -23,6 +23,8 @@ export class CompaniesAdapter implements CompaniesPort {
             email: company.email_company,
             password: company.password_company,
             role_id: company.role_id_company,
+            created_at: company.create_at,
+            status: company.status
         };
     }
 
