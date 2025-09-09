@@ -12,11 +12,10 @@ export class Document_typesController{
         const { description } = request.body;
              try {
                 // Validaciones
-                const descriptionRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9.,:;()\-_\s]{10,500}$/;
+                const descriptionRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9.,:;()\-_\s]{4,500}$/;
             if (!descriptionRegex.test(description?.trim())) {
-            return response.status(400).json({ message: "Descripción inválida, debe tener entre 10 y 500 caracteres y no contener símbolos no permitidos." });
-}
-    
+            return response.status(400).json({ message: "Descripción inválida, debe tener entre 4 y 500 caracteres y no contener símbolos no permitidos." });
+        }
                 const doc_type: Omit<Document_types, "doc_type_id"> = {description: description.trim()};
                 const document_typesId = await this.app.createDocument_types(doc_type);
                 return response
@@ -29,6 +28,7 @@ export class Document_typesController{
             }
             return response.status(400).json({ message: "error en la petición" });
         }
+        
     async searchDocument_typesById(request:Request, response: Response): Promise<Response>{
     try {
         const document_typesId = parseInt(request.params.id);
@@ -119,8 +119,8 @@ export class Document_typesController{
     return response.status(400).json({ message: "error en la petición" });
 }
 
- async allRoles(req:Request, res: Response): Promise<Response>{
-    try {
+ async allDocument_types(req:Request, res: Response): Promise<Response>{
+    try {   
         const documents = await this.app.getAllDocument_type();
         return res.status(200).json(documents);
     } catch (error) {

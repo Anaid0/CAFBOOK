@@ -58,7 +58,7 @@ export class UserController{
     
                 const user_id: Omit<Users, "user_id"> = {
                     name, lastname, doc_type_id, doc_number, address,
-                    phone, state, city, email, password, role_id, create_at, status
+                    phone, department, city, email, password, role_id
                 };
                 const userId = await this.app.createUser(user_id);
                 return response

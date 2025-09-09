@@ -5,6 +5,6 @@ export interface Document_typesPort{
      deleteDocument_types(doc_type_id:number): Promise<boolean>;
      getDocument_typesById(doc_type_id:number): Promise<Document_types | null>;
      getDocument_typesByDescription(description: string): Promise<Document_types | null>;
-     getAllDocument_type(): Promise <Document_types[]>;
+     getAllDocument_types(): Promise <Document_types[]>;
 
 }

@@ -50,6 +50,7 @@ export class Document_typesApplication {
     }
 
     async getAllDocument_type(): Promise <Document_types[]>{
-        return await this.port.getAllDocument_type();
+        return await this.port.getAllDocument_types();
     }
 }
+4
