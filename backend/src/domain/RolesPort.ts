@@ -4,7 +4,7 @@ export interface RolesPort{
      updateRole(role_id:number, roles:Partial<Roles>):Promise<boolean>;
      deleteRole(role_id:number): Promise<boolean>;
      getAllRoles(): Promise<Roles[]>;
-     getRolesById(role_id:number): Promise<Roles | null>;
-     getRolesByDescription(Description:string): Promise <Roles | null>;
+     getRoleById(role_id:number): Promise<Roles | null>;
+     getRoleByDescription(Description:string): Promise <Roles | null>;
 
 }
