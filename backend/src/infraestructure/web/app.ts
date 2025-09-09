@@ -1,5 +1,6 @@
 import express,{Request, Response} from "express";
 import rolesRoutes from "../routers/RolesRoutes";
+import departmentsRoutes from "../routers/DepartmentsRoutes"
 
 class App{
     private app: express.Application;
@@ -16,6 +17,7 @@ class App{
 
     private routes():void{
         this.app.use("/api", rolesRoutes);
+        this.app.use("/api", departmentsRoutes);
     }
     getApp(){
         return this.app;

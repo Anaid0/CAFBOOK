@@ -110,7 +110,7 @@ export class RolesController{
       const updated = await this.app.updateRole(roleId,{description});
       if(!updated) return response.status(404).json({message: "Rol no encontrado o sin cambios"});
 
-      return response.status(200).json({message:"Usuaurio actualización exitosamente"})
+      return response.status(200).json({message:"Rol actualizado exitosamente"})
  
         }catch(error){
             if(error instanceof Error){
