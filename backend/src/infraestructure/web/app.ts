@@ -1,6 +1,9 @@
 import express,{Request, Response} from "express";
 import rolesRoutes from "../routers/RolesRoutes";
-import departmentsRoutes from "../routers/DepartmentsRoutes"
+import departmentsRoutes from "../routers/DepartmentsRoutes";
+import document_typesRoutes from "../routers/Document_typesRouter";
+import post_categoriesRoutes from "../routers/Post_categoriesRoutes";
+import number_typesRoutes from "../routers/Number_typesRoutes";
 
 class App{
     private app: express.Application;
@@ -18,6 +21,9 @@ class App{
     private routes():void{
         this.app.use("/api", rolesRoutes);
         this.app.use("/api", departmentsRoutes);
+        this.app.use("/api", document_typesRoutes);
+        this.app.use("/api", number_typesRoutes);
+        this.app.use("/api", post_categoriesRoutes);
     }
     getApp(){
         return this.app;

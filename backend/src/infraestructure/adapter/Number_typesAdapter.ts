@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 import { Number_types } from '../../domain/Number_types';
-import { Number_typesPort } from "../../domain/Numer_typesPort";
+import { Number_typesPort } from "../../domain/Number_typesPort";
 import { Number_typesEntity } from '../entities/Number_typesEntity';
 import { AppDataSource } from "../config/con_data_bases";
 
@@ -24,7 +24,7 @@ export class  Number_typesAdapter implements  Number_typesPort{
         return number_typesEntity;
     }
 
-    async createNumber_type(number_type: Omit<Number_types, "number_typet_id">): Promise<number> {
+    async createNumber_type(number_type: Omit<Number_types, "number_type_id">): Promise<number> {
         try{
             const newNumber_type = this.toEntity(number_type);
             const savedNumber_type = await this.number_typeRepository.save(newNumber_type);

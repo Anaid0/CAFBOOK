@@ -1,6 +1,6 @@
 import { Router, Request } from 'express';
 import { Document_typesAdapter } from "../adapter/Document_typesAdapter";
-import { Document_typesApplication } from "../../application/Document_typesApplicattion";
+import { Document_typesApplication } from "../../application/Document_typesApplication";
 import { Document_typesController } from "../controller/Document_typesController";
 
 //Express
@@ -16,7 +16,7 @@ router.post("/document_types", async (Request, Response)=>{
       await  document_typesController.registerDocument_types(Request, Response);
     } catch (error) {
         console.error("Error en tipo de documento:"+ error);
-        Response.status(400).json({message: "Error en la creación del rol" });
+        Response.status(400).json({message: "Error en la creación del tipo de documento" });
     }
 });
 
@@ -24,8 +24,8 @@ router.get("/document_types/:id", async(Request, Response)=>{
     try {
         await  document_typesController.searchDocument_typesById(Request, Response);
       } catch (error) {
-          console.error("Error en rol:"+ error);
-          Response.status(400).json({message: "Error en rol" });
+          console.error("Error en tipo documento:"+ error);
+          Response.status(400).json({message: "Error en tipo documento" });
       }
 })
 

@@ -1,4 +1,4 @@
-import { Document_typesApplication } from "../../application/Document_typesApplicattion";
+import { Document_typesApplication } from "../../application/Document_typesApplication";
 import {Document_types} from "../../domain/Document_types";
 import {Request, Response} from "express";
 
