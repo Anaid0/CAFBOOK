@@ -6,6 +6,7 @@ import { Media_typesEntity } from "../entities/Media_typesEntity";
 import {Number_typesEntity } from "../entities/Number_typesEntity";
 import { Post_categoriesEntity } from "../entities/Post_categoriesEntity";
 import { CitiesEntity } from "../entities/CitiesEntity";
+import { AddressesEntity } from "../entities/AddressesEntity";
 
 
 
@@ -19,7 +20,7 @@ export const AppDataSource = new DataSource({
  schema: envs.DB_SCHEMA,
  synchronize: true,
  logging: true,
- entities:[RolesEntity, Document_typesEntity, Media_typesEntity, Number_typesEntity, Post_categoriesEntity, CitiesEntity ]
+ entities:[RolesEntity, Document_typesEntity, Media_typesEntity, Number_typesEntity, Post_categoriesEntity, CitiesEntity, AddressesEntity ]
 });
 
 //Conectar a la Base de Datos
