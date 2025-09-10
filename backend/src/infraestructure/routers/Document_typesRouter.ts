@@ -56,7 +56,7 @@ router.delete("/document_types/:id", async (Request, Response) => {
     }
   });
 
-  router.get("document_types", async (Request, Response)=>{
+  router.get("/document_types", async (Request, Response)=>{
     try {
       await document_typesController.allDocument_types(Request, Response);
     } catch (error) {

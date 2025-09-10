@@ -56,7 +56,7 @@ router.delete("/post_categories/:id", async (Request, Response) => {
     }
   });
 
-  router.get("post_categories", async (Request, Response)=>{
+  router.get("/post_categories", async (Request, Response)=>{
     try {
       await post_categoriesController.allPost_categories(Request, Response);
     } catch (error) {

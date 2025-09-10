@@ -110,7 +110,7 @@ export class Post_categoriesController{
       const updated = await this.app.updatePost_category(post_categoryId,{description});
       if(!updated) return response.status(404).json({message: "Post categories no encontrado o sin cambios"});
 
-      return response.status(200).json({message:"Rol actualizado exitosamente"})
+      return response.status(200).json({message:"Categoria post actualizado exitosamente"})
  
         }catch(error){
             if(error instanceof Error){
