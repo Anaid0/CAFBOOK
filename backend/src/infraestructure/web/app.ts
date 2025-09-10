@@ -1,6 +1,8 @@
 import express,{Request, Response} from "express";
 import rolesRoutes from "../routers/RolesRoutes";
-import departmentsRoutes from "../routers/DepartmentsRoutes"
+import departmentsRoutes from "../routers/DepartmentsRoutes";
+import document_typesRouter from "../routers/Document_typesRouter";
+import crop_typesRouter from "../routers/Crop_typesRouter"
 
 class App{
     private app: express.Application;
@@ -18,6 +20,8 @@ class App{
     private routes():void{
         this.app.use("/api", rolesRoutes);
         this.app.use("/api", departmentsRoutes);
+        this.app.use("/api", document_typesRouter);
+        this.app.use("/api", crop_typesRouter);
     }
     getApp(){
         return this.app;

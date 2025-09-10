@@ -8,10 +8,10 @@ export class Document_typesApplication {
         this.port = port;
     }
 
-    async createDocument_types(doc_type: Omit<Document_types, "doc_type_id">): Promise<number> {
-        const existingDocument_types = await this.port.getDocument_typesByDescription(doc_type.description);
+    async createDocument_types(document_type: Omit<Document_types, "doc_type_id">): Promise<number> {
+        const existingDocument_types = await this.port.getDocument_typesByDescription(document_type.description);
         if (!existingDocument_types) {
-            return await this.port.createDocument_types(doc_type);
+            return await this.port.createDocument_types(document_type);
         }
         throw new Error("El tipo de documento ya existe");
     }
@@ -40,7 +40,6 @@ export class Document_typesApplication {
         return await this.port.deleteDocument_types(doc_type_id);
     }
 
-    // Consultas GET
     async getDocument_typesById(doc_type_id: number): Promise<Document_types | null> {
         return await this.port.getDocument_typesById(doc_type_id);
     }
