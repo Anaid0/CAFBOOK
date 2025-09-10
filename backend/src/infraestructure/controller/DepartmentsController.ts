@@ -34,7 +34,7 @@ export class DepartmentsController{
             const departmentId = parseInt(request.params.id);
             if(isNaN(departmentId)) return response.status(400).json({message:"Error en parámetro"});
             const department = await this.app.getDepartmentById (departmentId);
-            if(!department) return response.status(404).json({message:"Rol no encontrado"});
+            if(!department) return response.status(404).json({message:"Departamento no encontrado"});
 
             return response.status(200).json(department);
         
