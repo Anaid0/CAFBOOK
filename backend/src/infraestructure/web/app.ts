@@ -5,6 +5,7 @@ import document_typesRoutes from "../routers/Document_typesRouter";
 import post_categoriesRoutes from "../routers/Post_categoriesRoutes";
 import number_typesRoutes from "../routers/Number_typesRoutes";
 import media_typesRoutes from "../routers/Media_typesRoutes";
+import citiesRoutes from "../routers/CitiesRoutes";
 
 class App{
     private app: express.Application;
@@ -26,6 +27,7 @@ class App{
         this.app.use("/api", number_typesRoutes);
         this.app.use("/api", post_categoriesRoutes);
         this.app.use("/api", media_typesRoutes);
+        this.app.use("/api", citiesRoutes);
     }
     getApp(){
         return this.app;

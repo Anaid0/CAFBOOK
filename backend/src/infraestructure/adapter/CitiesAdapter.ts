@@ -1,129 +1,107 @@
 import { Repository } from "typeorm";
-import { Companies } from '../../domain/Cities';
-import { CompaniesPort } from "../../domain/CitiesPort";
-import { CompaniesEntity } from "../entities/CompaniesEntity";
+import { Cities } from '../../domain/Cities';
+import { CitiesPort } from "../../domain/CitiesPort";
+import { CitiesEntity } from "../entities/CitiesEntity";
 import { AppDataSource } from "../config/con_data_bases";
 
-export class CompaniesAdapter implements CompaniesPort {
-    private companyRepository: Repository<CompaniesEntity>;
+export class CitiesAdapter implements CitiesPort {
+    private cityRepository: Repository<CitiesEntity>;
 
     constructor() {
-        this.companyRepository = AppDataSource.getRepository(CompaniesEntity);
+        this.cityRepository = AppDataSource.getRepository(CitiesEntity);
     }
 
-    private toDomain(company: CompaniesEntity): Companies {
+    private toDomain(city: CitiesEntity): Cities {
         return {
-            company_id: company.company_id_company,
-            business_name: company.business_name_company,
-            doc_type_id: company.doc_type_id_company,
-            document_number: company.document_number_company,
-            phone: company.phone_company,
-            profession: company.profession_company,
-            years_experience: company.years_experience_company,
-            email: company.email_company,
-            password: company.password_company,
-            role_id: company.role_id_company,
-            created_at: company.create_at,
-            status: company.status
+            city_id: city.city_id,
+            city_name: city.city_name,
+            department_id: city.department_id,
+           
         };
     }
 
-    private toEntity(company: Omit<Companies, "company_id">): CompaniesEntity {
-        const companiesEntity = new CompaniesEntity();
-        companiesEntity.business_name_company = company.business_name;
-        companiesEntity.doc_type_id_company = company.doc_type_id;
-        companiesEntity.document_number_company = company.document_number;
-        companiesEntity.phone_company = company.phone;
-        companiesEntity.profession_company = company.profession;
-        companiesEntity.years_experience_company = company.years_experience;
-        companiesEntity.email_company = company.email;
-        companiesEntity.password_company = company.password;
-        companiesEntity.role_id_company = company.role_id;
-        return companiesEntity;
+    private toEntity(city: Omit<Cities, "city_id">): CitiesEntity {
+        const citiesEntity = new CitiesEntity();
+        citiesEntity.city_name = city.city_name;
+        citiesEntity.department_id = city.department_id;
+        return citiesEntity;
     }
 
-    async createCompany(company: Omit<Companies, "company_id">): Promise<number> {
+    async createCity(city: Omit<Cities, "city_id">): Promise<number> {
         try {
-            const newcompany = this.toEntity(company);
-            const savedCompany = await this.companyRepository.save(newcompany);
-            return savedCompany.company_id_company;
+            const newCity = this.toEntity(city);
+            const savedCity = await this.cityRepository.save(newCity);
+            return savedCity.city_id;
         } catch (error) {
-            console.error("Error creating company", error);
-            throw new Error("Error creating company");
+            console.error("Error creating city", error);
+            throw new Error("Error creating city");
         }
     }
 
-    async updateCompany(company_id: number, company: Partial<Companies>): Promise<boolean> {
+    async updateCity(city_id: number, city: Partial<Cities>): Promise<boolean> {
         try {
-            const existingCompany = await this.companyRepository.findOne({ where: { company_id_company: company_id } });
-            if (!existingCompany) {
-                throw new Error("Company not found");
+            const existingCity = await this.cityRepository.findOne({ where: { city_id: city_id } });
+            if (!existingCity) {
+                throw new Error("City not found");
             }
 
             // Actualizamos solo los campos enviados
-            Object.assign(existingCompany, {
-                business_name_company: company.business_name ?? existingCompany.business_name_company,
-                doc_type_id_company: company.doc_type_id ?? existingCompany.doc_type_id_company,
-                document_number_company: company.document_number ?? existingCompany.document_number_company,
-                phone_company: company.phone ?? existingCompany.phone_company,
-                profession_company: company.profession ?? existingCompany.profession_company,
-                years_experience_company: company.years_experience ?? existingCompany.years_experience_company,
-                email_company: company.email ?? existingCompany.email_company,
-                password_company: company.password ?? existingCompany.password_company,
-                role_id_company: company.role_id ?? existingCompany.role_id_company,
-                
+            Object.assign(existingCity, {
+                city_name: city.city_name ?? existingCity.city_name,
+                department_id: city.department_id ?? existingCity.department_id,
+                                
             });
 
-            await this.companyRepository.save(existingCompany);
+            await this.cityRepository.save(existingCity);
             return true;
         } catch (error) {
-            console.error("Error updating company", error);
-            throw new Error("Error updating company");
+            console.error("Error updating city", error);
+            throw new Error("Error updating city");
         }
     }
 
-    async deleteCompany(company_id: number): Promise<boolean> {
+    async deleteCity(city_id: number): Promise<boolean> {
         try {
-            const existingCompany = await this.companyRepository.findOne({ where: { company_id_company: company_id } });
-            if (!existingCompany) {
-                throw new Error("Company not found");
+            const existingCity = await this.cityRepository.findOne({ where: { city_id: city_id } });
+            if (!existingCity) {
+                throw new Error("City not found");
             };
 
-            await this.companyRepository.save(existingCompany);
+            await this.cityRepository.save(existingCity);
             return true;
         } catch (error) {
-            console.error("Error deleting company", error);
-            throw new Error("Error deleting company");
+            console.error("Error deleting city", error);
+            throw new Error("Error deleting city");
         }
     }
 
-    async getAllCompanies(): Promise<Companies[]> {
+    async getAllCities(): Promise<Cities[]> {
         try {
-            const companies = await this.companyRepository.find();
-            return companies.map((company) => this.toDomain(company));
+            const cities = await this.cityRepository.find();
+            return cities.map((city) => this.toDomain(city));
         } catch (error) {
-            console.error("Error fetching all companies", error);
-            throw new Error("Error fetching all companies");
+            console.error("Error fetching all cities", error);
+            throw new Error("Error fetching all cities");
         }
     }
 
-    async getCompanyById(company_id: number): Promise<Companies | null> {
+    async getCityById(city_id: number): Promise<Cities | null> {
         try {
-            const company = await this.companyRepository.findOne({ where: { company_id_company: company_id } });
-            return company ? this.toDomain(company) : null;
+            const city = await this.cityRepository.findOne({ where: { city_id: city_id } });
+            return city ? this.toDomain(city) : null;
         } catch (error) {
-            console.error("Error fetching company by id", error);
-            throw new Error("Error fetching company by id");
+            console.error("Error fetching city by id", error);
+            throw new Error("Error fetching city by id");
         }
     }
 
-    async getCompanyByEmail(email: string): Promise<Companies | null> {
+    async getCityByName(name: string): Promise<Cities | null> {
         try {
-            const company= await this.companyRepository.findOne({ where: { email_company: email } });
-            return company ? this.toDomain(company) : null;
+            const city= await this.cityRepository.findOne({ where: { city_name: name } });
+            return city ? this.toDomain(city) : null;
         } catch (error) {
-            console.error("Error fetching user by email", error);
-            throw new Error("Error fetching user by email");
+            console.error("Error fetching city by name", error);
+            throw new Error("Error fetching city by name");
         }
     }
 }
