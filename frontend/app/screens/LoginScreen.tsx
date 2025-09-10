@@ -1,134 +1,242 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  Image,
+  Alert 
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
+const TEST_PROFILE = {
+  email: "usuario@prueba.com",
+  password: "password123"
+};
 
 const LoginScreen = () => {
+  const navigation = useNavigation<any>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = () => {
-    // Aquí después conectamos con el backend (authService)
-    console.log("Email:", email, "Password:", password);
+    if (!email || !password) {
+      Alert.alert("Error", "Por favor completa todos los campos");
+      return;
+    }
+
+    setIsLoading(true);
+
+    setTimeout(() => {
+      setIsLoading(false);
+      
+      if (email === TEST_PROFILE.email && password === TEST_PROFILE.password) {
+        console.log("Login exitoso con perfil de prueba");
+        navigation.navigate("Main");
+      } else {
+        Alert.alert("Error", "Credenciales incorrectas. Usa:\nEmail: usuario@prueba.com\nContraseña: password123");
+      }
+    }, 1500);
+  };
+
+  const handleGoogleLogin = () => {
+    Alert.alert("Google Login", "Esta funcionalidad no está implementada en la versión de prueba");
+  };
+
+  const navigateToRegister = () => {
+    navigation.navigate("Register");
+  };
+
+  const navigateToForgotPassword = () => {
+    navigation.navigate("ForgotPassword");
   };
 
   return (
     <View style={styles.container}>
-    
+      <View style={styles.logoContainer}>
+        <Image 
+          source={require("../../assets/images/logoCAFBOOKK.png")}
+          style={styles.logo}
+        />
+        <Text style={styles.title}>CAF-BOOK</Text>
+        <Text style={styles.subtitle}>Inicia Sesión</Text>
+        
+        <View style={styles.testProfileInfo}>
+          <Text style={styles.testProfileTitle}>Perfil de Prueba:</Text>
+          <Text style={styles.testProfileText}>Email: usuario@prueba.com</Text>
+          <Text style={styles.testProfileText}>Contraseña: password123</Text>
+        </View>
+      </View>
 
-      {/* Título */}
-      <Text style={styles.title}>CAF-BOOK</Text>
-      <Text style={styles.subtitle}>"Descubre lo que esta sucediendo en la comunidad Agropecuaria."</Text>
-
-      {/* Input Email */}
-      <TextInput
-        style={styles.input}
-        placeholder="Correo/NIT/Cédula Representante"
+      <TextInput 
+        style={styles.input} 
+        placeholder="Correo Electrónico" 
         value={email}
         onChangeText={setEmail}
+        autoCapitalize="none"
+        keyboardType="email-address"
       />
-
-      {/* Input Password */}
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        secureTextEntry
+      <TextInput 
+        style={styles.input} 
+        placeholder="Contraseña" 
+        secureTextEntry 
         value={password}
         onChangeText={setPassword}
       />
 
-      {/* Botón Login */}
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Ingresar</Text>
+      <TouchableOpacity onPress={navigateToForgotPassword} style={styles.forgotPasswordLink}>
+        <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
       </TouchableOpacity>
 
-      {/* Links */}
-      <View style={styles.links}>
-        <Text style={styles.link}>¿Olvidó su contraseña?</Text>
-        <Text style={styles.link}>Crear cuenta</Text>
-      </View>
+      <TouchableOpacity 
+        style={[styles.loginButton, isLoading && styles.disabledButton]} 
+        onPress={handleLogin}
+        disabled={isLoading}
+      >
+        <Text style={styles.loginButtonText}>
+          {isLoading ? "Cargando..." : "Iniciar Sesión"}
+        </Text>
+      </TouchableOpacity>
 
-      {/* Google Login */}
-      <TouchableOpacity style={styles.googleButton}>
+      <Text style={styles.orText}>Or</Text>
+      <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
         <Image
-          style={styles.googleIcon}
+          source={{
+            uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
+          }}
+          style={styles.googleLogo}
         />
+        <Text style={styles.googleText}>Continue with Google</Text>
       </TouchableOpacity>
 
-      {/* Términos */}
+      <TouchableOpacity onPress={navigateToRegister}>
+        <Text style={styles.createAccountText}>
+          ¿No tienes una cuenta? <Text style={styles.createAccountLink}>Crear cuenta</Text>
+        </Text>
+      </TouchableOpacity>
+
       <Text style={styles.footer}>Términos y Condiciones.</Text>
     </View>
   );
 };
 
-export default LoginScreen;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#A6E4A6",
+    backgroundColor: "#A9DFBF",
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
   },
-  logo: {
-    width: 120,
-    height: 120,
-    marginBottom: 10,
-    resizeMode: "contain",
+  logoContainer: { 
+    alignItems: "center", 
+    marginBottom: 30 
   },
-  title: {
-    fontSize: 28,
+  logo: { 
+    width: 100, 
+    height: 100, 
+    resizeMode: "contain", 
+    marginBottom: 15 
+  },
+  title: { 
+    fontSize: 32, 
+    fontWeight: "bold", 
+    color: "#1C2833" 
+  },
+  subtitle: { 
+    fontSize: 18, 
+    color: "#1C2833", 
+    marginBottom: 15 
+  },
+  testProfileInfo: {
+    backgroundColor: "#F8F9F9",
+    padding: 10,
+    borderRadius: 8,
+    marginTop: 10,
+    width: "100%",
+    alignItems: "center",
+  },
+  testProfileTitle: {
     fontWeight: "bold",
     marginBottom: 5,
+    color: "#2E4053",
   },
-  subtitle: {
-    fontSize: 14,
-    color: "#333",
-    textAlign: "center",
-    marginBottom: 20,
+  testProfileText: {
+    fontSize: 12,
+    color: "#566573",
   },
   input: {
     width: "100%",
-    height: 45,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    marginVertical: 5,
     backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: "#ccc",
   },
-  button: {
-    backgroundColor: "#1E90FF",
-    padding: 12,
-    borderRadius: 10,
-    width: "100%",
-    alignItems: "center",
-    marginVertical: 10,
+  forgotPasswordLink: {
+    alignSelf: "flex-end",
+    marginBottom: 20,
   },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
+  forgotPasswordText: {
+    color: "#1ABC9C",
     fontWeight: "bold",
   },
-  links: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  loginButton: {
+    backgroundColor: "#1ABC9C",
+    padding: 15,
+    borderRadius: 8,
     width: "100%",
-    paddingHorizontal: 5,
+    alignItems: "center",
+    marginTop: 10,
   },
-  link: {
-    fontSize: 12,
-    color: "#000",
+  disabledButton: {
+    backgroundColor: "#85C1E9",
+  },
+  loginButtonText: { 
+    color: "#fff", 
+    fontWeight: "bold", 
+    fontSize: 16 
+  },
+  orText: { 
+    marginVertical: 15, 
+    fontSize: 14, 
+    color: "#555" 
   },
   googleButton: {
-    marginTop: 15,
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    padding: 12,
+    borderRadius: 50,
+    alignItems: "center",
+    marginBottom: 20,
   },
-  googleIcon: {
-    width: 40,
-    height: 40,
+  googleLogo: { 
+    width: 24, 
+    height: 24, 
+    resizeMode: "contain", 
+    marginRight: 10 
   },
-  footer: {
-    marginTop: 20,
-    fontSize: 12,
+  googleText: { 
+    fontSize: 14, 
+    color: "#555" 
+  },
+  createAccountText: {
+    fontSize: 14,
     color: "#555",
+    marginBottom: 10,
+  },
+  createAccountLink: {
+    color: "#1ABC9C",
+    fontWeight: "bold",
+  },
+  footer: { 
+    fontSize: 12, 
+    color: "#555", 
+    marginTop: 20 
   },
 });
+
+export default LoginScreen;
