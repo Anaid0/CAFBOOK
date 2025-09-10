@@ -13,7 +13,8 @@ router.post("/document_types", async (Request, Response)=>{
       await  document_typesController.registerDocument_types(Request, Response);
     } catch (error) {
         console.error("Error en tipo de documento:"+ error);
-        Response.status(400).json({message: "Error en la creación del rol" });
+        Response.status(400).json({message: "Error en la creación del tipo del documento" });
+        Response.status(400).json({message: "Error en la creación del tipo de documento" });
     }
 });
 
