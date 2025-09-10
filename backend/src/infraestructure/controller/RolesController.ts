@@ -103,7 +103,7 @@ export class RolesController{
 
              
             if (description && !Validators.description(description)) 
-                return response.status(400).json({message:"La descripción solo debe contener letras",
+                return response.status(400).json({message:"La descripción solo debe contener letras"
             });
  
       

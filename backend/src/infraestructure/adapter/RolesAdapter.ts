@@ -58,7 +58,7 @@ export class RolesAdapter implements RolesPort{
             if(!existingRole){
                 throw new Error("Role not found");
             }
-            await this.roleRepository.save(existingRole);
+            await this.roleRepository.delete(existingRole);
             return true;
         } catch (error) {
             console.error("Error deleting role", error);
