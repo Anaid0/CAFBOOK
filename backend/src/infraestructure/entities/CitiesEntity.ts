@@ -9,7 +9,7 @@ export class CitiesEntity {
     @Column({type: "character varying", length:255})
     city_name!:string;
 
-    @Column({type: "int", length:100})
+    @Column({type: "int"})
     department_id!:number;
 
 }

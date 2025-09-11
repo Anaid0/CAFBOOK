@@ -2,15 +2,12 @@ import express,{Request, Response} from "express";
 import rolesRoutes from "../routers/RolesRoutes";
 import departmentsRoutes from "../routers/DepartmentsRoutes";
 import document_typesRoutes from "../routers/Document_typesRouter";
-<<<<<<< HEAD
 import post_categoriesRoutes from "../routers/Post_categoriesRoutes";
 import number_typesRoutes from "../routers/Number_typesRoutes";
 import media_typesRoutes from "../routers/Media_typesRoutes";
 import citiesRoutes from "../routers/CitiesRoutes";
 import addressesRoutes from "../routers/AddressesRoutes";
-=======
 import crop_typesRoutes from "../routers/Crop_typesRouter";
->>>>>>> 243473aaa26edc8ba4594d0cbb190f2dc17444f2
 
 class App{
     private app: express.Application;
@@ -29,15 +26,12 @@ class App{
         this.app.use("/api", rolesRoutes);
         this.app.use("/api", departmentsRoutes);
         this.app.use("/api", document_typesRoutes);
-<<<<<<< HEAD
         this.app.use("/api", number_typesRoutes);
         this.app.use("/api", post_categoriesRoutes);
         this.app.use("/api", media_typesRoutes);
         this.app.use("/api", citiesRoutes);
         this.app.use("/api", addressesRoutes);
-=======
         this.app.use("/api", crop_typesRoutes);
->>>>>>> 243473aaa26edc8ba4594d0cbb190f2dc17444f2
     }
     getApp(){
         return this.app;

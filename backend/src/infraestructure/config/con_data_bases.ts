@@ -3,17 +3,12 @@ import { DataSource } from "typeorm";
 import envs from "../config/enviroments-vars";
 import { RolesEntity } from "../entities/RolesEntity";
 import { Document_typesEntity } from "../entities/Document_typesEntity";
-<<<<<<< HEAD
 import { Media_typesEntity } from "../entities/Media_typesEntity";
 import {Number_typesEntity } from "../entities/Number_typesEntity";
 import { Post_categoriesEntity } from "../entities/Post_categoriesEntity";
 import { CitiesEntity } from "../entities/CitiesEntity";
 import { AddressesEntity } from "../entities/AddressesEntity";
-
-
-=======
 import { Crop_typesEntity } from "../entities/Crop_typesEntity";
->>>>>>> 243473aaa26edc8ba4594d0cbb190f2dc17444f2
 
 export const AppDataSource = new DataSource({
  type: "postgres",
@@ -25,11 +20,8 @@ export const AppDataSource = new DataSource({
  schema: envs.DB_SCHEMA,
  synchronize: true,
  logging: true,
-<<<<<<< HEAD
- entities:[RolesEntity, Document_typesEntity, Media_typesEntity, Number_typesEntity, Post_categoriesEntity, CitiesEntity, AddressesEntity ]
-=======
- entities:[Document_typesEntity, Crop_typesEntity, RolesEntity, Document_typesEntity]
->>>>>>> 243473aaa26edc8ba4594d0cbb190f2dc17444f2
+ entities:[RolesEntity, Document_typesEntity, Media_typesEntity, Number_typesEntity, Post_categoriesEntity, CitiesEntity, AddressesEntity, Crop_typesEntity]
+
 });
 
 //Conectar a la Base de Datos
