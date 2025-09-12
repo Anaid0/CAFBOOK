@@ -32,7 +32,7 @@ export class Company_phonesAdapter implements Company_phonesPort {
       const savedEntity = await this.companyPhonesRepository.save(newEntity);
       return savedEntity.company_phone;
     } catch (error) {
-      console.error("Error creando teléfono de la compañía", error);
+      console.error("Error creando teléfono de la compañía:", error);
       throw new Error("Error creando teléfono de la compañía");
     }
   }
@@ -52,7 +52,7 @@ export class Company_phonesAdapter implements Company_phonesPort {
       await this.companyPhonesRepository.save(existing);
       return true;
     } catch (error) {
-      console.error("Error actualizando teléfono de la compañía", error);
+      console.error("Error actualizando teléfono de la compañía:", error);
       throw new Error("Error actualizando teléfono de la compañía");
     }
   }
@@ -63,10 +63,10 @@ export class Company_phonesAdapter implements Company_phonesPort {
       if (!existing) {
         throw new Error("Teléfono de la compañía no encontrado");
       }
-      await this.companyPhonesRepository.delete(existing.company_phone);
+      await this.companyPhonesRepository.delete({ company_phone });
       return true;
     } catch (error) {
-      console.error("Error eliminando teléfono de la compañía", error);
+      console.error("Error eliminando teléfono de la compañía:", error);
       throw new Error("Error eliminando teléfono de la compañía");
     }
   }
@@ -74,9 +74,9 @@ export class Company_phonesAdapter implements Company_phonesPort {
   async getAllCompanyPhones(): Promise<Company_phones[]> {
     try {
       const entities = await this.companyPhonesRepository.find();
-      return entities.map(this.toDomain);
+      return entities.map((entity) => this.toDomain(entity));
     } catch (error) {
-      console.error("Error obteniendo todos los teléfonos de la compañía", error);
+      console.error("Error obteniendo todos los teléfonos de la compañía:", error);
       throw new Error("Error obteniendo todos los teléfonos de la compañía");
     }
   }
@@ -86,7 +86,7 @@ export class Company_phonesAdapter implements Company_phonesPort {
       const entity = await this.companyPhonesRepository.findOne({ where: { company_phone } });
       return entity ? this.toDomain(entity) : null;
     } catch (error) {
-      console.error("Error obteniendo teléfono de la compañía por ID", error);
+      console.error("Error obteniendo teléfono de la compañía por ID:", error);
       throw new Error("Error obteniendo teléfono de la compañía por ID");
     }
   }
@@ -94,9 +94,9 @@ export class Company_phonesAdapter implements Company_phonesPort {
   async getCompanyPhonesByPhoneId(phone_id: number): Promise<Company_phones[]> {
     try {
       const entities = await this.companyPhonesRepository.find({ where: { phone_id } });
-      return entities.map(this.toDomain);
+      return entities.map((entity) => this.toDomain(entity));
     } catch (error) {
-      console.error("Error obteniendo teléfonos de la compañía por phone_id", error);
+      console.error("Error obteniendo teléfonos de la compañía por phone_id:", error);
       throw new Error("Error obteniendo teléfonos de la compañía por phone_id");
     }
   }

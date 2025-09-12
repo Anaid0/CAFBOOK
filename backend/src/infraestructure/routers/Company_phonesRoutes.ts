@@ -2,7 +2,6 @@ import { Router, Request } from 'express';
 import { Company_phonesAdapter } from "../adapter/Company_phonesAdapter";
 import { Company_phonesApplication } from "../../application/Company_phonesApplication";
 import { Company_phonesController } from "../controller/Company_phonesController";
-import { Company_phones } from '../../domain/Company_phones';
 
 
 const router = Router();

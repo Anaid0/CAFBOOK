@@ -10,6 +10,8 @@ import { CitiesEntity } from "../entities/CitiesEntity";
 import { AddressesEntity } from "../entities/AddressesEntity";
 import { Crop_typesEntity } from "../entities/Crop_typesEntity";
 import { PhonesEntity } from "../entities/PhonesEntity";
+import { Company_phonesEntity } from "../entities/Company_phonesEntity";
+import { User_phonesEntity } from "../entities/User_phonesEntity";
 
 export const AppDataSource = new DataSource({
  type: "postgres",
@@ -22,7 +24,8 @@ export const AppDataSource = new DataSource({
  synchronize: true,
  logging: true,
  entities:[RolesEntity, Document_typesEntity, Media_typesEntity, Number_typesEntity,
-     Post_categoriesEntity, CitiesEntity, AddressesEntity, Crop_typesEntity, PhonesEntity]
+     Post_categoriesEntity, CitiesEntity, AddressesEntity, Crop_typesEntity, 
+     PhonesEntity, Company_phonesEntity, User_phonesEntity]
 
 });
 
