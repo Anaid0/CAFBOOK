@@ -19,6 +19,7 @@ import TutorialesScreen from '../screens/tutorialesScreen';
 import ForosScreen from '../screens/forosScreen';
 import ProfileScreen from '../screens/profileScreen';
 import AgregarScreen from '../screens/agregarScreen';
+import CultivosScreen from '../screens/cultivosScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -114,6 +115,21 @@ const BottomTabNavigator = () => {
               ),
             }}
           />
+
+          <Tab.Screen
+            name="Tutoriales"
+            component={TutorialesScreen}
+            options={{
+              tabBarLabel: 'Tutoriales',
+              tabBarIcon: ({ color, size }) => (
+                <Image
+                  source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2889/2889676.png' }}
+                  style={{ width: size, height: size, tintColor: color }}
+                />
+              ),
+            }}
+          />
+
           <Tab.Screen
             name="Manuales"
             component={ManualesScreen}
@@ -145,19 +161,7 @@ const BottomTabNavigator = () => {
             }}
           />
           
-          <Tab.Screen
-            name="Tutoriales"
-            component={TutorialesScreen}
-            options={{
-              tabBarLabel: 'Tutoriales',
-              tabBarIcon: ({ color, size }) => (
-                <Image
-                  source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2889/2889676.png' }}
-                  style={{ width: size, height: size, tintColor: color }}
-                />
-              ),
-            }}
-          />
+          
           <Tab.Screen
             name="Foros"
             component={ForosScreen}
@@ -171,6 +175,21 @@ const BottomTabNavigator = () => {
               ),
             }}
           />
+
+          <Tab.Screen
+            name="Cultivos"
+            component={CultivosScreen}
+            options={{
+              tabBarLabel: 'Cultivos',
+              tabBarIcon: ({ color, size }) => (
+                <Image
+                  source={{ uri: '' }}
+                  style={{ width: size, height: size, tintColor: color }}
+                />
+              ),
+            }}
+          />
+
           <Tab.Screen
             name="Profile"
             component={ProfileScreen}

@@ -6,6 +6,14 @@ import RegisterScreen from "./app/screens/registerScreen";
 import ForgotPasswordScreen from "./app/screens/forgotPasswordScreen";
 import CodigoPasswordScreen from "./app/screens/codigoPassword";
 import BottomTabNavigator from "./app/navigation/bottomTabNavigator";
+import MisTutorialesScreen from './app/screens/misTutorialesScreen';
+import MisManualesScreen from './app/screens/misManualesScreen';
+import MisForosScreen from './app/screens/misForosScreen';
+import EditarForoScreen from "./app/screens/editarForosScreen";
+import EditarManualScreen from "./app/screens/editarManualScreen";
+import EditarTutorialScreen from "./app/screens/EditarTutorialScreen";
+import AgregarScreen from "./app/screens/agregarScreen";
+import CultivosScreen from "./app/screens/cultivosScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +29,15 @@ export default function App() {
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         <Stack.Screen name="CodigoPassword" component={CodigoPasswordScreen} />
         <Stack.Screen name="Main" component={BottomTabNavigator} />
+        <Stack.Screen name="MisTutoriales" component={MisTutorialesScreen} options={{ headerShown: false }} /> 
+        <Stack.Screen name="MisManuales" component={MisManualesScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="MisForos" component={MisForosScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="editarTutorialesScreen" component={EditarTutorialScreen} />
+        <Stack.Screen name="editarManualesScreen" component={EditarManualScreen} />
+        <Stack.Screen name="editarForosScreen" component={EditarForoScreen} />
+        <Stack.Screen name="agregarScreen" component={AgregarScreen} />
+        <Stack.Screen name="cultivosScreen" component={CultivosScreen} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
