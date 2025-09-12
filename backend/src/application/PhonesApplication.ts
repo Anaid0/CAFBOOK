@@ -9,7 +9,7 @@ export class PhonesApplication {
     }
 
     async createPhone(phone:Omit<Phones, "phone_id">):Promise<number>{
-        const existingPhone = await this.port.getPhoneById(phone.number)
+        const existingPhone = await this.port.getPhoneByNumber(phone.number)
         if(!existingPhone){
             return await this.port.createPhone(phone);
         }

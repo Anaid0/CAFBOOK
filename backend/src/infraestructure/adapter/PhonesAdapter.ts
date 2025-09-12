@@ -17,7 +17,7 @@ export class PhonesAdapter implements PhonesPort {
         return {
             phone_id: phone.phone_id,
             number: phone.number,
-            number_type_id: phone.number_type_id.number_type_id // 👈 sacamos el id de la relación
+            number_type_id: phone.number_type_id.number_type_id 
         };
     }
 
@@ -32,10 +32,10 @@ private toEntity(phone: Omit<Phones, "phone_id">): PhonesEntity {
     return phonesEntity;
 }
 
-    async getPhoneByNumber(phone: number): Promise<Phones | null> {
+    async getPhoneByNumber(number: string): Promise<Phones | null> {
         try {
             const phone = await this.phoneRepository.findOne({
-                where: { number: number },
+                where: { number:number },
                 relations: ["number_type_id"]
             });
             return phone ? this.toDomain(phone) : null;
