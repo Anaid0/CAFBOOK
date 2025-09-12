@@ -7,4 +7,6 @@ export const Validators = {
     vereda: (vereda: string) => /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50}$/.test(vereda.trim()),
     postalCode: (postalCode: string) => /^[0-9]{4,10}$/.test(postalCode.trim()),
     numberTypeId: (numberTypeId: string) => /^[1-9][0-9]*$/.test(numberTypeId.trim()),
+    phoneId: (phoneId: string) => /^[1-9][0-9]*$/.test(phoneId.trim()),
+    companyId: (companyId: string) => /^[1-9][0-9]*$/.test(companyId.trim()),
   };
