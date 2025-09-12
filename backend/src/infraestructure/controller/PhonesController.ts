@@ -2,6 +2,7 @@ import { PhonesApplication } from "../../application/PhonesApplication";
 import { Phones } from "../../domain/Phones";
 import {Request, Response} from "express";
 import { Validators } from "../config/validations";
+import { number } from 'joi';
 
 export class PhonesController{
     private app: PhonesApplication;
@@ -10,13 +11,13 @@ export class PhonesController{
     }
 
     async registerPhone(request: Request, response: Response): Promise <Response>{
-        const { number_type_id } = request.body;
+        const { number_type_id, number} = request.body;
         try{
 
             if(!Validators.numberTypeId(number_type_id))
                 return response.status(400).json({message: "Tipo de número inválida"});
         
-            const phone: Omit<Phones, "phone_id"> = {number_type_id};
+            const phone: Omit<Phones, "phone_id"> = {number_type_id, number};
             const phoneId = await this.app.createPhone(phone);
 
             return response.status(201).json({message:"Teléfono creado exitosamente:", phoneId});

@@ -15,12 +15,14 @@ export class PhonesAdapter implements PhonesPort{
      return{
         phone_id: phone.phone_id,
         number_type_id: phone.number_type_id,
+        number: phone.number
      }   
     }
     
     private toEntity(phone: Omit<Phones, "phone_id">): PhonesEntity {
         const phonesEntity = new PhonesEntity();
         phonesEntity.number_type_id = phone.number_type_id;
+        phonesEntity.number = phone.number
         return phonesEntity;
       }
 

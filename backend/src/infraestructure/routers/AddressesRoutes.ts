@@ -11,7 +11,7 @@ const citiesApp = new CitiesApplication(citiesAdapter);
 const citiesController = new CitiesController(citiesApp);
 
 
-router.post("/cities", async (req: Request, res: Response) => {
+router.post("/address", async (req: Request, res: Response) => {
     try {
         await citiesController.registerCity(req, res);
     } catch (error) {
@@ -21,7 +21,7 @@ router.post("/cities", async (req: Request, res: Response) => {
 });
 
 
-router.get("/cities", async (req: Request, res: Response) => {
+router.get("/addresses", async (req: Request, res: Response) => {
     try {
         await citiesController.allCities(req, res);
     } catch (error) {
@@ -31,7 +31,7 @@ router.get("/cities", async (req: Request, res: Response) => {
 });
 
 
-router.get("/cities/:id", async (req: Request, res: Response) => {
+router.get("/address/:id", async (req: Request, res: Response) => {
     try {
         await citiesController.searchCityById(req, res);
     } catch (error) {
@@ -41,7 +41,7 @@ router.get("/cities/:id", async (req: Request, res: Response) => {
 });
 
 
-router.get("/cities/name/:name", async (req: Request, res: Response) => {
+router.get("/address/name/:name", async (req: Request, res: Response) => {
     try {
         await citiesController.searchCityByName(req, res);
     } catch (error) {
@@ -51,7 +51,7 @@ router.get("/cities/name/:name", async (req: Request, res: Response) => {
 });
 
 
-router.delete("/cities/:id", async (req: Request, res: Response) => {
+router.delete("/address/:id", async (req: Request, res: Response) => {
     try {
         await citiesController.downCity(req, res);
     } catch (error) {
@@ -61,7 +61,7 @@ router.delete("/cities/:id", async (req: Request, res: Response) => {
 });
 
 
-router.put("/cities/:id", async (req: Request, res: Response) => {
+router.put("/address/:id", async (req: Request, res: Response) => {
     try {
         await citiesController.updateCity(req, res);
     } catch (error) {

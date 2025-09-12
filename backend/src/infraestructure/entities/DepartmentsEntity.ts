@@ -1,11 +1,11 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({name: 'departaments'})
+@Entity({name: 'departments'})
 export class DepartmentsEntity {
     @PrimaryGeneratedColumn()
-    departament_id!: number;
+    department_id!: number;
     
-    @Column({type: "character varying", length:255})
-    departaments_name!:string;
+    @Column({type: "character varying", length:150})
+    department_name!:string;
 
 }
