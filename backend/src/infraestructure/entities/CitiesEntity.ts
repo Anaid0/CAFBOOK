@@ -1,4 +1,3 @@
-import { number } from "joi";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'cities'})
