@@ -10,7 +10,7 @@ export class PhonesEntity {
     @Column({type: "character varying", length:12})
     number!:string;
     
-    @ManyToOne(()=> Number_typesEntity, (numberType)=> numberType.phone)
+    @ManyToOne(()=> Number_typesEntity, {eager: false})
     @JoinColumn({ name: "number_type_id" })
     number_type_id!:Number_typesEntity;
 

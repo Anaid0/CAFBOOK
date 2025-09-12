@@ -13,9 +13,6 @@ export class PhonesController{
     async registerPhone(request: Request, response: Response): Promise <Response>{
         const { number_type_id, number} = request.body;
         try{
-
-            if(!Validators.numberTypeId(number_type_id))
-                return response.status(400).json({message: "Tipo de número inválida"});
         
             const phone: Omit<Phones, "phone_id"> = {number_type_id, number};
             const phoneId = await this.app.createPhone(phone);
@@ -50,8 +47,6 @@ export class PhonesController{
     async searchPhoneByNumber_type_id(request: Request, response: Response): Promise<Response> {
         try {
           const number_type_id = parseInt(request.params.number_type_id);
-          if (isNaN(number_type_id) || !Validators.numberTypeId(String(number_type_id)))
-            return response.status(400).json({ error: "Tipo de número inválido" });
     
           const phone = await this.app.getPhoneByNumber_type_id(number_type_id);
           if (!phone) return response.status(404).json({ message: "Teléfono no encontrado" });
@@ -100,12 +95,6 @@ export class PhonesController{
             if(isNaN(phoneId)) return response.status(400).json({message:"Error en parámetro"});
             
             let { number_type_id } = request.body;
-
-             
-            if (number_type_id && !Validators.numberTypeId(number_type_id)) 
-                return response.status(400).json({message:"El tipo de número solo debe contener letras"
-            });
- 
       
       const updated = await this.app.updatePhone(phoneId,{number_type_id});
       if(!updated) return response.status(404).json({message: "Tipo de número no encontrado o sin cambios"});

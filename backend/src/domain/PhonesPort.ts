@@ -5,6 +5,7 @@ export interface PhonesPort{
      deletePhone(phone_id:number): Promise<boolean>;
      getAllPhones(): Promise<Phones[]>;
      getPhoneById(phone_id:number): Promise<Phones | null>;
+     getPhoneByNumber(phone:number): Promise<Phones | null>;
      getPhoneByNumber_type_id(number_type_id:number): Promise <Phones | null>;
 
 }
