@@ -8,6 +8,7 @@ import media_typesRoutes from "../routers/Media_typesRoutes";
 import citiesRoutes from "../routers/CitiesRoutes";
 import addressesRoutes from "../routers/AddressesRoutes";
 import crop_typesRoutes from "../routers/Crop_typesRouter";
+import phonesRoutes from "../routers/PhonesRoutes";
 
 class App{
     private app: express.Application;
@@ -32,6 +33,7 @@ class App{
         this.app.use("/api", citiesRoutes);
         this.app.use("/api", addressesRoutes);
         this.app.use("/api", crop_typesRoutes);
+        this.app.use("/api", phonesRoutes);
     }
     getApp(){
         return this.app;

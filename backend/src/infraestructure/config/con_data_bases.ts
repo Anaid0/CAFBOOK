@@ -9,6 +9,7 @@ import { Post_categoriesEntity } from "../entities/Post_categoriesEntity";
 import { CitiesEntity } from "../entities/CitiesEntity";
 import { AddressesEntity } from "../entities/AddressesEntity";
 import { Crop_typesEntity } from "../entities/Crop_typesEntity";
+import { PhonesEntity } from "../entities/PhonesEntity";
 
 export const AppDataSource = new DataSource({
  type: "postgres",
@@ -20,7 +21,8 @@ export const AppDataSource = new DataSource({
  schema: envs.DB_SCHEMA,
  synchronize: true,
  logging: true,
- entities:[RolesEntity, Document_typesEntity, Media_typesEntity, Number_typesEntity, Post_categoriesEntity, CitiesEntity, AddressesEntity, Crop_typesEntity]
+ entities:[RolesEntity, Document_typesEntity, Media_typesEntity, Number_typesEntity,
+     Post_categoriesEntity, CitiesEntity, AddressesEntity, Crop_typesEntity, PhonesEntity]
 
 });
 

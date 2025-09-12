@@ -6,4 +6,5 @@ export const Validators = {
     street: (street: string) => /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,#-]{3,100}$/.test(street.trim()),
     vereda: (vereda: string) => /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50}$/.test(vereda.trim()),
     postalCode: (postalCode: string) => /^[0-9]{4,10}$/.test(postalCode.trim()),
+    numberTypeId: (numberTypeId: string) => /^[1-9][0-9]*$/.test(numberTypeId.trim()),
   };
