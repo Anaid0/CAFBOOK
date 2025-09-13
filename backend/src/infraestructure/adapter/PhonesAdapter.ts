@@ -21,16 +21,16 @@ export class PhonesAdapter implements PhonesPort {
         };
     }
 
-private toEntity(phone: Omit<Phones, "phone_id">): PhonesEntity {
-    const phonesEntity = new PhonesEntity();
+    private toEntity(phone: Omit<Phones, "phone_id">): PhonesEntity {
+        const phonesEntity = new PhonesEntity();
 
-    const numberType = new Number_typesEntity();
-    numberType.number_type_id = phone.number_type_id; // aquí le pasas el entero
-    phonesEntity.number_type_id = numberType;
+        const numberType = new Number_typesEntity();
+        numberType.number_type_id = phone.number_type_id;
+        phonesEntity.number_type_id = numberType;
 
-    phonesEntity.number = phone.number;
-    return phonesEntity;
-}
+        phonesEntity.number = phone.number;
+        return phonesEntity;
+    }
 
     async getPhoneByNumber(number: string): Promise<Phones | null> {
         try {
@@ -64,12 +64,17 @@ private toEntity(phone: Omit<Phones, "phone_id">): PhonesEntity {
                 throw new Error("Phone not found");
             }
 
-            // Si se actualiza el tipo de número
             if (phone.number_type_id) {
                 const numberType = new Number_typesEntity();
                 numberType.number_type_id = phone.number_type_id;
                 existingPhone.number_type_id = numberType;
             }
+
+            Object.assign(existingPhone, {
+                number: phone.number ?? existingPhone.number,
+                number_type_id: phone.number_type_id ?? existingPhone.number_type_id,
+                                
+            });
 
             // Si se actualiza el número
             if (phone.number) {
@@ -100,7 +105,7 @@ private toEntity(phone: Omit<Phones, "phone_id">): PhonesEntity {
 
     async getAllPhones(): Promise<Phones[]> {
         try {
-            const phones = await this.phoneRepository.find({ relations: ["number_type_id"] }); // 👈 cargamos relación
+            const phones = await this.phoneRepository.find({ relations: ["number_type_id"] }); 
             return phones.map(this.toDomain);
         } catch (error) {
             console.error("Error fetching all phones ", error);

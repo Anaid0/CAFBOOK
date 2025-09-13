@@ -1,6 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-
-
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { CitiesEntity } from "./CitiesEntity";
 
 @Entity({name: 'addresses'})
 export class AddressesEntity {
@@ -16,7 +15,8 @@ export class AddressesEntity {
     @Column({type: "character varying", length:255})
     postal_code!:string;
 
-    @Column({type: "int"})
-    city_id!:number;
+    @ManyToOne(()=> CitiesEntity, {eager: false})
+    @JoinColumn({ name: "city_id"})
+    city_id!:CitiesEntity;
         
 }

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { CitiesEntity } from "./CitiesEntity";
 
 @Entity({name: 'departments'})
 export class DepartmentsEntity {
@@ -7,5 +8,8 @@ export class DepartmentsEntity {
     
     @Column({type: "character varying", length:150})
     department_name!:string;
+
+    @OneToMany(()=> CitiesEntity, (cities)=> cities.department_id)
+    cities!: CitiesEntity; 
 
 }
