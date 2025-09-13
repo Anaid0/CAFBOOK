@@ -11,6 +11,7 @@ import crop_typesRoutes from "../routers/Crop_typesRouter";
 import phonesRoutes from "../routers/PhonesRoutes";
 import company_phonesRoutes from "../routers/Company_phonesRoutes";
 import user_phonesRoutes from "../routers/User_phonesRoutes";
+import company_adressRoutes from "../routers/Company_addressesRoutes";
 
 class App{
     private app: express.Application;
@@ -38,6 +39,7 @@ class App{
         this.app.use("/api", phonesRoutes);
         this.app.use("/api", company_phonesRoutes);
         this.app.use("/api", user_phonesRoutes);
+        this.app.use("/api", company_adressRoutes);
     }
     getApp(){
         return this.app;
