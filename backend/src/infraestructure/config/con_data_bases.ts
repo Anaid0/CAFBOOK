@@ -1,5 +1,4 @@
 import { DataSource } from "typeorm";
-//import { UserEntity } from "../entities/UsersEntity";
 import envs from "../config/enviroments-vars";
 import { RolesEntity } from "../entities/RolesEntity";
 import { Document_typesEntity } from "../entities/Document_typesEntity";

@@ -10,5 +10,5 @@ export class Number_typesEntity {
     description!:string;
 
     @OneToMany(()=> PhonesEntity, (phone)=> phone.number_type_id)
-    phone!: PhonesEntity[]
+    phone!: PhonesEntity[];
 }
