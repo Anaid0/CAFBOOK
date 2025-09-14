@@ -27,8 +27,7 @@ export const AppDataSource = new DataSource({
  synchronize: true,
  logging: true,
  entities:[RolesEntity, Document_typesEntity, Media_typesEntity, Number_typesEntity, Post_categoriesEntity, CitiesEntity, 
-    AddressesEntity, Crop_typesEntity, PhonesEntity, Company_phonesEntity, User_phonesEntity, DepartmentsEntity, Company_addressesEntity, User_addressesEntity]
-    AddressesEntity, Crop_typesEntity, PhonesEntity, Company_phonesEntity, User_phonesEntity, DepartmentsEntity, Company_addressesEntity, UserEntity]
+    AddressesEntity, Crop_typesEntity, PhonesEntity, Company_phonesEntity, User_phonesEntity, DepartmentsEntity, Company_addressesEntity, User_addressesEntity, Crop_typesEntity, PhonesEntity, Company_phonesEntity, User_phonesEntity, DepartmentsEntity, Company_addressesEntity, UserEntity, AddressesEntity]
 });
 
 //Conectar a la Base de Datos
