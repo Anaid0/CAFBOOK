@@ -1,0 +1,182 @@
+import { PostsApplication } from "../../application/PostsApplication";
+import { Posts } from "../../domain/Posts";
+import { Request, Response } from "express";
+import { Validators } from "../config/validations";
+
+export class PostsController {
+  private app: PostsApplication;
+
+  constructor(app: PostsApplication) {
+    this.app = app;
+  }
+
+  async registerPost(request: Request, response: Response): Promise<Response> {
+    const { tittle, description, post_category_id, user_id, creates_at } = request.body;
+    try {
+      if (!tittle || !Validators.tittle(tittle)) {
+        return response.status(400).json({ message: "Título inválido" });
+      }
+
+      if (!description || !Validators.description(description)) {
+        return response.status(400).json({ message: "Descripción inválida" });
+      }
+
+      if (!post_category_id || isNaN(Number(post_category_id))) {
+        return response.status(400).json({ message: "ID de categoría inválido" });
+      }
+
+      if (!user_id || isNaN(Number(user_id))) {
+        return response.status(400).json({ message: "ID de usuario inválido" });
+      }
+
+      if (!creates_at || !Validators.date(creates_at)) {
+        return response.status(400).json({ message: "Fecha inválida" });
+      }
+
+      const post: Omit<Posts, "post_id"> = {
+        tittle: tittle.trim(),
+        description: description.trim(),
+        post_category_id: Number(post_category_id),
+        user_id: Number(user_id),
+        creates_at: new Date(creates_at) as any, 
+      };
+
+      const postId = await this.app.createPost(post);
+
+      return response.status(201).json({
+        message: "Post creado exitosamente",
+        postId,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        return response.status(500).json({ message: "Error en el servidor" });
+      }
+    }
+    return response.status(400).json({ message: "Error en la petición" });
+  }
+
+  async searchPostById(request: Request, response: Response): Promise<Response> {
+    try {
+      const postId = parseInt(request.params.id);
+      if (isNaN(postId)) {
+        return response.status(400).json({ message: "Error en parámetro" });
+      }
+
+      const post = await this.app.getPostById(postId);
+      if (!post) {
+        return response.status(404).json({ message: "Post no encontrado" });
+      }
+
+      return response.status(200).json(post);
+    } catch (error) {
+      if (error instanceof Error) {
+        return response.status(500).json({ message: "Error en el servidor" });
+      }
+    }
+    return response.status(400).json({ message: "Error en la petición" });
+  }
+
+  async searchPostByPostCategoryId(request: Request, response: Response): Promise<Response> {
+    try {
+      const postcategoryId = parseInt(request.params.id);
+      if (isNaN(postcategoryId)) {
+        return response.status(400).json({ error: "ID de categoría no válido" });
+      }
+
+      const posts = await this.app.getPostByPostCategoryById(postcategoryId);
+      if (!posts || posts.length === 0) {
+        return response.status(404).json({ message: "No se encontraron posts en esta categoría" });
+      }
+
+      return response.status(200).json(posts);
+    } catch (error) {
+      if (error instanceof Error) {
+        return response.status(500).json({ message: "Error en el servidor" });
+      }
+    }
+    return response.status(400).json({ message: "Error en la petición" });
+  }
+
+  async allPosts(request: Request, response: Response): Promise<Response> {
+    try {
+      const posts = await this.app.getAllPosts();
+      return response.status(200).json(posts);
+    } catch (error) {
+      if (error instanceof Error) {
+        return response.status(500).json({ message: "Error en el servidor" });
+      }
+    }
+    return response.status(400).json({ message: "Error en la petición" });
+  }
+
+  async downPost(request: Request, response: Response): Promise<Response> {
+    try {
+      const postId = parseInt(request.params.id);
+      if (isNaN(postId)) {
+        return response.status(400).json({ message: "Error en parámetro" });
+      }
+
+      const deleted = await this.app.deletePost(postId);
+      if (!deleted) {
+        return response.status(404).json({ message: "Post no encontrado" });
+      }
+
+      return response.status(200).json({ message: "Post eliminado exitosamente" });
+    } catch (error) {
+      if (error instanceof Error) {
+        return response.status(500).json({ message: "Error en el servidor" });
+      }
+    }
+    return response.status(400).json({ message: "Error en la petición" });
+  }
+
+  async updatePost(request: Request, response: Response): Promise<Response> {
+    try {
+      const postId = parseInt(request.params.id);
+      if (isNaN(postId)) {
+        return response.status(400).json({ message: "Error en parámetro" });
+      }
+
+      const { tittle, description, post_category_id, user_id, creates_at } = request.body;
+
+      if (tittle && !Validators.tittle(tittle)) {
+        return response.status(400).json({ message: "Título inválido" });
+      }
+
+      if (description && !Validators.description(description)) {
+        return response.status(400).json({ message: "Descripción inválida" });
+      }
+
+      if (post_category_id && isNaN(Number(post_category_id))) {
+        return response.status(400).json({ message: "ID de categoría inválido" });
+      }
+
+      if (user_id && isNaN(Number(user_id))) {
+        return response.status(400).json({ message: "ID de usuario inválido" });
+      }
+
+      if (creates_at && !Validators.date(creates_at)) {
+        return response.status(400).json({ message: "Fecha inválida" });
+      }
+
+      const updated = await this.app.updatePost(postId, {
+        tittle,
+        description,
+        post_category_id,
+        user_id,
+        creates_at: creates_at ? new Date(creates_at) as any : undefined,
+      });
+
+      if (!updated) {
+        return response.status(404).json({ message: "Post no encontrado o sin cambios" });
+      }
+
+      return response.status(200).json({ message: "Post actualizado exitosamente" });
+    } catch (error) {
+      if (error instanceof Error) {
+        return response.status(500).json({ message: "Error en el servidor" });
+      }
+    }
+    return response.status(400).json({ message: "Error en la petición" });
+  }
+}
