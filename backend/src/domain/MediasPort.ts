@@ -5,5 +5,5 @@ export interface MediasPort {
     deleteMedia(media_id: number): Promise<boolean>;
     getAllMedias(): Promise<Medias[]>;
     getMediaById(media_id: number): Promise<Medias | null>;
-    getMediaByMediaTypeId(meida_type_id: number): Promise<Medias[]>;
+    getMediaByMediaTypeId(media_type_id: number): Promise<Medias[]>;
   }

@@ -17,6 +17,7 @@ import { User_addressesEntity } from "../entities/User_addressesEntity";
 import { UserEntity } from "../entities/UsersEntity";
 import { PostsEntity } from "../entities/PostsEntity";
 import { MediasEntity } from "../entities/MediasEntity";
+import { CommentsEntity } from "../entities/CommentsEntity";
 
 export const AppDataSource = new DataSource({
  type: "postgres",
@@ -30,7 +31,7 @@ export const AppDataSource = new DataSource({
  logging: true,
  entities:[RolesEntity, Document_typesEntity, Media_typesEntity, Number_typesEntity, Post_categoriesEntity, CitiesEntity, 
     AddressesEntity, Crop_typesEntity, PhonesEntity, Company_phonesEntity, User_phonesEntity, DepartmentsEntity, Company_addressesEntity, 
-    User_addressesEntity, UserEntity, PostsEntity, MediasEntity]
+    User_addressesEntity, UserEntity, PostsEntity, MediasEntity, CommentsEntity]
 });
 
 //Conectar a la Base de Datos
