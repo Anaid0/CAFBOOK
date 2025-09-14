@@ -89,7 +89,7 @@ export class AddressesAdapter implements AddressesPort {
 
     async getAllAddresses(): Promise<Addresses[]> {
         try {
-            const addresses = await this.addressRepository.find();
+            const addresses = await this.addressRepository.find({relations: ["city_id"]});
             return addresses.map(this.toDomain);
         } catch (error) {
             console.error("Error fetching all addresses", error);
@@ -99,7 +99,7 @@ export class AddressesAdapter implements AddressesPort {
 
     async getAddressById(address_id: number): Promise<Addresses | null> {
         try {
-            const address = await this.addressRepository.findOne({ where: { address_id } });
+            const address = await this.addressRepository.findOne({ relations:["city_id"],where: { address_id } });
             return address ? this.toDomain(address) : null;
         } catch (error) {
             console.error("Error fetching address by id", error);

@@ -13,6 +13,7 @@ import { Company_phonesEntity } from "../entities/Company_phonesEntity";
 import { User_phonesEntity } from "../entities/User_phonesEntity";
 import { DepartmentsEntity } from "../entities/DepartmentsEntity";
 import { Company_addressesEntity } from "../entities/Company_addressesEntity";
+import { UserEntity } from "../entities/UsersEntity";
 
 export const AppDataSource = new DataSource({
  type: "postgres",
@@ -25,7 +26,7 @@ export const AppDataSource = new DataSource({
  synchronize: true,
  logging: true,
  entities:[RolesEntity, Document_typesEntity, Media_typesEntity, Number_typesEntity, Post_categoriesEntity, CitiesEntity, 
-    AddressesEntity, Crop_typesEntity, PhonesEntity, Company_phonesEntity, User_phonesEntity, DepartmentsEntity, Company_addressesEntity]
+    AddressesEntity, Crop_typesEntity, PhonesEntity, Company_phonesEntity, User_phonesEntity, DepartmentsEntity, Company_addressesEntity, UserEntity]
 });
 
 //Conectar a la Base de Datos

@@ -8,4 +8,5 @@ export const Validators = {
     postalCode: (postalCode: string) => /^[0-9]{4,10}$/.test(postalCode.trim()),
     phoneId: (phoneId: string) => /^[1-9][0-9]*$/.test(phoneId.trim()),
     companyId: (companyId: string) => /^[1-9][0-9]*$/.test(companyId.trim()),
+    document: (document_number: string) => /^[1-9][0-9]*$/.test(document_number.trim())
   };

@@ -107,7 +107,7 @@ export class CitiesAdapter implements CitiesPort {
 
     async getCityByName(name: string): Promise<Cities | null> {
         try {
-            const city= await this.cityRepository.findOne({ where: { city_name: name } });
+            const city= await this.cityRepository.findOne({relations:["departmnet_id"], where: { city_name: name } });
             return city ? this.toDomain(city) : null;
         } catch (error) {
             console.error("Error fetching city by name", error);

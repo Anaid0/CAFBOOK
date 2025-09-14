@@ -1,4 +1,3 @@
-
 import app from './infraestructure/web/app';
 import { ServerBoostrap } from './infraestructure/boostrap/servers-boostrap';
 import { connectDB } from './infraestructure/config/con_data_bases';
