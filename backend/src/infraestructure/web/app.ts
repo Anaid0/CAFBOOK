@@ -14,6 +14,7 @@ import user_phonesRoutes from "../routers/User_phonesRoutes";
 import company_addressRoutes from "../routers/Company_addressesRoutes";
 import user_addressRoutes from "../routers/User_addressesRoutes";
 import postRoutes from "../routers/PostsRoutes";
+import mediaRoutes from "../routers/MediasRoutes";
 
 
 class App{
@@ -45,6 +46,7 @@ class App{
         this.app.use("/api", company_addressRoutes);
         this.app.use("/api", user_addressRoutes);
         this.app.use("/api", postRoutes);
+        this.app.use("/api", mediaRoutes);
     }
     getApp(){
         return this.app;
