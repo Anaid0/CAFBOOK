@@ -16,6 +16,7 @@ import user_addressRoutes from "../routers/User_addressesRoutes";
 import postRoutes from "../routers/PostsRoutes";
 import mediaRoutes from "../routers/MediasRoutes";
 import commentsRoutes from "../routers/CommentsRoutes";
+import cropsRoutes from "../routers/CropsRoutes";
 
 
 class App{
@@ -49,6 +50,7 @@ class App{
         this.app.use("/api", postRoutes);
         this.app.use("/api", mediaRoutes);
         this.app.use("/api", commentsRoutes);
+        this.app.use("/api", cropsRoutes);
     }
     getApp(){
         return this.app;
