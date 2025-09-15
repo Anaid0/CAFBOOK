@@ -4,7 +4,7 @@ import { PhonesPort } from "../../domain/ports/PhonesPort";
 import { PhonesEntity } from '../entities/PhonesEntity';
 import { Number_typesEntity } from "../entities/Number_typesEntity";
 import { AppDataSource } from "../config/con_data_bases";
-import { number } from "joi";
+
 
 export class PhonesAdapter implements PhonesPort {
     private phoneRepository: Repository<PhonesEntity>;

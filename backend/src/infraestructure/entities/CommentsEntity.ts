@@ -1,18 +1,18 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-// import { Timestamp } from "typeorm/browser";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
+import { UsersEntity } from "./UsersEntity";
 
-
-@Entity({name: 'comments'})
+@Entity({ name: "comments" })
 export class CommentsEntity {
-    @PrimaryGeneratedColumn()
-    comment_id!: number;   
- 
-    @Column({type: "int"})
-    user_id!:number;
+  @PrimaryGeneratedColumn()
+  comment_id!: number;
 
-    @Column({type: "character varying", length:150})
-    content!:string;
+  @ManyToOne(() => UsersEntity)
+  @JoinColumn({ name: "user_id" })
+  user_id!: UsersEntity;
 
-    @Column({type: "timestamp"})
-    created_at!:Date;
+  @Column({ type: "character varying", length: 150 })
+  content!: string;
+
+  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  created_at!: Date;
 }
