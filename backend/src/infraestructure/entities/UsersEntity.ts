@@ -26,7 +26,7 @@ export class UserEntity{
     @Column({type: "int"})
     status!: number;
 
-    @Column({type: "timestamp" , default: () => "CURRENT_TIMESTAMP"})
+    @Column({type: "timestamp"})
     created_at!: Timestamp;
 
     @ManyToOne(()=> RolesEntity, {eager: false})

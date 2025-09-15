@@ -1,5 +1,5 @@
 import app from './infraestructure/web/app';
-import { ServerBoostrap } from './infraestructure/boostrap/servers-boostrap';
+import { ServerBoostrap } from './infraestructure/boostrap/server-boostrap';
 import { connectDB } from './infraestructure/config/con_data_bases';
 const server = new ServerBoostrap(app);
 (

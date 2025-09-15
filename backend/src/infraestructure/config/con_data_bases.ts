@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm";
-import envs from "../config/enviroments-vars";
+import envs from "./enviroment-vars";
 import { RolesEntity } from "../entities/RolesEntity";
 import { Document_typesEntity } from "../entities/Document_typesEntity";
 import { Media_typesEntity } from "../entities/Media_typesEntity";

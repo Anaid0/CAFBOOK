@@ -1,5 +1,5 @@
 import { Repository } from "typeorm";
-import { User_phones } from "../../domain/User_phones";
+import { User_phones } from "../../domain/User_Phones";
 import { User_phonesPort } from "../../domain/User_PhonesPort";
 import { User_phonesEntity } from "../entities/User_phonesEntity";
 import { AppDataSource } from "../config/con_data_bases";
