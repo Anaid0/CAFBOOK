@@ -1,26 +1,24 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
-import { Post_categoriesEntity } from "./Post_categoriesEntity";
-import { UsersEntity } from "./UsersEntity";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Timestamp } from "typeorm/browser";
 
-@Entity({ name: "posts" })
+@Entity({name: 'posts'})
 export class PostsEntity {
-  @PrimaryGeneratedColumn()
-  post_id!: number;
+    @PrimaryGeneratedColumn()
+    post_id!: number;   
+ 
+    @Column({type: "character varying", length:150})
+    tittle!:string;
 
-  @Column({ type: "character varying", length: 150 })
-  tittle!: string;
+    @Column({type: "character varying", length:150})
+    description!:string;
 
-  @Column({ type: "character varying", length: 150 })
-  description!: string;
+    @Column({type: "int"})
+    post_category_id!:number;
 
-  @ManyToOne(() => Post_categoriesEntity)
-  @JoinColumn({ name: "post_category_id" })
-  post_category_id!: Post_categoriesEntity;
+    @Column({type: "int"})
+    user_id!:number;
 
-  @ManyToOne(() => UsersEntity)
-  @JoinColumn({ name: "user_id" })
-  user_id!: UsersEntity;
+    @Column({type: "timestamp"})
+    creates_at!:Timestamp;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-  creates_at!: Date;
 }

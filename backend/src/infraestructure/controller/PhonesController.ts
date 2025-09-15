@@ -1,5 +1,5 @@
 import { PhonesApplication } from "../../application/PhonesApplication";
-import { Phones } from "../../domain/models/Phones";
+import { Phones } from "../../domain/Phones";
 import {Request, Response} from "express";
 import { Validators } from "../config/validations";
 import { number } from 'joi';

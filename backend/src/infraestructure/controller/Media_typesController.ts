@@ -1,5 +1,5 @@
 import { Media_typesApplication } from "../../application/Media_typesApplication";
-import { Media_types } from '../../domain/models/Media_types';
+import { Media_types } from '../../domain/Media_types';
 import {Request, Response} from "express";
 import { Validators } from "../config/validations";
 

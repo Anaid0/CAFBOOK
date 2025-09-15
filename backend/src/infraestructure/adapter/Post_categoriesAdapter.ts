@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
-import { Post_categories } from '../../domain/models/Post_categories';
-import { Post_categoriesPort } from "../../domain/ports/Post_categoriesPort";
+import { Post_categories } from '../../domain/Post_categories';
+import { Post_categoriesPort } from "../../domain/Post_categoriesPort";
 import { Post_categoriesEntity } from '../entities/Post_categoriesEntity';
 import { AppDataSource } from "../config/con_data_bases";
 

@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
-import { Roles } from '../../domain/models/Roles';
-import { RolesPort } from "../../domain/ports/RolesPort";
+import { Roles } from '../../domain/Roles';
+import { RolesPort } from "../../domain/RolesPort";
 import { RolesEntity } from '../entities/RolesEntity';
 import { AppDataSource } from "../config/con_data_bases";
 

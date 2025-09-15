@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
-import { Document_types } from "../../domain/models/Document_types";
-import { Document_typesPort } from "../../domain/ports/Document_typesPort";
+import { Document_types } from "../../domain/Document_types";
+import { Document_typesPort } from "../../domain/Document_typesPort";
 import { AppDataSource } from "../config/con_data_bases";
 import { Document_typesEntity } from '../entities/Document_typesEntity';
 

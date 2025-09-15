@@ -1,5 +1,5 @@
 import { Company_addressApplication } from "../../application/Company_addressesApplicattion";
-import { Company_addresses } from "../../domain/models/Company_addresses";
+import { Company_addresses } from "../../domain/Company_addresses";
 import { Request, Response } from "express";
 
 export class Company_addressController {

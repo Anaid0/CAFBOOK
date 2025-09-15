@@ -1,17 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
-import { PhonesEntity } from "./PhonesEntity";
-import { CompaniesEntity } from "./CompaniesEntity";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({ name: "company_phones" })
+@Entity({name: 'company_phones'})
 export class Company_phonesEntity {
-  @PrimaryGeneratedColumn()
-  company_phone!: number;   
+    @PrimaryGeneratedColumn()
+    company_phone!: number;   
+    
+    @Column({type: "int"})
+    phone_id!:number;
 
-  @ManyToOne(() => PhonesEntity)
-  @JoinColumn({ name: "phone_id" })
-  phone_id!: PhonesEntity;
-
-  @ManyToOne(() => CompaniesEntity)
-  @JoinColumn({ name: "company_id" })
-  company_id!: CompaniesEntity;
+    @Column({type: "int"})
+    company_id!:number;
+        
 }

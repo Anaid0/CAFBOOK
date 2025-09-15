@@ -1,5 +1,5 @@
-import { Medias } from "../domain/models/Medias"
-import { MediasPort } from '../domain/ports/MediasPort';
+import { Medias } from "../domain/Medias"
+import { MediasPort } from '../domain/MediasPort';
 
 export class MediasApplication {
     private port: MediasPort;

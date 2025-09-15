@@ -1,23 +1,21 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
-import { PostsEntity } from "./PostsEntity";
-import { Media_typesEntity } from "./Media_typesEntity";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Timestamp } from "typeorm/browser";
 
-@Entity({ name: "medias" })
+@Entity({name: 'medias'})
 export class MediasEntity {
-  @PrimaryGeneratedColumn()
-  media_id!: number;   
+    @PrimaryGeneratedColumn()
+    media_id!: number;   
+ 
+    @Column({type: "int"})
+    post_id!:number;
 
-  @ManyToOne(() => PostsEntity)
-  @JoinColumn({ name: "post_id" })
-  post_id!: PostsEntity;
+    @Column({type: "int"})
+    media_type_id!:number;
 
-  @ManyToOne(() => Media_typesEntity)
-  @JoinColumn({ name: "media_type_id" })
-  media_type_id!: Media_typesEntity;
+    @Column({type: "character varying", length:150})
+    file_url!:string;
 
-  @Column({ type: "character varying", length: 150 })
-  file_url!: string;
+    @Column({type: "timestamp"})
+    uploaded_at!:Timestamp;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-  uploaded_at!: Date;
 }
