@@ -52,7 +52,7 @@ class App{
         this.app.use("/api", commentsRoutes);
         this.app.use("/api", cropsRoutes);
     }
-    getApp(){
+    getApp(): express.Application{
         return this.app;
     }
 }

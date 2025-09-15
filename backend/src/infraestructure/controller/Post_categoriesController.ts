@@ -1,5 +1,5 @@
 import { Post_categoriesApplication } from "../../application/Post_categoriesApplication";
-import { Post_categories } from "../../domain/Post_categories";
+import { Post_categories } from "../../domain/models/Post_categories";
 import {Request, Response} from "express";
 import { Validators } from "../config/validations";
 

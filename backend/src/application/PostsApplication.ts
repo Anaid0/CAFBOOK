@@ -1,5 +1,5 @@
-import { Posts } from "../domain/Posts"
-import { PostsPort } from '../domain/PostsPort';
+import { Posts } from "../domain/models/Posts"
+import { PostsPort } from '../domain/ports/PostsPort';
 
 export class PostsApplication {
     private port: PostsPort;

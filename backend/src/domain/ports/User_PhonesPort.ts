@@ -1,0 +1,9 @@
+import { User_phones } from "../models/User_phones";
+export interface User_phonesPort {
+    createUserPhone(userphone: Omit<User_phones, "user_phone">): Promise<number>;
+    updateUserPhone(user_phone: number, userphone: Partial<User_phones>): Promise<boolean>;
+    deleteUserPhone(user_phone: number): Promise<boolean>;
+    getAllUserPhones(): Promise<User_phones[]>;
+    getUserPhoneById(user_phone: number): Promise<User_phones | null>;
+    getUserPhoneByPhoneId(phone_id: number): Promise<User_phones[]>;
+  }

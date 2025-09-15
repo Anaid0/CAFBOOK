@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
-import { Comments } from "../../domain/Comments";
-import { CommentsPort } from "../../domain/CommentsPort";
+import { Comments } from "../../domain/models/Comments";
+import { CommentsPort } from "../../domain/ports/CommentsPort";
 import { CommentsEntity } from "../entities/CommentsEntity";
 import { AppDataSource } from "../config/con_data_bases";
 

@@ -1,5 +1,5 @@
 import { User_addressApplication } from "../../application/User_addressesApplication";
-import { User_addresses } from "../../domain/User_addresses";
+import { User_addresses } from "../../domain/models/User_addresses";
 import { Request, Response } from "express";
 
 export class User_addressController {

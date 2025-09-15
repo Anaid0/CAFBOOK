@@ -1,5 +1,5 @@
 import { DepartmentsApplication } from "../../application/DepartmentsApplication";
-import { Departments } from "../../domain/Departments";
+import { Departments } from "../../domain/models/Departments";
 import {Request, Response} from "express";
 import { Validators } from "../config/validations";
 

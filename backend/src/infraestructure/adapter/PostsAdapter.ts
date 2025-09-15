@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
-import { Posts } from "../../domain/Posts";
-import { PostsPort } from "../../domain/PostsPort";
+import { Posts } from "../../domain/models/Posts";
+import { PostsPort } from "../../domain/ports/PostsPort";
 import { PostsEntity } from "../entities/PostsEntity";
 import { AppDataSource } from "../config/con_data_bases";
 

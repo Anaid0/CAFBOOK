@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Timestamp } from "typeorm/browser";
+// import { Timestamp } from "typeorm/browser";
 
 @Entity({name: 'crops'})
 export class CropsEntity {
@@ -19,6 +19,6 @@ export class CropsEntity {
     longitude!:number;
 
     @Column({type:"timestamp"})
-    created_at!:Timestamp;
+    created_at!: Date;
         
 }

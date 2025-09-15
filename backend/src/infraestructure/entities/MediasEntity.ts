@@ -1,5 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Timestamp } from "typeorm/browser";
+import { Column, Entity, PrimaryGeneratedColumn, Timestamp } from "typeorm";
+// import { Timestamp } from "typeorm/browser";
 
 @Entity({name: 'medias'})
 export class MediasEntity {
@@ -16,6 +16,6 @@ export class MediasEntity {
     file_url!:string;
 
     @Column({type: "timestamp"})
-    uploaded_at!:Timestamp;
+    uploaded_at!:Date;
 
 }

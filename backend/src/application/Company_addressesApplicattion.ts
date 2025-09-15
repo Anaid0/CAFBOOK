@@ -1,5 +1,5 @@
-import { Company_addresses } from '../domain/Company_addresses';
-import { Company_addressPort } from '../domain/Company_addressesPort';
+import { Company_addresses } from '../domain/models/Company_addresses';
+import { Company_addressPort } from '../domain/ports/Company_addressesPort';
 
 export class Company_addressApplication {
     private port: Company_addressPort;

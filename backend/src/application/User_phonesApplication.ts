@@ -1,5 +1,5 @@
-import { User_phones } from '../domain/User_Phones';
-import { User_phonesPort } from '../domain/User_PhonesPort';
+import { User_phones } from '../domain/models/User_phones';
+import { User_phonesPort } from '../domain/ports/User_PhonesPort';
 
 export class User_phonesApplication {
   private port: User_phonesPort;

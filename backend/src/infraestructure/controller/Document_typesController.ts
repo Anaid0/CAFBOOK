@@ -1,5 +1,5 @@
 import { Document_typesApplication } from "../../application/Document_typesApplication";
-import {Document_types} from "../../domain/Document_types";
+import {Document_types} from "../../domain/models/Document_types";
 import {Request, Response} from "express";
 import { Validators } from "../config/validations";
 

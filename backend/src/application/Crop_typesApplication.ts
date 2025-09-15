@@ -1,5 +1,5 @@
-import { Crop_types } from "../domain/Crop_types";
-import { Crop_typesPort } from "../domain/Crop_typesPort";
+import { Crop_types } from "../domain/models/Crop_types";
+import { Crop_typesPort } from "../domain/ports/Crop_typesPort";
 
 export class Crop_typesApplication{
     private port: Crop_typesPort;
