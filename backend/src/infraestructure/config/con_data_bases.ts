@@ -30,9 +30,9 @@ export const AppDataSource = new DataSource({
  schema: envs.DB_SCHEMA,
  synchronize: true,
  logging: true,
-//  entities:[RolesEntity, Document_typesEntity, Media_typesEntity, Number_typesEntity, Post_categoriesEntity, CitiesEntity, 
-//     AddressesEntity, Crop_typesEntity, PhonesEntity, Company_phonesEntity, User_phonesEntity, DepartmentsEntity, Company_addressesEntity, 
-//     User_addressesEntity, PostsEntity, MediasEntity, CommentsEntity, CropsEntity]
+ entities:[RolesEntity, Document_typesEntity, Media_typesEntity, Number_typesEntity, Post_categoriesEntity, CitiesEntity, 
+    AddressesEntity, Crop_typesEntity, PhonesEntity, Company_phonesEntity, User_phonesEntity, DepartmentsEntity, Company_addressesEntity, 
+    User_addressesEntity, PostsEntity, MediasEntity, CommentsEntity, CropsEntity]
 });
 
 //Conectar a la Base de Datos
