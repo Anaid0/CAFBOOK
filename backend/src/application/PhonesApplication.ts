@@ -22,8 +22,8 @@ export class PhonesApplication {
             throw new Error("El telefono no existe")
         }
 
-        if(phone.number_type_id){
-            const number_type_idTaken = await this.port.getPhoneByNumber_type_id(phone.number_type_id);
+        if(phone.number_type?.id){
+            const number_type_idTaken = await this.port.getPhoneByNumber_type_id(phone.number_type.id);
             if(number_type_idTaken && number_type_idTaken.phone_id !== phone_id){
                 throw new Error("Error en actualizar el tipo de número NO SE PUEDE!")
             }

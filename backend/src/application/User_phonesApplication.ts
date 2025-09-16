@@ -1,4 +1,4 @@
-import { User_phones } from '../domain/User_Phones';
+import { User_phones } from '../domain/User_phones';
 import { User_phonesPort } from '../domain/User_PhonesPort';
 
 export class User_phonesApplication {
