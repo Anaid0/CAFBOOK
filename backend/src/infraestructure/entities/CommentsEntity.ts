@@ -1,6 +1,4 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Timestamp } from "typeorm/browser";
-
 
 @Entity({name: 'comments'})
 export class CommentsEntity {
@@ -13,7 +11,7 @@ export class CommentsEntity {
     @Column({type: "character varying", length:150})
     content!:string;
 
-    @Column({type: "timestamp"})
-    created_at!:Timestamp;
+    @Column({type: "date"})
+    created_at!:Date;
 
 }

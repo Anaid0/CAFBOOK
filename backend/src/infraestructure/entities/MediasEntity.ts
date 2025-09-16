@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Timestamp } from "typeorm/browser";
 
 @Entity({name: 'medias'})
 export class MediasEntity {
@@ -15,7 +14,7 @@ export class MediasEntity {
     @Column({type: "character varying", length:150})
     file_url!:string;
 
-    @Column({type: "timestamp"})
-    uploaded_at!:Timestamp;
+    @Column({type: "date"})
+    uploaded_at!: Date;
 
 }

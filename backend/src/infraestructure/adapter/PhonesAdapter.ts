@@ -17,7 +17,10 @@ export class PhonesAdapter implements PhonesPort {
         return {
             phone_id: phone.phone_id,
             number: phone.number,
-            number_type_id: phone.number_type_id.number_type_id 
+            number_type: {
+            id: phone.number_type_id.number_type_id,
+            description: phone.number_type_id.description
+        } 
         };
     }
 
@@ -25,7 +28,7 @@ export class PhonesAdapter implements PhonesPort {
         const phonesEntity = new PhonesEntity();
 
         const numberType = new Number_typesEntity();
-        numberType.number_type_id = phone.number_type_id;
+        numberType.number_type_id = phone.number_type.id;
         phonesEntity.number_type_id = numberType;
 
         phonesEntity.number = phone.number;
@@ -45,7 +48,6 @@ export class PhonesAdapter implements PhonesPort {
         }
     }
 
-
     async createPhone(phone: Omit<Phones, "phone_id">): Promise<number> {
         try {
             const newPhone = this.toEntity(phone);
@@ -64,15 +66,15 @@ export class PhonesAdapter implements PhonesPort {
                 throw new Error("Phone not found");
             }
 
-            if (phone.number_type_id) {
+            if (phone.number_type?.id) {
                 const numberType = new Number_typesEntity();
-                numberType.number_type_id = phone.number_type_id;
+                numberType.number_type_id = phone.number_type.id;
                 existingPhone.number_type_id = numberType;
             }
 
             Object.assign(existingPhone, {
                 number: phone.number ?? existingPhone.number,
-                number_type_id: phone.number_type_id ?? existingPhone.number_type_id,
+                number_type_id: phone.number_type?.id ?? existingPhone.number_type_id,
                                 
             });
 

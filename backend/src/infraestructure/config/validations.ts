@@ -12,5 +12,4 @@ export const Validators = {
     tittle: (tittle: string) => /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,;:()'"¡!¿?\-]{3,100}$/.test(tittle.trim()),
     date: (date: string) => !isNaN(Date.parse(date)),
     url: (url: string) => /^(https?:\/\/[^\s]+)$/.test(url.trim()),
-   
   };

@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Timestamp } from "typeorm/browser";
 
 @Entity({name: 'posts'})
 export class PostsEntity {
@@ -18,7 +17,7 @@ export class PostsEntity {
     @Column({type: "int"})
     user_id!:number;
 
-    @Column({type: "timestamp"})
-    creates_at!:Timestamp;
+    @Column({type: "date"})
+    creates_at!:Date;
 
 }

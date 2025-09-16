@@ -17,7 +17,8 @@ import postRoutes from "../routers/PostsRoutes";
 import mediaRoutes from "../routers/MediasRoutes";
 import commentsRoutes from "../routers/CommentsRoutes";
 import cropsRoutes from "../routers/CropsRoutes";
-
+import userRoutes from "../routers/UsersRoutes";
+import companyRoutes from "../routers/CompaniesRoutes";
 
 class App{
     private app: express.Application;
@@ -51,6 +52,8 @@ class App{
         this.app.use("/api", mediaRoutes);
         this.app.use("/api", commentsRoutes);
         this.app.use("/api", cropsRoutes);
+        this.app.use("/api", userRoutes);
+        this.app.use("/api", companyRoutes);
     }
     getApp(){
         return this.app;
