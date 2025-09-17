@@ -34,6 +34,7 @@ export class Media_typesAdapter implements Media_typesPort{
             throw new Error("Error creating media_type")
         }
     }
+    
     async updateMedia_type(media_type_id: number, media_type: Partial<Media_types>): Promise<boolean> {
         try {
             const existingMedia_type = await this.media_typeRepository.findOne({where:{media_type_id:media_type_id}});

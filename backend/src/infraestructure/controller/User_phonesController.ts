@@ -1,7 +1,6 @@
 import { User_phonesApplication } from "../../application/User_phonesApplication";
 import { User_phones } from "../../domain/User_phones";
 import { Request, Response } from "express";
-import { Validators } from "../config/validations";
 
 export class User_phonesController {
   private app: User_phonesApplication;

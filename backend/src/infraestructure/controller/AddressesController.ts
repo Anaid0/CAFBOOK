@@ -9,7 +9,6 @@ export class AddressesController {
         this.app = app;
     }
 
-
     async registerAddress(request: Request, response: Response): Promise<Response> {
         const { street, vereda, postal_code, city_id } = request.body;
         try {
