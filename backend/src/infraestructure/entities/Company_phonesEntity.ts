@@ -1,12 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Company_phones } from '../../domain/Company_phones';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'company_phones'})
 export class Company_phonesEntity {
     @PrimaryGeneratedColumn()
     company_phone!: number;   
     
-    @Column({type: "int"})
+    @ManyToOne
     phone_id!:number;
 
     @Column({type: "int"})

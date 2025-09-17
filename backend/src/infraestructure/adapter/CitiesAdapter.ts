@@ -3,6 +3,7 @@ import { Cities } from '../../domain/Cities';
 import { CitiesPort } from "../../domain/CitiesPort";
 import { CitiesEntity } from "../entities/CitiesEntity";
 import { AppDataSource } from "../config/con_data_bases";
+import { DepartmentsEntity } from "../entities/DepartmentsEntity";
 
 export class CitiesAdapter implements CitiesPort {
     private cityRepository: Repository<CitiesEntity>;
@@ -15,15 +16,19 @@ export class CitiesAdapter implements CitiesPort {
         return {
             city_id: city.city_id,
             city_name: city.city_name,
-            department_id: city.department_id,
-           
+            department_id: city.department_id.department_id, 
         };
     }
 
     private toEntity(city: Omit<Cities, "city_id">): CitiesEntity {
         const citiesEntity = new CitiesEntity();
+        const departmentsEntity = new DepartmentsEntity();
+
+        departmentsEntity.department_id = city.department_id;
+        citiesEntity.department_id = departmentsEntity;
+
         citiesEntity.city_name = city.city_name;
-        citiesEntity.department_id = city.department_id;
+        
         return citiesEntity;
     }
 
@@ -45,7 +50,12 @@ export class CitiesAdapter implements CitiesPort {
                 throw new Error("City not found");
             }
 
-            // Actualizamos solo los campos enviados
+            if(city.department_id){
+                const department = new DepartmentsEntity();
+                department.department_id = city.department_id;
+                existingCity.department_id = department;
+            }
+
             Object.assign(existingCity, {
                 city_name: city.city_name ?? existingCity.city_name,
                 department_id: city.department_id ?? existingCity.department_id,
@@ -77,8 +87,8 @@ export class CitiesAdapter implements CitiesPort {
 
     async getAllCities(): Promise<Cities[]> {
         try {
-            const cities = await this.cityRepository.find();
-            return cities.map((city) => this.toDomain(city));
+            const cities = await this.cityRepository.find({relations: ["department_id"]});
+            return cities.map(this.toDomain);
         } catch (error) {
             console.error("Error fetching all cities", error);
             throw new Error("Error fetching all cities");
@@ -87,7 +97,7 @@ export class CitiesAdapter implements CitiesPort {
 
     async getCityById(city_id: number): Promise<Cities | null> {
         try {
-            const city = await this.cityRepository.findOne({ where: { city_id: city_id } });
+            const city = await this.cityRepository.findOne({ relations: ["department_id"], where: { city_id: city_id }});
             return city ? this.toDomain(city) : null;
         } catch (error) {
             console.error("Error fetching city by id", error);
@@ -97,7 +107,7 @@ export class CitiesAdapter implements CitiesPort {
 
     async getCityByName(name: string): Promise<Cities | null> {
         try {
-            const city= await this.cityRepository.findOne({ where: { city_name: name } });
+            const city= await this.cityRepository.findOne({relations:["departmnet_id"], where: { city_name: name } });
             return city ? this.toDomain(city) : null;
         } catch (error) {
             console.error("Error fetching city by name", error);

@@ -1,5 +1,3 @@
-import { Timestamp } from "typeorm";
-
 export interface Users{
     user_id: number;
     role_id: number;
@@ -10,5 +8,5 @@ export interface Users{
     email: string;
     password: string;
     status: number;
-    created_at: Timestamp;
+    created_at: Date;
 }
