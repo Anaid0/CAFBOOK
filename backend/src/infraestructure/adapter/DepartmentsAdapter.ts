@@ -13,14 +13,14 @@ export class DepartmentsAdapter implements DepartmentsPort{
     }
     private toDomain(department:DepartmentsEntity):Departments{
      return{
-        department_id: department.departament_id,
-        department_name: department.departaments_name,
+        department_id: department.department_id,
+        department_name: department.department_name,
      }   
     }
 
     private toEntity(department: Omit<Departments, "department_id">): DepartmentsEntity{
         const departmentsEntity = new DepartmentsEntity();
-        departmentsEntity.departaments_name = department.department_name;       
+        departmentsEntity.department_name = department.department_name;       
         return departmentsEntity;
     }
 
@@ -28,7 +28,7 @@ export class DepartmentsAdapter implements DepartmentsPort{
         try{
             const newDepartment = this.toEntity(department);
             const savedDepartment = await this.departmentRepository.save(newDepartment);
-            return savedDepartment.departament_id;
+            return savedDepartment.department_id;
         }catch (error){
             console.error("Error creating department ", error);
             throw new Error("Error creating department")
@@ -36,13 +36,13 @@ export class DepartmentsAdapter implements DepartmentsPort{
     }
     async updateDepartment(department_id: number, department: Partial<Departments>): Promise<boolean> {
         try {
-            const existingDepartment = await this.departmentRepository.findOne({where:{departament_id:department_id}});
+            const existingDepartment = await this.departmentRepository.findOne({where:{department_id:department_id}});
             if(!existingDepartment){
                 throw new Error("Department not found");
             }
            
             Object.assign( existingDepartment,{
-             department_name: department.department_name ?? existingDepartment.departaments_name
+             department_name: department.department_name ?? existingDepartment.department_name
             });
             await this.departmentRepository.save(existingDepartment);
             return true;
@@ -54,7 +54,7 @@ export class DepartmentsAdapter implements DepartmentsPort{
     }
     async deleteDepartment(department_id: number): Promise<boolean> {
         try {
-            const existingDepartment = await this.departmentRepository.findOne({where:{departament_id:department_id}});
+            const existingDepartment = await this.departmentRepository.findOne({where:{department_id:department_id}});
             if(!existingDepartment){
                 throw new Error("Department not found");
             }
@@ -76,7 +76,7 @@ export class DepartmentsAdapter implements DepartmentsPort{
     }
     async getDepartmentById(department_id: number): Promise<Departments | null> {
         try {
-            const department = await this.departmentRepository.findOne({where:{departament_id:department_id}});
+            const department = await this.departmentRepository.findOne({where:{department_id:department_id}});
             return department ? this.toDomain(department): null
         } catch (error) {
             console.error("Error featching department by id ", error);
@@ -85,7 +85,7 @@ export class DepartmentsAdapter implements DepartmentsPort{
     }
     async getDepartmentByName(department_name: string): Promise<Departments | null> {
         try {
-            const department = await this.departmentRepository.findOne({where:{departaments_name:department_name}});
+            const department = await this.departmentRepository.findOne({where:{department_name:department_name}});
             return department ? this.toDomain(department): null
         } catch (error) {
             console.error("Error featching department by name ", error);

@@ -10,16 +10,16 @@ const crop_typeApp = new Crop_typesApplication(crop_typeAdapter);
 const crop_typeController = new Crop_typesController(crop_typeApp);
 
 
-router.post("/crop_type", async (Request, Response)=>{
+router.post("/crop_types", async (Request, Response)=>{
     try {
-      await  crop_typeController.allCrop_types(Request, Response);
+      await  crop_typeController.registerCrop_types(Request, Response);
     } catch (error) {
         console.error("Error en rol:"+ error);
         Response.status(400).json({message: "Error en la creación del rol" });
     }
 });
 
-router.get("/crop_type", async(Request, Response)=>{
+router.get("/crop_types", async(Request, Response)=>{
     try {
         await  crop_typeController.allCrop_types(Request, Response);
       } catch (error) {

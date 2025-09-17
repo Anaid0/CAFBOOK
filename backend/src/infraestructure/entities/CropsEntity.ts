@@ -8,8 +8,8 @@ export class CropsEntity {
     @Column({type: "int"})
     user_id!:number;
 
-    @Column({type: "character varying", length:255})
-    crop_type!:string;
+    @Column({type: "int"})
+    crop_type_id!:number;
 
     @Column({type: "int"})
     latitude!:number;
@@ -17,7 +17,7 @@ export class CropsEntity {
     @Column({type: "int"})
     longitude!:number;
 
-    @Column({type:"time"})
-    created_at!:string;
+    @Column({type:"date"})
+    created_at!:Date;
         
 }

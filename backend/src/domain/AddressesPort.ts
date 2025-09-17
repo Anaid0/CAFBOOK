@@ -6,5 +6,4 @@ export interface AddressesPort{
      getAllAddresses(): Promise<Addresses[]>;
      getAddressById(address_id:number): Promise<Addresses | null>;
      getAddressByVereda(vereda: string): Promise<Addresses | null>;
-
 }

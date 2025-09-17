@@ -3,6 +3,7 @@ import { Addresses } from "../../domain/Addresses";
 import { AddressesPort } from "../../domain/AddressesPort";
 import { AddressesEntity } from "../entities/AddressesEntity";
 import { AppDataSource } from "../config/con_data_bases";
+import { CitiesEntity } from '../entities/CitiesEntity';
 
 export class AddressesAdapter implements AddressesPort {
     private addressRepository: Repository<AddressesEntity>;
@@ -17,16 +18,19 @@ export class AddressesAdapter implements AddressesPort {
             street: address.street,
             vereda: address.vereda,
             postal_code: address.postal_code,
-            city_id: address.city_id,
+            city_id: address.city_id.city_id,
         };
     }
 
     private toEntity(address: Omit<Addresses, "address_id">): AddressesEntity {
         const addressEntity = new AddressesEntity();
+        const citiesEntity = new CitiesEntity();
+
+        citiesEntity.city_id = address.city_id;
         addressEntity.street = address.street;
         addressEntity.vereda = address.vereda;
         addressEntity.postal_code = address.postal_code;
-        addressEntity.city_id = address.city_id;
+        addressEntity.city_id = citiesEntity;
         return addressEntity;
     }
 
@@ -46,6 +50,12 @@ export class AddressesAdapter implements AddressesPort {
             const existingAddress = await this.addressRepository.findOne({ where: { address_id } });
             if (!existingAddress) {
                 throw new Error("Address not found");
+            }
+
+            if(address.city_id){
+                const city = new CitiesEntity();
+                city.city_id = address.city_id;
+                existingAddress.city_id = city;
             }
 
             Object.assign(existingAddress, {
@@ -79,7 +89,7 @@ export class AddressesAdapter implements AddressesPort {
 
     async getAllAddresses(): Promise<Addresses[]> {
         try {
-            const addresses = await this.addressRepository.find();
+            const addresses = await this.addressRepository.find({relations: ["city_id"]});
             return addresses.map(this.toDomain);
         } catch (error) {
             console.error("Error fetching all addresses", error);
@@ -89,7 +99,7 @@ export class AddressesAdapter implements AddressesPort {
 
     async getAddressById(address_id: number): Promise<Addresses | null> {
         try {
-            const address = await this.addressRepository.findOne({ where: { address_id } });
+            const address = await this.addressRepository.findOne({ relations:["city_id"],where: { address_id } });
             return address ? this.toDomain(address) : null;
         } catch (error) {
             console.error("Error fetching address by id", error);
