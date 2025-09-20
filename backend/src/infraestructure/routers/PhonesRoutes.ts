@@ -29,7 +29,6 @@ router.get("/phones", async (req, res) => {
   }
 });
 
-
 router.get("/phones/:id", async (req, res) => {
   try {
     await phoneController.searchPhoneById(req, res);

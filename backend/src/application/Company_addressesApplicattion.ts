@@ -8,7 +8,7 @@ export class Company_addressApplication {
         this.port = port;
     }
 
-    async createCompanyaddress(companyaddress: Omit<Company_addresses, "company_address_id">): Promise<number> {
+    async createCompanyaddress(companyaddress: Omit<Company_addresses, "company_address_id" | "bussines_name" | "address_street">): Promise<number> {
         const existingAddress = await this.port.getCompanyAddressByAddressId(companyaddress.address_id);
         if (existingAddress.length === 0) {
             return await this.port.createCompanyAddress(companyaddress);
@@ -46,6 +46,13 @@ export class Company_addressApplication {
 
     async getCompanyAddressByAddressid(address_id: number): Promise<Company_addresses[]> {
         return await this.port.getCompanyAddressByAddressId(address_id);
+    }
+    
+    async getCompanyAddressByBussinesName(bussines_name:string): Promise <Company_addresses[]>{
+        return await this.port.getCompanyAddressByBussinesName(bussines_name);
+    }
+    async getCompanyAddressByDepartmentName(department_name:string): Promise <Company_addresses[]>{
+        return await this.port.getCompanyAddressByDepartmentName(department_name);
     }
 
     async getAllCompanyAddresses(): Promise<Company_addresses[]> {

@@ -8,7 +8,7 @@ export class CitiesApplication {
         this.port = port;
     }
 
-    async createCity(city:Omit<Cities, "city_id">):Promise<number>{
+    async createCity(city:Omit<Cities, "city_id" | "department_name">):Promise<number>{
         const existingCity = await this.port.getCityByName(city.city_name)
         if(!existingCity){
             return await this.port.createCity(city);
@@ -42,11 +42,18 @@ export class CitiesApplication {
 
     async getCityById(city_id:number): Promise<Cities | null>{
         return await this.port.getCityById(city_id);
-
     }
 
     async getCityByName(name:string): Promise<Cities | null>{
         return await this.port.getCityByName(name);
+    }
+
+    async getCityByDepartmentId(department_id: number): Promise <Cities[]>{
+        return await this.port.getCityByDepartmentId(department_id);
+    }
+
+    async getCityByDepartmentName(department_name: string): Promise <Cities[]>{
+        return await this.port.getCityByDepartmentName(department_name);
     }
 
     async getAllCities(): Promise <Cities[]>{

@@ -78,7 +78,6 @@ export class PhonesAdapter implements PhonesPort {
                                 
             });
 
-            // Si se actualiza el número
             if (phone.number) {
                 existingPhone.number = phone.number;
             }

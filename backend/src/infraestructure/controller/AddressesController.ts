@@ -21,7 +21,17 @@ export class AddressesController {
             if (!Validators.postalCode(postal_code))
                 return response.status(400).json({ message: "Código postal inválido" });
 
-            const address: Omit<Addresses, "address_id"> = { street, vereda, postal_code, city_id };
+            if (!city_id || isNaN(Number(city_id))) {
+                return response.status(400).json({ message: "ID de la ciudad inválido" });
+            }
+
+            const address: Omit<Addresses, "address_id" | "city_name"> = {
+            street: street.trim(),
+            vereda: vereda?.trim(),
+            postal_code: postal_code.trim(),
+            city_id: Number(city_id),
+            };
+
             const addressId = await this.app.createAddress(address);
 
             return response.status(201).json({ message: "Dirección creada exitosamente", addressId });
@@ -33,7 +43,6 @@ export class AddressesController {
         return response.status(400).json({ message: "Error en la petición" });
     }
 
-    
     async searchAddressById(request: Request, response: Response): Promise<Response> {
         try {
             const addressId = parseInt(request.params.id);
@@ -53,7 +62,6 @@ export class AddressesController {
         return response.status(400).json({ message: "Error en la petición" });
     }
 
-
     async searchAddressByVereda(request: Request, response: Response): Promise<Response> {
         try {
             const { vereda } = request.params;
@@ -72,6 +80,51 @@ export class AddressesController {
         }
         return response.status(400).json({ message: "Error en la petición" });
     }
+
+    async searchAddressByCityId(request: Request, response: Response): Promise<Response> {
+        try {
+            const id = parseInt(request.params.id);
+            const address = await this.app.getAddressByCityId(id);
+            if (!address)
+                return response.status(404).json({ message: "Direcciones no encontradas por id de ciudad" });
+
+            return response.status(200).json(address);
+        } catch (error) {
+            if (error instanceof Error) {
+                return response.status(500).json({ message: "Error en el servidor" });
+            }
+        }
+        return response.status(400).json({ message: "Error en la petición" });
+    }
+
+    async searchAddressByCityName(request: Request, response: Response): Promise<Response> {
+    try {
+        const { name } = request.params;
+        if (!Validators.name(name)) {
+            return response.status(400).json({ error: "Nombre de ciudad no válido" });
+        }
+
+        const addresses = await this.app.getAddressByCityName(name);
+        if (!addresses || addresses.length === 0) {
+            return response.status(404).json({ message: "Direcciones no encontradas para la ciudad" });
+        }
+
+        const result = addresses.map(addr => ({
+            address_id: addr.address_id,
+            street: addr.street,
+            vereda: addr.vereda,
+            postal_code: addr.postal_code,
+            city_id: addr.city_id,
+            city_name: addr.city_name
+        }));
+
+        return response.status(200).json(result);
+    } catch (error) {
+        console.error("Error searching addresses by city name:", error);
+        return response.status(500).json({ message: "Error en el servidor" });
+    }
+}
+
 
     async allAddresses(request: Request, response: Response): Promise<Response> {
         try {

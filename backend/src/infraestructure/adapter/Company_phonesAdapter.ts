@@ -1,8 +1,10 @@
 import { Repository } from "typeorm";
-import { Company_phones } from "../../domain/Company_phones";
+import { Company_phones } from '../../domain/Company_phones';
 import { Company_phonesPort } from "../../domain/Company_phonesPort";
 import { Company_phonesEntity } from "../entities/Company_phonesEntity";
 import { AppDataSource } from "../config/con_data_bases";
+import { CompaniesEntity } from "../entities/CompaniesEntity";
+import { PhonesEntity } from "../entities/PhonesEntity";
 
 export class Company_phonesAdapter implements Company_phonesPort {
   private companyPhonesRepository: Repository<Company_phonesEntity>;
@@ -10,21 +12,30 @@ export class Company_phonesAdapter implements Company_phonesPort {
   constructor() {
     this.companyPhonesRepository = AppDataSource.getRepository(Company_phonesEntity);
   }
-
+  
   private toDomain(entity: Company_phonesEntity): Company_phones {
     return {
       company_phone: entity.company_phone,
-      phone_id: entity.phone_id,
-      company_id: entity.company_id,
+      phone_id: entity.phone_id.phone_id,
+      phone_number: entity.phone_id.number,
+      company_id: entity.company_id.company_id,
+      bussines_name: entity.company_id.bussines_name
     };
   }
 
   private toEntity(domain: Omit<Company_phones, "company_phone">): Company_phonesEntity {
-    const entity = new Company_phonesEntity();
-    entity.phone_id = domain.phone_id;
-    entity.company_id = domain.company_id;
-    return entity;
-  }
+  const companyPhonesEntity = new Company_phonesEntity();
+
+  const companyEntity = new CompaniesEntity();
+  companyEntity.company_id = domain.company_id;
+  companyPhonesEntity.company_id = companyEntity;
+
+  const phoneEntity = new PhonesEntity();
+  phoneEntity.phone_id = domain.phone_id;
+  companyPhonesEntity.phone_id = phoneEntity;
+
+  return companyPhonesEntity;
+}
 
   async createCompanyPhone(companyPhone: Omit<Company_phones, "company_phone">): Promise<number> {
     try {
@@ -43,6 +54,17 @@ export class Company_phonesAdapter implements Company_phonesPort {
       if (!existing) {
         throw new Error("Teléfono de la compañía no encontrado");
       }
+      if (companyPhone.phone_id) {
+      const phoneEntity = new PhonesEntity();
+      phoneEntity.phone_id = companyPhone.phone_id;
+      existing.phone_id = phoneEntity;
+    }
+
+    if (companyPhone.company_id) {
+    const companyEntity = new CompaniesEntity();
+    companyEntity.company_id = companyPhone.company_id;
+    existing.company_id = companyEntity;
+  }
 
       Object.assign(existing, {
         phone_id: companyPhone.phone_id ?? existing.phone_id,
@@ -72,32 +94,73 @@ export class Company_phonesAdapter implements Company_phonesPort {
   }
 
   async getAllCompanyPhones(): Promise<Company_phones[]> {
+  try {
+    const entities = await this.companyPhonesRepository.find({
+      relations: ["company_id", "phone_id", "phone_id.number_type_id"]
+    });
+    return entities.map((entity) => this.toDomain(entity));
+  } catch (error) {
+    console.error("Error obteniendo todos los teléfonos de la compañía:", error);
+    throw new Error("Error obteniendo todos los teléfonos de la compañía");
+  }
+}
+
+async getCompanyPhonesByNumber(number: string): Promise<Company_phones[]> {
+  try {
+    const entities = await this.companyPhonesRepository.find({
+      relations: ["company_id", "phone_id", "phone_id.number_type_id"],
+      where: {
+        phone_id: {
+          number: number, 
+        },
+      },
+    });
+
+    return entities.map((entity) => this.toDomain(entity));
+  } catch (error) {
+    console.error("Error obteniendo los teléfonos de la compañía:", error);
+    throw new Error("Error obteniendo los teléfonos de la compañía");
+  }
+}
+
+
+async getCompanyPhoneById(company_phone: number): Promise<Company_phones | null> {
+  try {
+    const entity = await this.companyPhonesRepository.findOne({
+      where: { company_phone },
+      relations: ["company_id", "phone_id", "phone_id.number_type_id"]
+    });
+    return entity ? this.toDomain(entity) : null;
+  } catch (error) {
+    console.error("Error obteniendo teléfono de la compañía por ID:", error);
+    throw new Error("Error obteniendo teléfono de la compañía por ID");
+  }
+}
+
+async getCompanyPhonesByPhoneId(phone_id: number): Promise<Company_phones[]> {
+  try {
+   const entities = await this.companyPhonesRepository.find({
+    where: { phone_id: phone_id as any }, 
+    relations: ["company_id", "phone_id", "phone_id.number_type_id"],
+  });
+  return entities.map((entity) => this.toDomain(entity));
+  } catch (error) {
+    console.error("Error obteniendo teléfonos de la compañía por phone_id:", error);
+    throw new Error("Error obteniendo teléfonos de la compañía por phone_id");
+  }
+}
+
+async getCompanyPhonesByBussinesName(bussines_name: string): Promise<Company_phones[]> {
     try {
-      const entities = await this.companyPhonesRepository.find();
-      return entities.map((entity) => this.toDomain(entity));
+        const companiesPhones = await this.companyPhonesRepository.find({ relations: ["company_id"] });
+
+        const filtered = companiesPhones.filter(Company_phones => Company_phones.company_id.bussines_name === bussines_name);
+
+        return filtered.map(entity => this.toDomain(entity));
     } catch (error) {
-      console.error("Error obteniendo todos los teléfonos de la compañía:", error);
-      throw new Error("Error obteniendo todos los teléfonos de la compañía");
+        console.error("Error fetching phones by company name", error);
+        throw new Error("Error fetching phones by company name");
     }
   }
 
-  async getCompanyPhoneById(company_phone: number): Promise<Company_phones | null> {
-    try {
-      const entity = await this.companyPhonesRepository.findOne({ where: { company_phone } });
-      return entity ? this.toDomain(entity) : null;
-    } catch (error) {
-      console.error("Error obteniendo teléfono de la compañía por ID:", error);
-      throw new Error("Error obteniendo teléfono de la compañía por ID");
-    }
-  }
-
-  async getCompanyPhonesByPhoneId(phone_id: number): Promise<Company_phones[]> {
-    try {
-      const entities = await this.companyPhonesRepository.find({ where: { phone_id } });
-      return entities.map((entity) => this.toDomain(entity));
-    } catch (error) {
-      console.error("Error obteniendo teléfonos de la compañía por phone_id:", error);
-      throw new Error("Error obteniendo teléfonos de la compañía por phone_id");
-    }
-  }
 }

@@ -10,7 +10,6 @@ const addressesAdapter = new AddressesAdapter();
 const addresesApp = new AddressesApplication(addressesAdapter);
 const addressesController = new AddressesController(addresesApp);
 
-
 router.post("/addresses", async (req: Request, res: Response) => {
     try {
         await addressesController.registerAddress(req, res);
@@ -19,7 +18,6 @@ router.post("/addresses", async (req: Request, res: Response) => {
         res.status(400).json({ message: "Error en la creación de la ciudad" });
     }
 });
-
 
 router.get("/addresses", async (req: Request, res: Response) => {
     try {
@@ -30,7 +28,6 @@ router.get("/addresses", async (req: Request, res: Response) => {
     }
 });
 
-
 router.get("/address/:id", async (req: Request, res: Response) => {
     try {
         await addressesController.searchAddressById(req, res);
@@ -40,6 +37,23 @@ router.get("/address/:id", async (req: Request, res: Response) => {
     }
 });
 
+router.get("/address/city/:id", async(Request, Response)=>{
+    try {
+        await  addressesController.searchAddressByCityId(Request, Response);
+      } catch (error) {
+          console.error("Error en ciudades:"+ error);
+          Response.status(400).json({message: "Error en ciudades" });
+      }
+});
+
+router.get("/address/city/name/:name", async(Request, Response)=>{
+    try {
+        await  addressesController.searchAddressByCityName(Request, Response);
+      } catch (error) {
+          console.error("Error en ciudades:"+ error);
+          Response.status(400).json({message: "Error en ciudades" });
+      }
+});
 
 router.get("/address/name/:name", async (req: Request, res: Response) => {
     try {

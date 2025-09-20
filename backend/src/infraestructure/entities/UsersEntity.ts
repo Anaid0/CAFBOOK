@@ -28,11 +28,11 @@ export class UserEntity{
     @Column({type: "date"})
     created_at!: Date;
 
-    @ManyToOne(()=> RolesEntity, {eager: false})
+    @ManyToOne(()=> RolesEntity, {eager: true})
     @JoinColumn({name: "role_id"})
     role_id!: RolesEntity;
 
-    @ManyToOne(()=> Document_typesEntity, {eager: false})
+    @ManyToOne(()=> Document_typesEntity, {eager: true})
     @JoinColumn({name: "doc_type_id"})
     doc_type_id!: Document_typesEntity;
 }

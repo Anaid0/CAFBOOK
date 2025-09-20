@@ -29,6 +29,24 @@ router.get("/cities", async(Request, Response)=>{
       }
 });
 
+router.get("/cities/department/:id", async(Request, Response)=>{
+    try {
+        await  citiesController.searchCityByDepartmentId(Request, Response);
+      } catch (error) {
+          console.error("Error en ciudades:"+ error);
+          Response.status(400).json({message: "Error en ciudades" });
+      }
+});
+
+router.get("/cities/department/name/:name", async(Request, Response)=>{
+    try {
+        await  citiesController.searchCityByDepartmentName(Request, Response);
+      } catch (error) {
+          console.error("Error en ciudades:"+ error);
+          Response.status(400).json({message: "Error en ciudades" });
+      }
+});
+
 router.get("/cities/:id", async(Request, Response)=>{
     try {
         await  citiesController.searchCityById(Request, Response);

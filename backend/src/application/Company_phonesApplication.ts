@@ -7,14 +7,17 @@ export class Company_phonesApplication {
   constructor(port: Company_phonesPort) {
     this.port = port;
   }
+  
+  async createCompanyPhone(companyPhone: Omit<Company_phones, "company_phone" | "bussines_name" | "phone_number">): Promise<number> {
 
-  async createCompanyPhone(companyPhone: Omit<Company_phones, "company_phone">): Promise<number> {
-    const existingPhones = await this.port.getCompanyPhonesByPhoneId(companyPhone.phone_id);
-    if (existingPhones.length === 0) {
-      return await this.port.createCompanyPhone(companyPhone);
-    }
-    throw new Error("El teléfono de la compañía ya existe");
+  const existingPhone = await this.port.getCompanyPhoneById(companyPhone.phone_id);
+  if (!existingPhone) {
+    return await this.port.createCompanyPhone(companyPhone);
   }
+
+  throw new Error("El teléfono de la compañía ya existe");
+}
+
 
   async updateCompanyPhone(company_phone: number, companyPhone: Partial<Company_phones>): Promise<boolean> {
     const existingCompanyPhone = await this.port.getCompanyPhoneById(company_phone);
@@ -25,7 +28,7 @@ export class Company_phonesApplication {
     if (companyPhone.phone_id) {
       const companyPhonesWithSamePhoneId = await this.port.getCompanyPhonesByPhoneId(companyPhone.phone_id);
       const isTaken = companyPhonesWithSamePhoneId.some(
-        cp => cp.company_phone !== company_phone
+        cp => cp.company_phone !== company_phone 
       );
       if (isTaken) {
         throw new Error("Ya existe un registro con este phone_id, no se puede actualizar");
@@ -46,6 +49,10 @@ export class Company_phonesApplication {
   async getCompanyPhoneById(company_phone: number): Promise<Company_phones | null> {
     return await this.port.getCompanyPhoneById(company_phone);
   }
+  
+  async getCompanyPhonesByNumber(number: string): Promise<Company_phones[]> {
+    return await this.port.getCompanyPhonesByNumber(number);
+  }
 
   async getCompanyPhonesByPhoneId(phone_id: number): Promise<Company_phones[]> {
     return await this.port.getCompanyPhonesByPhoneId(phone_id);
@@ -53,5 +60,9 @@ export class Company_phonesApplication {
 
   async getAllCompanyPhones(): Promise<Company_phones[]> {
     return await this.port.getAllCompanyPhones();
+  }
+
+  async getCompanyPhonesByBussinesName(bussines_name:string): Promise <Company_phones[]>{
+    return await this.port.getCompanyPhonesByBussinesName(bussines_name);
   }
 }

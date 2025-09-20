@@ -19,6 +19,7 @@ export class AddressesAdapter implements AddressesPort {
             vereda: address.vereda,
             postal_code: address.postal_code,
             city_id: address.city_id.city_id,
+            city_name: address.city_id.city_name
         };
     }
 
@@ -28,7 +29,7 @@ export class AddressesAdapter implements AddressesPort {
 
         citiesEntity.city_id = address.city_id;
         addressEntity.street = address.street;
-        addressEntity.vereda = address.vereda;
+        addressEntity.vereda ?? address.vereda;
         addressEntity.postal_code = address.postal_code;
         addressEntity.city_id = citiesEntity;
         return addressEntity;
@@ -107,13 +108,36 @@ export class AddressesAdapter implements AddressesPort {
         }
     }
 
-    async getAddressByVereda(vereda: string): Promise<Addresses | null> {
+    async getAddressByVereda(vereda: string): Promise<Addresses[]> {
         try {
-            const address= await this.addressRepository.findOne({ where: { vereda: vereda } });
-            return address ? this.toDomain(address) : null;
+           const address= await this.addressRepository.find({relations:["city_id"], where: { vereda: vereda } });
+        return address.map(address=> this.toDomain(address));
         } catch (error) {
             console.error("Error fetching address by vereda", error);
             throw new Error("Error fetching address by vereda");
+        }
+    }
+
+    async getAddressByCityName(city_name: string): Promise<Addresses[]> {
+        try {
+            const address = await this.addressRepository.find({ relations: ["city_id"] });
+        const filtered = address.filter(address => address.city_id.city_name === city_name);
+
+        return filtered.map(address => this.toDomain(address));
+        } catch (error) {
+            console.error("Error fetching address by city name", error);
+            throw new Error("Error fetching address by city name");
+        }
+    }
+    async getAddressByCityId(city_id: number): Promise<Addresses[]> {
+        try {
+            const address = await this.addressRepository.find({ relations: ["city_id"] });
+        const filtered = address.filter(address => address.city_id.city_id === city_id);
+
+        return filtered.map(address => this.toDomain(address));
+        } catch (error) {
+            console.error("Error fetching address by city id", error);
+            throw new Error("Error fetching address by city id");
         }
     }
 }

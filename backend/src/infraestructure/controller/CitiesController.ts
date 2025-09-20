@@ -21,9 +21,9 @@ export class CitiesController {
                 return response.status(400).json({ message: "ID de departamento inválido" });
             }
 
-            const city: Omit<Cities, "city_id"> = {
+            const city: Omit<Cities, "city_id" | "department_name"> = {
                 city_name: city_name.trim(),
-                department_id: Number(department_id),
+                department_id: Number(department_id)
             };
 
             const cityId = await this.app.createCity(city);
@@ -33,11 +33,8 @@ export class CitiesController {
                 cityId,
             });
         } catch (error) {
-            if (error instanceof Error) {
-                return response.status(500).json({ message: "Error en el servidor" });
-            }
+            return response.status(500).json({ message: "Error en el servidor" });
         }
-        return response.status(400).json({ message: "Error en la petición" });
     }
 
     async searchCityById(request: Request, response: Response): Promise<Response> {
@@ -52,13 +49,15 @@ export class CitiesController {
                 return response.status(404).json({ message: "Ciudad no encontrada" });
             }
 
-            return response.status(200).json(city);
+            return response.status(200).json({
+                city_id: city.city_id,
+                city_name: city.city_name,
+                department_id: city.department_id,
+                department_name: city.department_name,
+            });
         } catch (error) {
-            if (error instanceof Error) {
-                return response.status(500).json({ message: "Error en el servidor" });
-            }
+            return response.status(500).json({ message: "Error en el servidor" });
         }
-        return response.status(400).json({ message: "Error en la petición" });
     }
 
     async searchCityByName(request: Request, response: Response): Promise<Response> {
@@ -73,25 +72,80 @@ export class CitiesController {
                 return response.status(404).json({ message: "Ciudad no encontrada" });
             }
 
-            return response.status(200).json(city);
+            return response.status(200).json({
+                city_id: city.city_id,
+                city_name: city.city_name,
+                department_id: city.department_id,
+                department_name: city.department_name,
+            });
         } catch (error) {
-            if (error instanceof Error) {
-                return response.status(500).json({ message: "Error en el servidor" });
-            }
+            return response.status(500).json({ message: "Error en el servidor" });
         }
-        return response.status(400).json({ message: "Error en la petición" });
     }
+
+    async searchCityByDepartmentId(req: Request, res: Response): Promise<Response> {
+    try {
+        const id = parseInt(req.params.id);
+        const cities = await this.app.getCityByDepartmentId(id);
+
+        if (!cities || cities.length === 0) {
+            return res.status(404).json({ message: "No cities found for this department" });
+        }
+
+        const result = cities.map(city => ({
+            city_id: city.city_id,
+            city_name: city.city_name,
+            department_id: city.department_id,
+            department_name: city.department_name,
+        }));
+
+        return res.status(200).json(result);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Server error" });
+    }
+}
+
+    async searchCityByDepartmentName(request: Request, response: Response): Promise<Response> {
+        try {
+            const { name } = request.params;
+            if (!Validators.name(name)) {
+                return response.status(400).json({ error: "Nombre de ciudad no válido" });
+            }
+
+            const cities = await this.app.getCityByDepartmentName(name);
+            if (!cities) {
+                return response.status(404).json({ message: "Ciudades no encontrada" });
+            }
+
+            const result = cities.map(city => ({
+                city_id: city.city_id,
+                city_name: city.city_name,
+                department_id: city.department_id,
+                department_name: city.department_name,
+            }));
+
+            return response.status(200).json(result);
+        } catch (error) {
+            return response.status(500).json({ message: "Error en el servidor" });
+        }
+}
 
     async allCities(request: Request, response: Response): Promise<Response> {
         try {
             const cities = await this.app.getAllCities();
-            return response.status(200).json(cities);
+
+            const result = cities.map(city => ({
+                city_id: city.city_id,
+                city_name: city.city_name,
+                department_id: city.department_id,
+                department_name: city.department_name,
+            }));
+
+            return response.status(200).json(result);
         } catch (error) {
-            if (error instanceof Error) {
-                return response.status(500).json({ message: "Error en el servidor" });
-            }
+            return response.status(500).json({ message: "Error en el servidor" });
         }
-        return response.status(400).json({ message: "Error en la petición" });
     }
 
     async downCity(request: Request, response: Response): Promise<Response> {
@@ -108,11 +162,8 @@ export class CitiesController {
 
             return response.status(200).json({ message: "Ciudad eliminada exitosamente" });
         } catch (error) {
-            if (error instanceof Error) {
-                return response.status(500).json({ message: "Error en el servidor" });
-            }
+            return response.status(500).json({ message: "Error en el servidor" });
         }
-        return response.status(400).json({ message: "Error en la petición" });
     }
 
     async updateCity(request: Request, response: Response): Promise<Response> {
@@ -143,10 +194,7 @@ export class CitiesController {
 
             return response.status(200).json({ message: "Ciudad actualizada exitosamente" });
         } catch (error) {
-            if (error instanceof Error) {
-                return response.status(500).json({ message: "Error en el servidor" });
-            }
+            return response.status(500).json({ message: "Error en el servidor" });
         }
-        return response.status(400).json({ message: "Error en la petición" });
     }
 }
