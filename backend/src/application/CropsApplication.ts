@@ -8,7 +8,7 @@ export class CropsApplication {
         this.port = port;
     }
 
-    async createCrop(crop: Omit<Crops, "crop_id">): Promise<number> {
+    async createCrop(crop: Omit<Crops, "crop_id" | "user_email" | "crop_type_description">): Promise<number> {
         return await this.port.createCrop(crop);
     }
 
@@ -38,5 +38,13 @@ export class CropsApplication {
 
     async getCropByCropTypeId(crop_type_id: number): Promise<Crops[]> {
         return await this.port.getCropByCropTypeId(crop_type_id);
+    }
+
+    async getCropByCropTypeUserEmail(email: string): Promise<Crops[]>{
+        return await this.port.getCropByCropTypeUserEmail(email);
+    }
+    
+    async getCropByCropTypeDescription(crop_type_description: string): Promise<Crops[]>{
+        return await this.port.getCropByCropTypeDescription(crop_type_description);
     }
 }

@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Post_categoriesEntity } from "./Post_categoriesEntity";
+import { UserEntity } from "./UsersEntity";
 
 @Entity({name: 'posts'})
 export class PostsEntity {
@@ -11,13 +13,15 @@ export class PostsEntity {
     @Column({type: "character varying", length:150})
     description!:string;
 
-    @Column({type: "int"})
-    post_category_id!:number;
+    @ManyToOne(()=> Post_categoriesEntity, {eager: true})
+    @JoinColumn({name:"post_category_id"})
+    post_category_id!:Post_categoriesEntity;
 
-    @Column({type: "int"})
-    user_id!:number;
+    @ManyToOne(()=> UserEntity, {eager: true})
+    @JoinColumn({name: "user_id"})
+    user_id!:UserEntity;
 
     @Column({type: "date"})
-    creates_at!:Date;
+    created_at!:Date;
 
 }
