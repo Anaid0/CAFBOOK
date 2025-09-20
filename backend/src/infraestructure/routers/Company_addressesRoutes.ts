@@ -39,6 +39,23 @@ router.get("/company_addresses/:id", async (Request, Response) => {
   }
 });
 
+router.get("/company_addresses/company/name/:name", async (Request, Response) => {
+  try {
+    await company_addressController.getCompanyAddressByBussinesName(Request, Response);
+  } catch (error) {
+    console.error("Error en búsqueda por company_id: " + error);
+    Response.status(400).json({ message: "Error en búsqueda de direcciones por compañía" });
+  }
+});
+
+router.get("/company_addresses/department/name/:name", async (Request, Response) => {
+  try {
+    await company_addressController.getCompanyAddressByDepartmentName(Request, Response);
+  } catch (error) {
+    console.error("Error en búsqueda por company_id: " + error);
+    Response.status(400).json({ message: "Error en búsqueda de direcciones por compañía" });
+  }
+});
 
 router.get("/company_addresses/company/:id", async (Request, Response) => {
   try {
@@ -48,7 +65,6 @@ router.get("/company_addresses/company/:id", async (Request, Response) => {
     Response.status(400).json({ message: "Error en búsqueda de direcciones por compañía" });
   }
 });
-
 
 router.delete("/company_addresses/:id", async (Request, Response) => {
   try {

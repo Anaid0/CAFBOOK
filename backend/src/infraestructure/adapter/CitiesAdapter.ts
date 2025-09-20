@@ -17,6 +17,7 @@ export class CitiesAdapter implements CitiesPort {
             city_id: city.city_id,
             city_name: city.city_name,
             department_id: city.department_id.department_id, 
+            department_name: city.department_id.department_name
         };
     }
 
@@ -107,11 +108,38 @@ export class CitiesAdapter implements CitiesPort {
 
     async getCityByName(name: string): Promise<Cities | null> {
         try {
-            const city= await this.cityRepository.findOne({relations:["departmnet_id"], where: { city_name: name } });
+            const city= await this.cityRepository.findOne({relations:["department_id"], where: { city_name: name } });
             return city ? this.toDomain(city) : null;
         } catch (error) {
             console.error("Error fetching city by name", error);
             throw new Error("Error fetching city by name");
         }
     }
+
+    async getCityByDepartmentId(department_id: number): Promise<Cities[]> {
+    try {
+        const cities = await this.cityRepository.find({ relations: ["department_id"] });
+
+        const filtered = cities.filter(city => city.department_id.department_id === department_id);
+
+        return filtered.map(city => this.toDomain(city));
+    } catch (error) {
+        console.error("Error fetching city by department name", error);
+        throw new Error("Error fetching city by department name");
+    }
+}
+
+    async getCityByDepartmentName(department_name: string): Promise<Cities[]> {
+    try {
+        const cities = await this.cityRepository.find({ relations: ["department_id"] });
+
+        const filtered = cities.filter(city => city.department_id.department_name === department_name);
+
+        return filtered.map(city => this.toDomain(city));
+    } catch (error) {
+        console.error("Error fetching city by department name", error);
+        throw new Error("Error fetching city by department name");
+    }
+}
+
 }

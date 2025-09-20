@@ -16,7 +16,7 @@ export class PhonesController {
         number,
         number_type: {
           id: number_type_id,
-          description: "" // solo enviamos id al crear
+          description: "" 
         }
       };
 

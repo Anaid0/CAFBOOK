@@ -15,7 +15,7 @@ export class AddressesEntity {
     @Column({type: "character varying", length:255})
     postal_code!:string;
 
-    @ManyToOne(()=> CitiesEntity, {eager: false})
+    @ManyToOne(()=> CitiesEntity, {eager: true})
     @JoinColumn({ name: "city_id"})
     city_id!:CitiesEntity;
         

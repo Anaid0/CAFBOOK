@@ -38,6 +38,24 @@ router.get("/company_phones/:id", async(Request, Response)=>{
       }
 })
 
+router.get("/company_phones/number/:number", async (req, res) => {
+  try {
+    await company_phoneController.searchCompanyPhonesByNumber(req, res);
+  } catch (error) {
+    console.error("Error en telefono compañia:" + error);
+    res.status(400).json({ message: "Error en telefono compañia" });
+  }
+});
+
+router.get("/company_phones/company/name/:name", async (req, res) => {
+  try {
+    await company_phoneController.getCompanyPhonesByBussinesName(req, res);
+  } catch (error) {
+    console.error("Error en telefono compañia:" + error);
+    res.status(400).json({ message: "Error en telefono compañia" });
+  }
+});
+
 router.get("/company_phones/phones/:id",  async(Request, Response)=>{
     try {
         await  company_phoneController.searchCompanyPhonesByPhoneId(Request, Response);
