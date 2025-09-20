@@ -3,6 +3,8 @@ export interface Posts{
     tittle: string;
     description: string;
     post_category_id: number;
+    post_category_description: string;
     user_id: number;
-    creates_at: Date;
+    user_email: string;
+    created_at: Date;
 }

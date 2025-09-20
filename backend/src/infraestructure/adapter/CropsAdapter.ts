@@ -3,6 +3,8 @@ import { Crops } from "../../domain/Crops";
 import { CropsPort } from "../../domain/CropsPort";
 import { CropsEntity } from "../entities/CropsEntity";
 import { AppDataSource } from "../config/con_data_bases";
+import { UserEntity } from "../entities/UsersEntity";
+import { Crop_typesEntity } from "../entities/Crop_typesEntity";
 
 export class CropsAdapter implements CropsPort {
   private cropsRepository: Repository<CropsEntity>;
@@ -14,8 +16,10 @@ export class CropsAdapter implements CropsPort {
   private toDomain(entity: CropsEntity): Crops {
     return {
       crop_id: entity.crop_id,
-      user_id: entity.user_id,
-      crop_type_id: entity.crop_type_id,
+      user_id: entity.user_id.user_id,
+      user_email: entity.user_id.email,
+      crop_type_id: entity.crop_type_id.crop_type_id,
+      crop_type_description: entity.crop_type_id.description,
       latitude: entity.latitude,
       longitude: entity.longitude,
       created_at: entity.created_at,
@@ -24,15 +28,21 @@ export class CropsAdapter implements CropsPort {
 
   private toEntity(domain: Omit<Crops, "crop_id">): CropsEntity {
     const entity = new CropsEntity();
-    entity.user_id = domain.user_id;
-    entity.crop_type_id = domain.crop_type_id;
+    const user = new UserEntity();
+    const crop_type = new Crop_typesEntity();
+    
+    user.user_id = domain.user_id;
+    crop_type.crop_type_id = domain.crop_type_id;
+
+    entity.user_id = user;
+    entity.crop_type_id = crop_type;
     entity.latitude = domain.latitude;
     entity.longitude = domain.longitude;
     entity.created_at = domain.created_at;
     return entity;
   }
 
-  async createCrop(crop: Omit<Crops, "crop_id">): Promise<number> {
+  async createCrop(crop: Omit<Crops, "crop_id" >): Promise<number> {
     try {
       const newEntity = this.toEntity(crop);
       const savedEntity = await this.cropsRepository.save(newEntity);
@@ -102,13 +112,42 @@ export class CropsAdapter implements CropsPort {
 
   async getCropByCropTypeId(crop_type_id: number): Promise<Crops[]> {
     try {
-      const entities = await this.cropsRepository.find({ where: { crop_type_id } });
-      return entities.map((entity) => this.toDomain(entity));
-    } catch (error) {
-      console.error("Error fetching crops by crop_type_id:", error);
-      throw new Error("Error fetching crops by crop_type_id");
-    }
+      const entities = await this.cropsRepository.find({
+      relations: ["user_id", "crop_type_id"],
+      where: { crop_type_id: { crop_type_id } } });
+    return entities.map((entity) => this.toDomain(entity));
+  } catch (error) {
+    console.error("Error obteniendo crops por crop_type_id:", error);
+    throw new Error("Error obteniendo crops por crop_type_id");
   }
+}
+
   
+  async getCropByCropTypeUserEmail(email: string): Promise<Crops[]> {
+  try {
+    const entities = await this.cropsRepository.find({
+      relations: ["user_id", "crop_type_id"],
+      where: { user_id: { email } },
+    });
+    return entities.map((entity) => this.toDomain(entity));
+  } catch (error) {
+    console.error("Error obteniendo crops por email de usuario:", error);
+    throw new Error("Error obteniendo crops por email de usuario");
+  }
+}
+
+async getCropByCropTypeDescription(crop_type_description: string): Promise<Crops[]> {
+  try {
+    const entities = await this.cropsRepository.find({
+      relations: ["user_id", "crop_type_id"],
+      where: { crop_type_id: { description: crop_type_description } },
+    });
+    return entities.map((entity) => this.toDomain(entity));
+  } catch (error) {
+    console.error("Error obteniendo crops por descripción del tipo de cultivo:", error);
+    throw new Error("Error obteniendo crops por descripción del tipo de cultivo");
+  }
+}
+
 }
 
