@@ -4,4 +4,5 @@ export interface Company_phones{
     phone_number: string;
     company_id: number;
     bussines_name: string;
+    company_email: string;
 }

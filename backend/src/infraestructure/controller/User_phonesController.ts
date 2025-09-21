@@ -20,7 +20,7 @@ export class User_phonesController {
       if (!user_id || isNaN(Number(user_id)))
         return response.status(400).json({ message: "user_id inválido" });
 
-      const userPhone: Omit<User_phones, "user_phone"> = { phone_id, user_id };
+      const userPhone: Omit<User_phones, "user_phone" | "user_name" | "phone_number" | "user_email"> = { phone_id, user_id };
       const userPhoneId = await this.app.createUserPhone(userPhone);
 
       return response.status(201).json({ message: "Teléfono de usuario creado exitosamente", userPhoneId });
@@ -62,6 +62,40 @@ export class User_phonesController {
       return response.status(200).json(phones);
     } catch (error) {
       console.error("Error en searchCompanyPhonesByPhoneId:", error);
+      return response.status(500).json({ message: "Error en el servidor" });
+    }
+  }
+
+  async searchUserPhonesByUserId(request: Request, response: Response): Promise<Response> {
+    try {
+      const userId = parseInt(request.params.id);
+
+      if (isNaN(userId)) return response.status(400).json({ message: "Error en parámetro" });
+
+      const phones = await this.app.getUserPhoneByUserId(userId);
+      if (!phones || phones.length === 0) {
+        return response.status(404).json({ message: "No se encontraron registros para ese user_id" });
+      }
+
+      return response.status(200).json(phones);
+    } catch (error) {
+      console.error("Error en searchCompanyPhonesByuserId:", error);
+      return response.status(500).json({ message: "Error en el servidor" });
+    }
+  }
+
+    async searchUserPhonesByUserEmail(request: Request, response: Response): Promise<Response> {
+    try {
+      const {email}= request.params;
+
+      const phones = await this.app.getUserPhonesByUserEmail(email);
+      if (!phones || phones.length === 0) {
+        return response.status(404).json({ message: "No se encontraron registros para ese email" });
+      }
+
+      return response.status(200).json(phones);
+    } catch (error) {
+      console.error("Error en searchCompanyPhonesByuserId:", error);
       return response.status(500).json({ message: "Error en el servidor" });
     }
   }

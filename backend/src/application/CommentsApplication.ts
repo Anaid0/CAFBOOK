@@ -7,12 +7,10 @@ export class CommentsApplication {
     constructor(port: CommentsPort) {
         this.port = port;
     }
-
     
-    async createComment(comment: Omit<Comments, "comment_id">): Promise<number> {
+    async createComment(comment: Omit<Comments, "comment_id" | "user_name">): Promise<number> {
         return await this.port.createComments(comment);
     }
-
 
     async updateComment(comment_id: number, comment: Partial<Comments>): Promise<boolean> {
         const existingComment = await this.port.getCommentsById(comment_id);
@@ -32,7 +30,7 @@ export class CommentsApplication {
     }
 
     
-    async getCommentById(comment_id: number): Promise<Comments | null> {
+    async getCommentsById(comment_id: number): Promise<Comments | null> {
         return await this.port.getCommentsById(comment_id);
     }
 
@@ -41,6 +39,13 @@ export class CommentsApplication {
         return await this.port.getCommentsByUserId(user_id);
     }
 
+    async getCommentsByUserEmail(email: string): Promise<Comments[]>{
+        return await this.port.getCommentsByUserEmail(email);
+    }
+
+    async getCommentsByPostId(post_id: number): Promise<Comments[]>{
+        return await this.port.getCommentsByPostId(post_id);
+    }
     
     async getAllComments(): Promise<Comments[]> {
         return await this.port.getAllComments();

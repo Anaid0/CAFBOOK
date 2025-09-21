@@ -29,11 +29,12 @@ export class PostsController {
         return response.status(400).json({ message: "ID de usuario inválido" });
       }
 
-      const post: Omit<Posts, "post_id" | "user_email" | "post_category_description"> = {
+      const post: Omit<Posts, "post_id" | "user_email" | "post_category_description"| "deleted_at"> = {
         tittle: tittle.trim(),
         description: description.trim(),
         post_category_id: Number(post_category_id),
         user_id: Number(user_id),
+        status: 1,
         created_at: new Date 
       };
 
@@ -129,8 +130,8 @@ export class PostsController {
         post_category_description: posts.post_category_description,
         user_id: posts.user_id,
         user_email: posts.user_email,
+        status: posts.status,
         created_at: new Date
-
       }));
 
       return response.status(200).json(result);
@@ -175,6 +176,19 @@ export class PostsController {
     return response.status(400).json({ message: "Error en la petición" });
   }
 
+  async allPostsActive(request: Request, response: Response): Promise<Response> {
+    try {
+      const status = 1;
+      const posts = await this.app.getAllPostsActive(status);
+      return response.status(200).json(posts);
+    } catch (error) {
+      if (error instanceof Error) {
+        return response.status(500).json({ message: "Error en el servidor" });
+      }
+    }
+    return response.status(400).json({ message: "Error en la petición" });
+  }
+
   async downPost(request: Request, response: Response): Promise<Response> {
     try {
       const postId = parseInt(request.params.id);
@@ -188,6 +202,29 @@ export class PostsController {
       }
 
       return response.status(200).json({ message: "Post eliminado exitosamente" });
+
+    } catch (error) {
+      if (error instanceof Error) {
+        return response.status(500).json({ message: "Error en el servidor" });
+      }
+    }
+    return response.status(400).json({ message: "Error en la petición" });
+  }
+
+  async restorePost(request: Request, response: Response): Promise<Response> {
+    try {
+      const postId = parseInt(request.params.id);
+      if (isNaN(postId)) {
+        return response.status(400).json({ message: "Error en parámetro" });
+      }
+
+      const restored = await this.app.restorePost(postId);
+      if (!restored) {
+        return response.status(404).json({ message: "Post no encontrado" });
+      }
+
+      return response.status(200).json({ message: "Post restaurado exitosamente" });
+
     } catch (error) {
       if (error instanceof Error) {
         return response.status(500).json({ message: "Error en el servidor" });

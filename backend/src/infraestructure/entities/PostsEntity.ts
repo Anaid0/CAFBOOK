@@ -24,4 +24,9 @@ export class PostsEntity {
     @Column({type: "date"})
     created_at!:Date;
 
+    @Column({ type: "int", default: 1 })
+    status!: number;
+
+    @Column({ type: "date", nullable: true })
+    deleted_at!: Date | null;
 }

@@ -3,6 +3,8 @@ import { Medias } from "../../domain/Medias";
 import { MediasPort } from "../../domain/MediasPort";
 import { MediasEntity } from "../entities/MediasEntity";
 import { AppDataSource } from "../config/con_data_bases";
+import { PostsEntity } from "../entities/PostsEntity";
+import { Media_typesEntity } from "../entities/Media_typesEntity";
 
 export class MediasAdapter implements MediasPort {
   private mediasRepository: Repository<MediasEntity>;
@@ -14,8 +16,9 @@ export class MediasAdapter implements MediasPort {
   private toDomain(entity: MediasEntity): Medias {
     return {
       media_id: entity.media_id,
-      post_id: entity.post_id,
-      media_type_id: entity.media_type_id,
+      post_id: entity.post_id.post_id,
+      media_type_id: entity.media_type_id.media_type_id,
+      media_type_description: entity.media_type_id.description,
       file_url: entity.file_url,
       uploaded_at: entity.uploaded_at,
     };
@@ -23,8 +26,14 @@ export class MediasAdapter implements MediasPort {
 
   private toEntity(domain: Omit<Medias, "media_id">): MediasEntity {
     const entity = new MediasEntity();
-    entity.post_id = domain.post_id;
-    entity.media_type_id = domain.media_type_id;
+    const post = new PostsEntity();
+    const media_type = new Media_typesEntity();
+
+    post.post_id = domain.post_id;
+    media_type.media_type_id = domain.media_type_id;
+
+    entity.post_id = post;
+    entity.media_type_id = media_type;
     entity.file_url = domain.file_url;
     entity.uploaded_at = domain.uploaded_at;
     return entity;
@@ -99,11 +108,28 @@ export class MediasAdapter implements MediasPort {
 
   async getMediaByMediaTypeId(media_type_id: number): Promise<Medias[]> {
     try {
-      const entities = await this.mediasRepository.find({ where: { media_type_id } });
-      return entities.map((entity) => this.toDomain(entity));
+      const entities = await this.mediasRepository.find({ relations:["post_id", "media_type_id"] });
+
+      const filtered = entities.filter(MediasEntity => MediasEntity.media_type_id.media_type_id === media_type_id);
+
+      return filtered.map(entity => this.toDomain(entity));
     } catch (error) {
       console.error("Error obteniendo medias por media_type_id:", error);
       throw new Error("Error obteniendo medias por media_type_id");
     }
   }
+  
+  async getMediaByPostId(post_id: number): Promise<Medias[]> {
+    try {
+      const entities = await this.mediasRepository.find({ relations:["post_id", "media_type_id"] });
+
+      const filtered = entities.filter(MediasEntity => MediasEntity.post_id.post_id === post_id);
+
+      return filtered.map(entity => this.toDomain(entity));
+    } catch (error) {
+      console.error("Error obteniendo medias por post_id:", error);
+      throw new Error("Error obteniendo medias por post_id");
+    }
+  }
+
 }

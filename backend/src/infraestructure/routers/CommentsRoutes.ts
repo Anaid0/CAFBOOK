@@ -9,8 +9,7 @@ const commentsAdapter = new CommentsAdapter();
 const commentsApp = new CommentsApplication(commentsAdapter);
 const commentsController = new CommentsController(commentsApp);
 
-
-router.post("/comments", async (req, res) => {
+router.post("/comments/:id", async (req, res) => {
   try {
     await commentsController.registerComment(req, res);
   } catch (error) {
@@ -18,7 +17,6 @@ router.post("/comments", async (req, res) => {
     res.status(400).json({ message: "Error creando comentario" });
   }
 });
-
 
 router.get("/comments/:id", async (req, res) => {
   try {
@@ -29,7 +27,6 @@ router.get("/comments/:id", async (req, res) => {
   }
 });
 
-
 router.get("/comments/user/:id", async (req, res) => {
   try {
     await commentsController.searchCommentsByUserId(req, res);
@@ -39,6 +36,23 @@ router.get("/comments/user/:id", async (req, res) => {
   }
 });
 
+router.get("/comments/user/email/:email", async (req, res) => {
+  try {
+    await commentsController.searchCommentsByUserEmail(req, res);
+  } catch (error) {
+    console.error("Error obteniendo comentarios por usuario:", error);
+    res.status(400).json({ message: "Error obteniendo comentarios por usuario" });
+  }
+});
+
+router.get("/comments/post/:id", async (req, res) => {
+  try {
+    await commentsController.searchCommentsByPostId(req, res);
+  } catch (error) {
+    console.error("Error obteniendo comentarios por post:", error);
+    res.status(400).json({ message: "Error obteniendo comentarios por post" });
+  }
+});
 
 router.put("/comments/:id", async (req, res) => {
   try {
@@ -49,7 +63,6 @@ router.put("/comments/:id", async (req, res) => {
   }
 });
 
-
 router.delete("/comments/:id", async (req, res) => {
   try {
     await commentsController.downComment(req, res);
@@ -58,7 +71,6 @@ router.delete("/comments/:id", async (req, res) => {
     res.status(400).json({ message: "Error eliminando comentario" });
   }
 });
-
 
 router.get("/comments", async (req, res) => {
   try {

@@ -10,45 +10,47 @@ export class MediasController {
     this.app = app;
   }
 
-  async registerMedia(request: Request, response: Response): Promise<Response> {
-    const { post_id, media_type_id, file_url, uploaded_at } = request.body;
-    try {
-      if (!post_id || isNaN(Number(post_id))) {
-        return response.status(400).json({ message: "ID de post inválido" });
-      }
+ async registerMedia(request: Request, response: Response): Promise<Response> {
+  try {
+    const { post_id } = request.body;
 
-      if (!media_type_id || isNaN(Number(media_type_id))) {
-        return response.status(400).json({ message: "ID de tipo de media inválido" });
-      }
-
-      if (!file_url || !Validators.url(file_url)) {
-        return response.status(400).json({ message: "URL inválida" });
-      }
-
-      if (!uploaded_at || !Validators.date(uploaded_at)) {
-        return response.status(400).json({ message: "Fecha inválida" });
-      }
-
-      const media: Omit<Medias, "media_id"> = {
-        post_id: Number(post_id),
-        media_type_id: Number(media_type_id),
-        file_url: file_url.trim(),
-        uploaded_at: new Date(uploaded_at) as any,
-      };
-
-      const mediaId = await this.app.createMedia(media);
-
-      return response.status(201).json({
-        message: "Media creada exitosamente",
-        mediaId,
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        return response.status(500).json({ message: "Error en el servidor" });
-      }
-      return response.status(400).json({ message: "Error en la petición" });
+    if (!post_id || isNaN(Number(post_id))) {
+      return response.status(400).json({ message: "ID de post inválido" });
     }
+
+    if (!request.file) {
+      return response.status(400).json({ message: "No se subió ningún archivo" });
+    }
+
+    const mimeType = request.file.mimetype;
+    let media_type_id: number;
+
+    if (mimeType === "application/pdf") media_type_id = 1; 
+    else if (mimeType.startsWith("video/")) media_type_id = 2; 
+    else if (mimeType.startsWith("image/")) media_type_id = 3; 
+    else if (mimeType.startsWith("audio/")) media_type_id = 4; 
+    else media_type_id = 5;
+
+    const media: Omit<Medias, "media_id" | "media_type_description"> = {
+      post_id: Number(post_id),
+      media_type_id,
+      file_url: request.file.path, 
+      uploaded_at: new Date(),
+    };
+
+    const mediaId = await this.app.createMedia(media);
+
+    return response.status(201).json({
+      message: "Media creada exitosamente",
+      mediaId,
+      file_url: request.file.path,
+      media_type_id,
+    });
+  } catch (error) {
+    console.error("Error en registerMedia:", error);
+    return response.status(500).json({ message: "Error en el servidor" });
   }
+}
 
   async searchMediaById(request: Request, response: Response): Promise<Response> {
     try {
@@ -78,6 +80,24 @@ export class MediasController {
       const medias = await this.app.getMediaByMediaTypeId(typeId);
       if (!medias || medias.length === 0) {
         return response.status(404).json({ message: "No se encontraron medias con este tipo" });
+      }
+
+      return response.status(200).json(medias);
+    } catch (error) {
+      return response.status(500).json({ message: "Error en el servidor" });
+    }
+  }
+
+  async searchMediaByPostId(request: Request, response: Response): Promise<Response> {
+    try {
+      const postId = parseInt(request.params.id);
+      if (isNaN(postId)) {
+        return response.status(400).json({ message: "Error en parámetro" });
+      }
+
+      const medias = await this.app.getMediaByPostId(postId);
+      if (!medias || medias.length === 0) {
+        return response.status(404).json({ message: "No se encontraron medias con este post" });
       }
 
       return response.status(200).json(medias);

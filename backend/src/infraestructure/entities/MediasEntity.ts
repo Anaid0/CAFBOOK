@@ -1,15 +1,19 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { PostsEntity } from "./PostsEntity";
+import { Media_typesEntity } from "./Media_typesEntity";
 
 @Entity({name: 'medias'})
 export class MediasEntity {
     @PrimaryGeneratedColumn()
     media_id!: number;   
  
-    @Column({type: "int"})
-    post_id!:number;
+    @ManyToOne(()=> PostsEntity, {eager: true})
+    @JoinColumn({name: "post_id"})
+    post_id!:PostsEntity;
 
-    @Column({type: "int"})
-    media_type_id!:number;
+    @ManyToOne(()=> Media_typesEntity, {eager: true})
+    @JoinColumn({name: "media_type_id"})
+    media_type_id!:Media_typesEntity;
 
     @Column({type: "character varying", length:150})
     file_url!:string;

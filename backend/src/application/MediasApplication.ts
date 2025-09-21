@@ -8,7 +8,7 @@ export class MediasApplication {
         this.port = port;
     }
 
-    async createMedia(media: Omit<Medias, "media_id">): Promise<number> {
+    async createMedia(media: Omit<Medias, "media_id" | "media_type_description">): Promise<number> {
         const existingMedia = await this.port.getMediaByMediaTypeId(media.media_type_id);
         if (existingMedia.length === 0) {
             return await this.port.createMedia(media);
@@ -46,6 +46,10 @@ export class MediasApplication {
 
     async getMediaByMediaTypeId(media_id: number): Promise<Medias[]> {
         return await this.port.getMediaByMediaTypeId(media_id);
+    }
+    
+    async getMediaByPostId(post_id: number): Promise<Medias[]>{
+        return await this.port.getMediaByPostId(post_id);
     }
 
     async getAllMedias(): Promise<Medias[]> {

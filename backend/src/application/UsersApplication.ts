@@ -29,7 +29,7 @@ export class UsersApplication{
         return token; 
     }
     
-    async createUser(user: Omit<Users,"user_id">): Promise<number>{
+    async createUser(user: Omit<Users,"user_id" | "role_description" | "doc_type_description" | "photo_url">): Promise<number>{
         const existingUser = await this.port.getUserByEmail(user.email);
         if(!existingUser){
             return await this.port.createUser(user);
@@ -58,6 +58,14 @@ export class UsersApplication{
             throw new Error("No se encntró el usuario");
         }
         return await this.port.deleteUser(user_id);
+    }
+
+    async restoreUser(user_id:number): Promise<boolean>{
+        const existingUser = await this.port.getUserById(user_id);
+        if(!existingUser){
+            throw new Error("No se encntró el usuario");
+        }
+        return await this.port.restoreUser(user_id);
     }
 
     //Consultas get

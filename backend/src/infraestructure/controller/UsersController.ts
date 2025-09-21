@@ -54,7 +54,7 @@ export class UsersController{
             if(!Validators.password(password))
                 return response.status(400).json({message:"La contraseña debe tener entre 6 y 25 caracteres, incluyendo al menos una letra y un número"});
         
-            const user: Omit<Users, "user_id"> = {
+            const user: Omit<Users, "user_id" | "role_description" | "doc_type_description" | "photo_url"> = {
                 firts_name, last_name, document_number, doc_type_id, email, password, role_id: 1, status: 1, created_at: new Date()
             };
             const user_id = await this.app.createUser(user);
@@ -122,6 +122,23 @@ export class UsersController{
             const user_id = parseInt(request.params.id);
             if(isNaN(user_id)) return response.status(400).json({message:"Error en parámetro"});
             const user = await this.app.deleteUser(user_id);
+            if(!user) return response.status(404).json({message:"Usuario no encontrado"});
+
+            return response.status(200).json(user);
+        
+        }catch(error){
+            if(error instanceof Error){
+                return response.status(500).json({message:"Error en el servidor"});
+            }
+        }
+        return response.status(400).json({message:"Error en la petición"});
+    }
+
+        async restoreUser(request: Request, response: Response): Promise<Response>{
+        try{
+            const user_id = parseInt(request.params.id);
+            if(isNaN(user_id)) return response.status(400).json({message:"Error en parámetro"});
+            const user = await this.app.restoreUser(user_id);
             if(!user) return response.status(404).json({message:"Usuario no encontrado"});
 
             return response.status(200).json(user);

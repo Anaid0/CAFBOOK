@@ -25,6 +25,9 @@ export class CompaniesEntity {
     @Column({type: "character varying", length:25})
     password!: string;
 
+    @Column({type: "character varying", length:150, nullable: true})
+    photo_url!: string | null;
+
     @Column({type: "int"})
     status!: number;
 

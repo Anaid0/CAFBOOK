@@ -11,24 +11,25 @@ export class CommentsController {
   }
 
   async registerComment(request: Request, response: Response): Promise<Response> {
-    const { user_id, content, created_at } = request.body;
+    const { user_id, post_id, content } = request.body;
     try {
       if (!user_id || isNaN(Number(user_id))) {
         return response.status(400).json({ message: "ID de usuario inválido" });
+      }
+
+      if (!post_id || isNaN(Number(post_id))) {
+        return response.status(400).json({ message: "ID de post inválido" });
       }
 
       if (!content || !Validators.description(content)) {
         return response.status(400).json({ message: "Contenido inválido" });
       }
 
-      if (!created_at || !Validators.date(created_at)) {
-        return response.status(400).json({ message: "Fecha inválida" });
-      }
-
-      const comment: Omit<Comments, "comment_id"> = {
+      const comment: Omit<Comments, "comment_id" | "user_name"> = {
         user_id: Number(user_id),
+        post_id: Number(post_id),
         content: content.trim(),
-        created_at: new Date(created_at) as any,
+        created_at: new Date
       };
 
       const commentId = await this.app.createComment(comment);
@@ -50,7 +51,7 @@ export class CommentsController {
         return response.status(400).json({ message: "Error en parámetro" });
       }
 
-      const comment = await this.app.getCommentById(commentId);
+      const comment = await this.app.getCommentsById(commentId);
       if (!comment) {
         return response.status(404).json({ message: "Comentario no encontrado" });
       }
@@ -77,6 +78,49 @@ export class CommentsController {
       return response.status(200).json(comments);
     } catch (error) {
       console.error("Error en searchCommentsByUserId:", error);
+      return response.status(500).json({ message: "Error en el servidor" });
+    }
+  }
+
+  async searchCommentsByUserEmail(request: Request, response: Response): Promise<Response> {
+    try {
+      const { email } = request.params;
+
+      const comments = await this.app.getCommentsByUserEmail(email);
+      if (!comments || comments.length === 0) {
+        return response.status(404).json({ message: "No se encontraron comments en este usuario" });
+      }
+      const result = comments.map(comments => ({
+        comment_id: comments.comment_id,
+        user_id: comments.user_id,
+        user_name: comments.user_name,
+        content: comments.content,
+        post_id: comments.post_id,
+        created_at: new Date
+      }));
+
+      return response.status(200).json(result);
+    } catch (error) {
+      console.error("Error en searchCommentsByUserEmail:", error);
+      return response.status(500).json({ message: "Error en el servidor" });
+    }
+  }
+
+    async searchCommentsByPostId(request: Request, response: Response): Promise<Response> {
+    try {
+      const postId = parseInt(request.params.id);
+      if (isNaN(postId)) {
+        return response.status(400).json({ message: "Error en parámetro" });
+      }
+
+      const comments = await this.app.getCommentsByPostId(postId);
+      if (!comments || comments.length === 0) {
+        return response.status(404).json({ message: "No se encontraron comentarios para este post" });
+      }
+
+      return response.status(200).json(comments);
+    } catch (error) {
+      console.error("Error en searchCommentsByPostId:", error);
       return response.status(500).json({ message: "Error en el servidor" });
     }
   }

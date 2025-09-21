@@ -8,7 +8,7 @@ export class Company_phonesApplication {
     this.port = port;
   }
   
-  async createCompanyPhone(companyPhone: Omit<Company_phones, "company_phone" | "bussines_name" | "phone_number">): Promise<number> {
+  async createCompanyPhone(companyPhone: Omit<Company_phones, "company_phone" | "bussines_name" | "phone_number" | "company_email">): Promise<number> {
 
   const existingPhone = await this.port.getCompanyPhoneById(companyPhone.phone_id);
   if (!existingPhone) {
@@ -64,5 +64,9 @@ export class Company_phonesApplication {
 
   async getCompanyPhonesByBussinesName(bussines_name:string): Promise <Company_phones[]>{
     return await this.port.getCompanyPhonesByBussinesName(bussines_name);
+  }
+
+  async getCompanyPhonesByCompanyEmail(email:string): Promise <Company_phones[]>{
+    return await this.port.getCompanyPhonesByCompanyEmail(email);
   }
 }
