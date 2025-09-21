@@ -5,7 +5,6 @@ import { PostsEntity } from "../entities/PostsEntity";
 import { AppDataSource } from "../config/con_data_bases";
 import { UserEntity } from "../entities/UsersEntity";
 import { Post_categoriesEntity } from "../entities/Post_categoriesEntity";
-import { Post_categories } from '../../domain/Post_categories';
 
 export class PostsAdapter implements PostsPort {
   private postsRepository: Repository<PostsEntity>;
@@ -24,6 +23,8 @@ export class PostsAdapter implements PostsPort {
       user_id: entity.user_id.user_id,
       user_email: entity.user_id.email,      
       created_at: entity.created_at,
+      status: entity.status,
+      deleted_at: entity.deleted_at
     };
   }
 
@@ -40,10 +41,11 @@ export class PostsAdapter implements PostsPort {
     entity.user_id = user;
     entity.post_category_id = post_category;
     entity.created_at = domain.created_at;
+    entity.status = domain.status;
+    entity.deleted_at = domain.deleted_at;
 
   return entity;
 }
-
 
   async createPost(post: Omit<Posts, "post_id">): Promise<number> {
     try {
@@ -81,11 +83,17 @@ export class PostsAdapter implements PostsPort {
 
   async deletePost(post_id: number): Promise<boolean> {
     try {
-      const existing = await this.postsRepository.findOne({ where: { post_id } });
+      const existing = await this.postsRepository.findOne({ where: { post_id: post_id} });
       if (!existing) {
         throw new Error("Post no encontrado");
       }
-      await this.postsRepository.delete({ post_id });
+
+      Object.assign(existing,{
+        status: 0,
+        deleted_at: new Date()
+      });
+
+      await this.postsRepository.save(existing);
       return true;
     } catch (error) {
       console.error("Error eliminando post:", error);
@@ -93,9 +101,30 @@ export class PostsAdapter implements PostsPort {
     }
   }
 
+  async restorePost(post_id: number): Promise<boolean> {
+    const post = await this.postsRepository.findOne({ where: { post_id } });
+    if (!post || post.status !== 0) return false;
+
+    post.status = 1;
+    post.deleted_at = null;
+    await this.postsRepository.save(post);
+
+  return true;
+}
+
   async getAllPosts(): Promise<Posts[]> {
     try {
       const entities = await this.postsRepository.find();
+      return entities.map((entity) => this.toDomain(entity));
+    } catch (error) {
+      console.error("Error obteniendo todos los posts:", error);
+      throw new Error("Error obteniendo todos los posts");
+    }
+  }
+
+  async getAllPostsActive(status:1): Promise<Posts[]> {
+    try {
+      const entities = await this.postsRepository.find({where:{status: status}});
       return entities.map((entity) => this.toDomain(entity));
     } catch (error) {
       console.error("Error obteniendo todos los posts:", error);

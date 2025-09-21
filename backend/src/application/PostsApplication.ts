@@ -8,7 +8,7 @@ export class PostsApplication {
         this.port = port;
     }
 
-    async createPost(post: Omit<Posts, "post_id" | "user_email" | "post_category_description">): Promise<number> {
+    async createPost(post: Omit<Posts, "post_id" | "user_email" | "post_category_description" | "deleted_at">): Promise<number> {
         const existingPosts = await this.port.getPostByPostCategoryId(post.post_category_id);
         if (existingPosts.length === 0) {
             return await this.port.createPost(post);
@@ -40,6 +40,10 @@ export class PostsApplication {
         return await this.port.deletePost(post_id);
     }
 
+    async restorePost(post_id: number): Promise <boolean>{
+        return await this.port.restorePost(post_id);
+    }
+
     async getPostById(post_id: number): Promise<Posts | null> {
         return await this.port.getPostById(post_id);
     }
@@ -63,4 +67,9 @@ export class PostsApplication {
     async getAllPosts(): Promise<Posts[]> {
         return await this.port.getAllPosts();
     }
+    
+    async getAllPostsActive(status:1): Promise<Posts[]> {
+        return await this.port.getAllPostsActive(status);
+    }
 }
+    

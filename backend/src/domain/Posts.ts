@@ -7,4 +7,6 @@ export interface Posts{
     user_id: number;
     user_email: string;
     created_at: Date;
+    status: number;
+    deleted_at: Date | null;
 }

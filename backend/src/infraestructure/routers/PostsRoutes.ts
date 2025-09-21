@@ -18,6 +18,24 @@ router.post("/posts", async (Request, Response) => {
   }
 });
 
+router.get("/posts/all", async (Request, Response) => {
+  try {
+    await postsController.allPosts(Request, Response);
+  } catch (error) {
+    console.error("Error obteniendo posts" + error);
+    Response.status(400).json({ message: "Error obteniendo post por ID" });
+  }
+});
+
+router.get("/posts", async (Request, Response) => {
+  try {
+    await postsController.allPostsActive(Request, Response);
+  } catch (error) {
+    console.error("Error obteniendo posts eliminados" + error);
+    Response.status(400).json({ message: "Error obteniendo post por ID" });
+  }
+});
+
 router.get("/posts/:id", async (Request, Response) => {
   try {
     await postsController.searchPostById(Request, Response);
@@ -45,7 +63,6 @@ router.get("/posts/user/email/:email", async (Request, Response) => {
   }
 });
 
-// Obtener Posts por categoría
 router.get("/posts/category/:id", async (Request, Response) => {
   try {
     await postsController.searchPostByPostCategoryId(Request, Response);
@@ -73,6 +90,14 @@ router.put("/posts/:id", async (Request, Response) => {
   }
 });
 
+router.put("/posts/restore/:id", async (Request, Response) => {
+  try {
+    await postsController.restorePost(Request, Response);
+  } catch (error) {
+    console.error("Error actualizando post: " + error);
+    Response.status(400).json({ message: "Error actualizando post" });
+  }
+});
 
 router.delete("/posts/:id", async (Request, Response) => {
   try {
