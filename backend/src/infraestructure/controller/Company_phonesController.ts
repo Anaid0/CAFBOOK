@@ -18,7 +18,7 @@ export class Company_phonesController {
       return response.status(400).json({ error: "phone_id y company_id son obligatorios" });
     }
 
-  const companyPhone: Omit<Company_phones, "company_phone" | "bussines_name" | "phone_number"> = { 
+  const companyPhone: Omit<Company_phones, "company_phone" | "bussines_name" | "phone_number" | "company_email"> = { 
       phone_id: phone_id,
       company_id: company_id
     };

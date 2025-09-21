@@ -1,8 +1,11 @@
 import { Repository } from "typeorm";
-import { User_phones } from "../../domain/User_phones";
+import { User_phones } from '../../domain/User_phones';
 import { User_phonesPort } from "../../domain/User_PhonesPort";
 import { User_phonesEntity } from "../entities/User_phonesEntity";
 import { AppDataSource } from "../config/con_data_bases";
+import { number } from 'joi';
+import { UserEntity } from "../entities/UsersEntity";
+import { PhonesEntity } from "../entities/PhonesEntity";
 
 export class User_phonesAdapter implements User_phonesPort {
   private userPhonesRepository: Repository<User_phonesEntity>;
@@ -10,19 +13,29 @@ export class User_phonesAdapter implements User_phonesPort {
   constructor() {
     this.userPhonesRepository = AppDataSource.getRepository(User_phonesEntity);
   }
-
+  
   private toDomain(entity: User_phonesEntity): User_phones {
     return {
       user_phone: entity.user_phone,
-      phone_id: entity.phone_id,
-      user_id: entity.user_id,
+      phone_id: entity.phone_id.phone_id,
+      phone_number: entity.phone_id.number,
+      user_id: entity.user_id.user_id,
+      user_name: `${entity.user_id.firts_name} ${entity.user_id.last_name}`,
+      user_email: entity.user_id.email
     };
   }
 
   private toEntity(domain: Omit<User_phones, "user_phone">): User_phonesEntity {
     const entity = new User_phonesEntity();
-    entity.phone_id = domain.phone_id;
-    entity.user_id = domain.user_id;
+    const user = new UserEntity();
+    const phone = new PhonesEntity();
+
+    user.user_id = domain.user_id;
+    phone.phone_id = domain.phone_id;
+
+    entity.phone_id = phone;
+    entity.user_id = user;
+
     return entity;
   }
 
@@ -93,11 +106,38 @@ export class User_phonesAdapter implements User_phonesPort {
 
   async getUserPhoneByPhoneId(phone_id: number): Promise<User_phones[]> {
     try {
-      const entities = await this.userPhonesRepository.find({ where: { phone_id } });
+      const entities = await this.userPhonesRepository.find({ where: { phone_id: phone_id as any }, relations:["user_id", "phone_id", "phone_id.number_type_id"] });
       return entities.map((entity) => this.toDomain(entity));
     } catch (error) {
       console.error("Error obteniendo teléfonos de usuario por phone_id:", error);
       throw new Error("Error obteniendo teléfonos de usuario por phone_id");
     }
   }
+  
+  async getUserPhonesByUserEmail(email: string): Promise<User_phones[]> {
+     try {
+        const userPhones = await this.userPhonesRepository.find({ relations: ["user_id"] });
+
+        const filtered = userPhones.filter(User_phones => User_phones.user_id.email === email);
+
+        return filtered.map(entity => this.toDomain(entity));
+    } catch (error) {
+        console.error("Error fetching phones by user email", error);
+        throw new Error("Error fetching phones by user email");
+    }
+  }
+
+  async getUserPhonesByUserId(user_id: number): Promise<User_phones[]> {
+    try {
+        const userPhones = await this.userPhonesRepository.find({ relations: ["user_id"] });
+
+        const filtered = userPhones.filter(User_phones => User_phones.user_id.user_id === user_id);
+
+        return filtered.map(entity => this.toDomain(entity));
+    } catch (error) {
+        console.error("Error fetching phones by user id", error);
+        throw new Error("Error fetching phones by user id");
+    }
+  }
+
 }

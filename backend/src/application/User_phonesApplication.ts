@@ -8,7 +8,7 @@ export class User_phonesApplication {
     this.port = port;
   }
 
-  async createUserPhone(userphone: Omit<User_phones, "user_phone">): Promise<number> {
+  async createUserPhone(userphone: Omit<User_phones, "user_phone" | "user_name" | "phone_number" | "user_email">): Promise<number> {
     const existingPhones = await this.port.getUserPhoneByPhoneId(userphone.phone_id);
     if (existingPhones.length === 0) {
       return await this.port.createUserPhone(userphone);
@@ -54,6 +54,15 @@ export class User_phonesApplication {
   async getUserPhonesByPhoneId(phone_id: number): Promise<User_phones[]> {
     return await this.port.getUserPhoneByPhoneId(phone_id);
   }
+
+  async getUserPhoneByUserId(user_id: number): Promise<User_phones[]> {
+    return await this.port.getUserPhonesByUserId(user_id);
+  }
+
+  async getUserPhonesByUserEmail(email: string): Promise<User_phones[]> {
+    return await this.port.getUserPhonesByUserEmail(email);
+  }
+
   async getAllUserPhones(): Promise<User_phones[]> {
     return await this.port.getAllUserPhones();
   }

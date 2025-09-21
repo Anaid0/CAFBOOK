@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, JoinColumn, ManyToOne } from "typeorm";
+import { PhonesEntity } from "./PhonesEntity";
+import { UserEntity } from "./UsersEntity";
 
 
 @Entity({name: 'user_phones'})
@@ -6,10 +8,12 @@ export class User_phonesEntity {
     @PrimaryGeneratedColumn()
     user_phone!: number;   
     
-    @Column({type: "int"})
-    phone_id!:number;
+    @ManyToOne(()=> PhonesEntity, {eager: true})
+    @JoinColumn({name: "phone_id"})
+    phone_id!:PhonesEntity;
 
-    @Column({type: "int"})
-    user_id!:number;
+    @ManyToOne(()=> UserEntity, {eager: true})
+    @JoinColumn({name: "user_id"})
+    user_id!:UserEntity;
 
 }

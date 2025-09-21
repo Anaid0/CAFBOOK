@@ -19,7 +19,8 @@ export class Company_phonesAdapter implements Company_phonesPort {
       phone_id: entity.phone_id.phone_id,
       phone_number: entity.phone_id.number,
       company_id: entity.company_id.company_id,
-      bussines_name: entity.company_id.bussines_name
+      bussines_name: entity.company_id.bussines_name,
+      company_email: entity.company_id.email
     };
   }
 
@@ -123,7 +124,6 @@ async getCompanyPhonesByNumber(number: string): Promise<Company_phones[]> {
   }
 }
 
-
 async getCompanyPhoneById(company_phone: number): Promise<Company_phones | null> {
   try {
     const entity = await this.companyPhonesRepository.findOne({
@@ -155,6 +155,19 @@ async getCompanyPhonesByBussinesName(bussines_name: string): Promise<Company_pho
         const companiesPhones = await this.companyPhonesRepository.find({ relations: ["company_id"] });
 
         const filtered = companiesPhones.filter(Company_phones => Company_phones.company_id.bussines_name === bussines_name);
+
+        return filtered.map(entity => this.toDomain(entity));
+    } catch (error) {
+        console.error("Error fetching phones by company name", error);
+        throw new Error("Error fetching phones by company name");
+    }
+  }
+
+  async getCompanyPhonesByCompanyEmail(email: string): Promise<Company_phones[]> {
+    try {
+        const companiesPhones = await this.companyPhonesRepository.find({ relations: ["company_id"] });
+
+        const filtered = companiesPhones.filter(Company_phones => Company_phones.company_id.email === email);
 
         return filtered.map(entity => this.toDomain(entity));
     } catch (error) {
