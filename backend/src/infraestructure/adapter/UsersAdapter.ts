@@ -22,9 +22,12 @@ export class UsersAdapter implements UserPort{
             email: user.email,
             password: user.password,
             status: user.status,
+            photo_url: user.photo_url,
             created_at: user.created_at,
             role_id: user.role_id.role_id,
-            doc_type_id: user.doc_type_id.doc_type_id
+            role_description: user.role_id.description,
+            doc_type_id: user.doc_type_id.doc_type_id,
+            doc_type_description: user.doc_type_id.description
         };
     }
 
@@ -42,6 +45,7 @@ export class UsersAdapter implements UserPort{
         userEntity.password = user.password;
         userEntity.status = user.status;
         userEntity.created_at = user.created_at;
+        userEntity.photo_url = user.photo_url ?? null;
         userEntity.role_id = rolesEntity;
         userEntity.doc_type_id = document_type;
         return userEntity;
@@ -105,6 +109,24 @@ export class UsersAdapter implements UserPort{
             throw new Error("Error deleting all users");
         }
     }
+
+    async restoreUser(user_id: number): Promise<boolean> {
+        try{
+            const existingUser = await this.userRepository.findOne({where:{user_id:user_id}});
+            if (!existingUser){
+                throw new Error("User not found");
+            }
+            Object.assign(existingUser, {
+                status: 1
+            });
+            await this.userRepository.save(existingUser);
+            return true;
+        }catch(error){
+            console.error("Error restore all users", error);
+            throw new Error("Error restore all users");
+        }
+    }
+
 
     async getAllUsers(): Promise<Users[]> {
         try{

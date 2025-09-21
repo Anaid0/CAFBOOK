@@ -4,6 +4,8 @@ import { CompaniesAdapter } from "../adapter/CompaniesAdapter";
 import { CompaniesController } from "../controller/CompaniesController";
 
 const router = Router();
+import multer from "multer";
+const upload = multer({ dest: "uploads/companies/" });
 
 const companyAdapter = new CompaniesAdapter();
 const companyApp = new CompaniesApplication(companyAdapter);
@@ -50,8 +52,7 @@ router.get("/companies/email/:email", async (Request, Response)=>{
         Response.status(400).json({message: "Error en la obtención de correo"});
     }
 });
-
-router.put("/companies/:id", async(Request, Response)=>{
+router.put("/companies/:id", upload.single("profile_image"), async(Request, Response)=>{
     try{
         await companyController.updateCompany(Request, Response);
     }catch(error){
@@ -69,4 +70,12 @@ router.put("/companies/down/:id", async(Request, Response)=>{
     }
 });
 
+router.put("/companies/restore/:id", async(Request, Response)=>{
+    try{
+        await companyController.restoreCompany(Request, Response);
+    }catch(error){
+        console.error("Error en empresa:"+error);
+        Response.status(400).json({message:"Error en empresa"});
+    }
+});
 export default router;

@@ -5,7 +5,6 @@ import { CompaniesEntity } from "../entities/CompaniesEntity";
 import { Companies } from "../../domain/Companies";
 import { RolesEntity } from "../entities/RolesEntity";
 import { Document_typesEntity } from "../entities/Document_typesEntity";
-import { x } from "joi";
 
 export class CompaniesAdapter implements CompaniesPort{
     private companiesRepository: Repository<CompaniesEntity>
@@ -25,7 +24,10 @@ export class CompaniesAdapter implements CompaniesPort{
             password: company.password,
             status: company.status,
             created_at: company.created_at,
+            photo_url: company.photo_url,
             role_id: company.role_id.role_id,
+            role_description: company.role_id.description,
+            doc_type_description: company.doc_type_id.description,
             doc_type_id: company.doc_type_id.doc_type_id
         }
     }
@@ -45,12 +47,13 @@ export class CompaniesAdapter implements CompaniesPort{
         companyEntity.password = company.password;
         companyEntity.status = company.status;
         companyEntity.created_at = company.created_at;
+        companyEntity.photo_url = company.photo_url ?? null;
         companyEntity.role_id = rolesEntity;
         companyEntity.doc_type_id = document_type;
         return companyEntity;
     }
 
-    async createCompany(company: Omit<Companies, "company_id">): Promise<number> {
+    async createCompany(company: Omit<Companies, "company_id" >): Promise<number> {
         try{
             const newCompany = this.toEntity(company);
             const savedCompany = await this.companiesRepository.save(newCompany);
@@ -62,36 +65,37 @@ export class CompaniesAdapter implements CompaniesPort{
     }
 
     async updateCompany(company_id: number, company: Partial<Companies>): Promise<boolean> {
-        try{
-            const existingCompany = await this.companiesRepository.findOne({where:{company_id:company_id}});
-            if (!existingCompany){
-                throw new Error("Company not found");
-            }
-
-            if(company.doc_type_id){
-                const doc_type_id = new Document_typesEntity();
-                doc_type_id.doc_type_id = company.doc_type_id;
-                existingCompany.doc_type_id = doc_type_id;
-            }
-            
-            Object.assign(existingCompany,{
-               bussines_name: company.bussines_name ??  existingCompany.bussines_name,
-               profession: company.profession ?? existingCompany.profession,
-               document_number: company.document_number ?? existingCompany.document_number,
-               email: company.email ?? existingCompany.email,
-               years_experience: company.years_experience ?? existingCompany.years_experience,
-               password: company.password ?? existingCompany.password,
-               doc_type_id: company.doc_type_id ?? existingCompany.doc_type_id,
-               status: 1,
-            });
-            
-            await this.companiesRepository.save(existingCompany);
-            return true;
-        }catch(error){
-            console.error("Error deleting all companies", error);
-            throw new Error("Error deleting all companies");
+    try {
+        const existingCompany = await this.companiesRepository.findOne({ where: { company_id: company_id } });
+        if (!existingCompany) {
+            throw new Error("Company not found");
         }
+
+        if (company.doc_type_id) {
+            const doc_type_id = new Document_typesEntity();
+            doc_type_id.doc_type_id = company.doc_type_id;
+            existingCompany.doc_type_id = doc_type_id;
+        }
+
+        Object.assign(existingCompany, {
+            bussines_name: company.bussines_name ?? existingCompany.bussines_name,
+            profession: company.profession ?? existingCompany.profession,
+            document_number: company.document_number ?? existingCompany.document_number,
+            email: company.email ?? existingCompany.email,
+            years_experience: company.years_experience ?? existingCompany.years_experience,
+            password: company.password ?? existingCompany.password,
+            photo_url: company.photo_url ?? existingCompany.photo_url,
+            doc_type_id: company.doc_type_id ?? existingCompany.doc_type_id,
+            status: 1,
+        });
+
+        await this.companiesRepository.save(existingCompany);
+        return true;
+    } catch (error) {
+        console.error("Error updating company", error);
+        throw new Error("Error updating company");
     }
+}
 
     async deleteCompany(company_id: number): Promise<boolean> {
         try{
@@ -137,6 +141,23 @@ export class CompaniesAdapter implements CompaniesPort{
         }catch(error){
             console.error("Error fetching all companies", error);
             throw new Error("Error fetching all companies");
+        }
+    }
+
+    async restoreCompany(company_id:number): Promise<boolean>{
+        try{
+            const existingCompany = await this.companiesRepository.findOne({where:{company_id:company_id}});
+            if (!existingCompany){
+                throw new Error("Company not found");
+            }
+            Object.assign(existingCompany, {
+                status: 1
+            });
+            await this.companiesRepository.save(existingCompany);
+            return true;
+        }catch(error){
+            console.error("Error deleting all companies", error);
+            throw new Error("Error deleting all companies");
         }
     }
 

@@ -29,7 +29,7 @@ export class CompaniesApplication{
             return token; 
         }
         
-        async createCompany(company: Omit<Companies,"company_id">): Promise<number>{
+        async createCompany(company: Omit<Companies,"company_id"| "role_description" | "doc_type_description">): Promise<number>{
             const existingCompany = await this.port.getCompanyByEmail(company.email);
             if(!existingCompany){
                 return await this.port.createCompany(company);
@@ -55,12 +55,19 @@ export class CompaniesApplication{
         async deleteCompany(company_id:number): Promise<boolean>{
             const existingUser = await this.port.getCompanyById(company_id);
             if(!existingUser){
-                throw new Error("No se encntró el usuario");
+                throw new Error("No se encntró la empresa");
             }
             return await this.port.deleteCompany(company_id);
         }
-    
-        //Consultas get
+
+        async restoreCompany(company_id:number): Promise<boolean>{
+            const existingUser = await this.port.getCompanyById(company_id);
+            if(!existingUser){
+                throw new Error("No se encntró la empresa");
+            }
+            return await this.port.restoreCompany(company_id);
+        } 
+
         async getCompanyById(company_id:number): Promise <Companies | null>{
             return await this.port.getCompanyById(company_id);
         }

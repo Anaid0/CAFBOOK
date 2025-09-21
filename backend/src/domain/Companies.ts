@@ -7,7 +7,10 @@ export interface Companies {
     email: string;
     password: string;
     status: number;
+    photo_url: string | null;
     created_at: Date;
     role_id: number;
+    role_description: string;
     doc_type_id: number;
+    doc_type_description: string;
 }

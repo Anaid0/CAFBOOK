@@ -69,4 +69,13 @@ router.put("/users/down/:id", async(Request, Response)=>{
     }
 });
 
+router.put("/users/restore/:id", async(Request, Response)=>{
+    try{
+        await userController.restoreUser(Request, Response);
+    }catch(error){
+        console.error("Error en usuarios:"+error);
+        Response.status(400).json({message:"Error en usuarios"});
+    }
+});
+
 export default router;

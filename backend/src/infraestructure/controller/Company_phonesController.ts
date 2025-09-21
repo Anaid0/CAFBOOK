@@ -19,8 +19,8 @@ export class Company_phonesController {
     }
 
   const companyPhone: Omit<Company_phones, "company_phone" | "bussines_name" | "phone_number"> = { 
-      phone_id: { id: phone_id } as any,
-      company_id: { id: company_id } as any
+      phone_id: phone_id,
+      company_id: company_id
     };
 
     const id = await this.app.createCompanyPhone(companyPhone);
@@ -34,7 +34,7 @@ export class Company_phonesController {
 
   async searchCompanyPhoneById(request: Request, response: Response): Promise<Response> {
     try {
-      const company_phone = parseInt(request.params.company_phone);
+      const company_phone = parseInt(request.params.id);
       if (isNaN(company_phone)) {
         return response.status(400).json({ message: "Error en parámetro" });
       }

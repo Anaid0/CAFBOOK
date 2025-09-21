@@ -2,16 +2,17 @@ import { Router, Request } from "express";
 import { MediasAdapter } from "../adapter/MediasAdapter";
 import { MediasApplication } from "../../application/MediasApplication";
 import { MediasController } from "../controller/MediasController";
+import multer from "multer";
 
 const router = Router();
-
+const upload = multer({ dest: "uploads/" });
 
 const mediasAdapter = new MediasAdapter();
 const mediasApp = new MediasApplication(mediasAdapter);
 const mediasController = new MediasController(mediasApp);
 
 
-router.post("/medias", async (Request, Response) => {
+router.post("/medias/:id", upload.single("file"), async (Request, Response) => {
   try {
     await mediasController.registerMedia(Request, Response);
   } catch (error) {
@@ -19,7 +20,6 @@ router.post("/medias", async (Request, Response) => {
     Response.status(400).json({ message: "Error creando media" });
   }
 });
-
 
 router.get("/medias/:id", async (Request, Response) => {
   try {
@@ -30,7 +30,6 @@ router.get("/medias/:id", async (Request, Response) => {
   }
 });
 
-
 router.get("/medias/type/:id", async (Request, Response) => {
   try {
     await mediasController.searchMediaByTypeId(Request, Response);
@@ -40,6 +39,14 @@ router.get("/medias/type/:id", async (Request, Response) => {
   }
 });
 
+router.get("/medias/post/:id", async (Request, Response) => {
+  try {
+    await mediasController.searchMediaByPostId(Request, Response);
+  } catch (error) {
+    console.error("Error obteniendo medias por tipo: " + error);
+    Response.status(400).json({ message: "Error obteniendo medias por tipo" });
+  }
+});
 
 router.put("/medias/:id", async (Request, Response) => {
   try {
@@ -50,7 +57,6 @@ router.put("/medias/:id", async (Request, Response) => {
   }
 });
 
-
 router.delete("/medias/:id", async (Request, Response) => {
   try {
     await mediasController.downMedia(Request, Response);
@@ -59,7 +65,6 @@ router.delete("/medias/:id", async (Request, Response) => {
     Response.status(400).json({ message: "Error eliminando media" });
   }
 });
-
 
 router.get("/medias", async (Request, Response) => {
   try {
