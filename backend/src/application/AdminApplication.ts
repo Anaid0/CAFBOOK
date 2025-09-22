@@ -31,6 +31,8 @@ export class AdminApplication{
     async createAdmin(admin: Omit<Admin,"admin_id">): Promise<number>{
         const existingAdmin = await this.port.getAdminByEmail(admin.email);
         if (!existingAdmin) {
+            const hashedPass= await bcrypt.hash(admin.password, 10);
+            admin.password = hashedPass;
             return await this.port.createAdmin(admin);
         }
         throw new Error("Ya existe un usuario asociado a este email");
