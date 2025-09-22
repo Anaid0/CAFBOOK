@@ -10,7 +10,7 @@ import {
   ActivityIndicator
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { loginUser } from "../../apis/usersapi"; // Asegúrate que la ruta sea correcta
+import { loginUser } from "../../apis/usersapi";
 
 const LoginScreen = () => {
   const navigation = useNavigation<any>();
@@ -27,12 +27,14 @@ const LoginScreen = () => {
     setIsLoading(true);
 
     try {
-      const user = await loginUser(email, password); // Llamada a la API
+      // Desestructuramos token e id del backend
+      const { token, id } = await loginUser(email, password);
       setIsLoading(false);
 
-      if (user && user.user_id) {
-        console.log("Login exitoso:", user);
-        navigation.navigate("homeScreen", { user }); // Envía info del usuario a la siguiente pantalla
+      if (token && id) {
+        console.log("Login exitoso:", { token, id });
+        // Navegamos al homeScreen enviando el id y token
+        navigation.navigate("Main", { userId: id, token });
       } else {
         Alert.alert("Error", "Credenciales incorrectas");
       }
