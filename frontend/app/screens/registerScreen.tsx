@@ -38,8 +38,7 @@ const RegisterScreen = () => {
   const [yearsOfExperience, setYearsOfExperience] = useState("");
 
   const roles = [
-    { label: "Agricultor", value: "agricultor" },
-    { label: "Ganadero", value: "ganadero" },
+    { label: "Agricultor y/o Ganadero", value: "agricultor" },
     { label: "Empresa/Emprendimiento", value: "empresa" }
   ];
 
