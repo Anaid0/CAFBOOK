@@ -60,7 +60,7 @@ async login(req: Request, res: Response): Promise<string | Response>{
         return response.status(400).json({message:"Error en la petición"});
     }
 
-    async searchAdminById (request: Request, response: Response): Promise<Response>{
+    async searchAdminById(request: Request, response: Response): Promise<Response>{
         try{
             const admin_id = parseInt(request.params.id);
             if(isNaN(admin_id)) return response.status(400).json({message:"Error en parámetro"});
