@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:4200";
+const API_URL = "http://localhost:4200/api";
 
 
 export const createCropType = async (cropTypeData: any) => {
