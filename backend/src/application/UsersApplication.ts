@@ -10,24 +10,26 @@ export class UsersApplication{
         this.port = port;
     }
 
-    async login(email:string, password:string):Promise<string>{
-        const existingUser = await this.port.getUserByEmail(email);
-        if(!existingUser){  
-            throw new Error("Credenciales Inválidas");
-        }
-
-        const passwordMath= await bcrypt.compare(password, existingUser.password);
-        if(!passwordMath){
-            throw new Error("Invalid Credencials")
-        }
-
-        const token = AuthApplication.generateToken({
-            id: existingUser.user_id,
-            email: existingUser.email
-        });
-
-        return token; 
+    async login(email: string, password: string): Promise<{ token: string; id: number }> {
+    const existingUser = await this.port.getUserByEmail(email);
+    if (!existingUser) {
+        throw new Error("Credenciales inválidas");
     }
+
+    const passwordMatch = await bcrypt.compare(password, existingUser.password);
+    if (!passwordMatch) {
+        throw new Error("Credenciales inválidas");
+    }
+
+    const token = AuthApplication.generateToken({
+        id: existingUser.user_id,
+        email: existingUser.email,
+        role: "user"
+    });
+
+    return { token, id: existingUser.user_id };
+}
+
     
     async createUser(user: Omit<Users,"user_id" | "role_description" | "doc_type_description" | "photo_url">): Promise<number>{
         const existingUser = await this.port.getUserByEmail(user.email);
