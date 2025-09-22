@@ -2,6 +2,7 @@ import { Router } from "express";
 import { CompaniesApplication } from "../../application/CompaniesApplication";
 import { CompaniesAdapter } from "../adapter/CompaniesAdapter";
 import { CompaniesController } from "../controller/CompaniesController";
+import { authenticateToken } from '../web/authMiddleware';
 
 const router = Router();
 import multer from "multer";
@@ -34,7 +35,7 @@ router.get("/companies", async(Request, Response)=>{
     }
 });
 
-router.get("/companies/:id", async(Request, Response)=>{
+router.get("/companies/:id", authenticateToken, async(Request, Response)=>{
     try{
         await companyController.searchCompanyById(Request, Response);
     }catch(error){

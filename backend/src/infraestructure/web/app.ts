@@ -20,6 +20,7 @@ import commentsRoutes from "../routers/CommentsRoutes";
 import cropsRoutes from "../routers/CropsRoutes";
 import userRoutes from "../routers/UsersRoutes";
 import companyRoutes from "../routers/CompaniesRoutes";
+import adminRoutes from "../routers/AdminRoutes";
 
 class App {
     private app: express.Application;
@@ -69,6 +70,7 @@ class App {
         this.app.use("/api", cropsRoutes);
         this.app.use("/api", userRoutes);
         this.app.use("/api", companyRoutes);
+        this.app.use("/api", adminRoutes);
     }
 
     getApp() {

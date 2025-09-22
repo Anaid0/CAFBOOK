@@ -62,7 +62,7 @@ export class AdminApplication{
     }
 
     async getAllAdmins(): Promise<Admin[]>{
-        return await this.getAllAdmins();
+        return await this.port.getAllAdmins();
     }
 
     async getAdminByEmail(email: string): Promise<Admin | null>{
