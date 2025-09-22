@@ -32,7 +32,7 @@ const LoginScreen = () => {
 
       if (user && user.user_id) {
         console.log("Login exitoso:", user);
-        navigation.navigate("home", { user }); // Envía info del usuario a la siguiente pantalla
+        navigation.navigate("homeScreen", { user }); // Envía info del usuario a la siguiente pantalla
       } else {
         Alert.alert("Error", "Credenciales incorrectas");
       }

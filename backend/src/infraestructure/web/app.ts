@@ -1,5 +1,5 @@
-import express, { Request, Response } from "express";
-import cors from "cors";
+import express, { Request, Response, NextFunction } from "express";
+// import cors from "cors"; // Ya no hace falta
 import rolesRoutes from "../routers/RolesRoutes";
 import departmentsRoutes from "../routers/DepartmentsRoutes";
 import document_typesRoutes from "../routers/Document_typesRouter";
@@ -33,12 +33,19 @@ class App {
     private middleware(): void {
         this.app.use(express.json());
 
-        // 🔹 Agregar CORS
-        this.app.use(cors({
-            origin: "http://localhost:8081", // tu frontend React
-            methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            credentials: true
-        }));
+        // 🔹 Middleware CORS personalizado
+        this.app.use((req: Request, res: Response, next: NextFunction) => {
+            res.header("Access-Control-Allow-Origin", "http://localhost:8081");
+            res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+            res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+            res.header("Access-Control-Allow-Credentials", "true");
+
+            if (req.method === "OPTIONS") {
+                // Preflight request
+                return res.sendStatus(204);
+            }
+            next();
+        });
     }
 
     private routes(): void {

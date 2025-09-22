@@ -14,6 +14,7 @@ import EditarManualScreen from "./app/screens/editarManualScreen";
 import EditarTutorialScreen from "./app/screens/EditarTutorialScreen";
 import AgregarScreen from "./app/screens/agregarScreen";
 import CultivosScreen from "./app/screens/cultivosScreen";
+import homeScreen from "./app/screens/homeScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -37,6 +38,8 @@ export default function App() {
         <Stack.Screen name="editarForosScreen" component={EditarForoScreen} />
         <Stack.Screen name="agregarScreen" component={AgregarScreen} />
         <Stack.Screen name="cultivosScreen" component={CultivosScreen} />
+        <Stack.Screen name="homeScreen" component={homeScreen} />
+
 
       </Stack.Navigator>
     </NavigationContainer>
