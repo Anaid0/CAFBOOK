@@ -6,14 +6,11 @@ import {
   TouchableOpacity, 
   StyleSheet, 
   Image,
-  Alert 
+  Alert,
+  ActivityIndicator
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
-const TEST_PROFILE = {
-  email: "usuario@prueba.com",
-  password: "password123"
-};
+import { loginUser } from "../../apis/usersapi"; // Asegúrate que la ruta sea correcta
 
 const LoginScreen = () => {
   const navigation = useNavigation<any>();
@@ -21,7 +18,7 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("Error", "Por favor completa todos los campos");
       return;
@@ -29,29 +26,27 @@ const LoginScreen = () => {
 
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
+      const user = await loginUser(email, password); // Llamada a la API
       setIsLoading(false);
-      
-      if (email === TEST_PROFILE.email && password === TEST_PROFILE.password) {
-        console.log("Login exitoso con perfil de prueba");
-        navigation.navigate("Main");
+
+      if (user && user.user_id) {
+        console.log("Login exitoso:", user);
+        navigation.navigate("home", { user }); // Envía info del usuario a la siguiente pantalla
       } else {
-        Alert.alert("Error", "Credenciales incorrectas. Usa:\nEmail: usuario@prueba.com\nContraseña: password123");
+        Alert.alert("Error", "Credenciales incorrectas");
       }
-    }, 1500);
+    } catch (error: any) {
+      setIsLoading(false);
+      Alert.alert(
+        "Error",
+        error.response?.data?.message || "Ocurrió un error al iniciar sesión"
+      );
+    }
   };
 
-  const handleGoogleLogin = () => {
-    Alert.alert("Google Login", "Esta funcionalidad no está implementada en la versión de prueba");
-  };
-
-  const navigateToRegister = () => {
-    navigation.navigate("Register");
-  };
-
-  const navigateToForgotPassword = () => {
-    navigation.navigate("ForgotPassword");
-  };
+  const navigateToRegister = () => navigation.navigate("Register");
+  const navigateToForgotPassword = () => navigation.navigate("ForgotPassword");
 
   return (
     <View style={styles.container}>
@@ -62,12 +57,6 @@ const LoginScreen = () => {
         />
         <Text style={styles.title}>CAF-BOOK</Text>
         <Text style={styles.subtitle}>Inicia Sesión</Text>
-        
-        <View style={styles.testProfileInfo}>
-          <Text style={styles.testProfileTitle}>Perfil de Prueba:</Text>
-          <Text style={styles.testProfileText}>Email: usuario@prueba.com</Text>
-          <Text style={styles.testProfileText}>Contraseña: password123</Text>
-        </View>
       </View>
 
       <TextInput 
@@ -95,17 +84,17 @@ const LoginScreen = () => {
         onPress={handleLogin}
         disabled={isLoading}
       >
-        <Text style={styles.loginButtonText}>
-          {isLoading ? "Cargando..." : "Iniciar Sesión"}
-        </Text>
+        {isLoading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
+        )}
       </TouchableOpacity>
 
       <Text style={styles.orText}>Or</Text>
-      <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
+      <TouchableOpacity style={styles.googleButton} onPress={() => Alert.alert("Google Login", "No implementado aún")}>
         <Image
-          source={{
-            uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
-          }}
+          source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" }}
           style={styles.googleLogo}
         />
         <Text style={styles.googleText}>Continue with Google</Text>
@@ -149,23 +138,6 @@ const styles = StyleSheet.create({
     fontSize: 18, 
     color: "#1C2833", 
     marginBottom: 15 
-  },
-  testProfileInfo: {
-    backgroundColor: "#F8F9F9",
-    padding: 10,
-    borderRadius: 8,
-    marginTop: 10,
-    width: "100%",
-    alignItems: "center",
-  },
-  testProfileTitle: {
-    fontWeight: "bold",
-    marginBottom: 5,
-    color: "#2E4053",
-  },
-  testProfileText: {
-    fontSize: 12,
-    color: "#566573",
   },
   input: {
     width: "100%",

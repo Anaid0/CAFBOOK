@@ -1,4 +1,5 @@
-import express,{Request, Response} from "express";
+import express, { Request, Response } from "express";
+import cors from "cors";
 import rolesRoutes from "../routers/RolesRoutes";
 import departmentsRoutes from "../routers/DepartmentsRoutes";
 import document_typesRoutes from "../routers/Document_typesRouter";
@@ -20,20 +21,27 @@ import cropsRoutes from "../routers/CropsRoutes";
 import userRoutes from "../routers/UsersRoutes";
 import companyRoutes from "../routers/CompaniesRoutes";
 
-class App{
+class App {
     private app: express.Application;
 
-    constructor(){
+    constructor() {
         this.app = express();
         this.middleware();
         this.routes();
     }
 
-    private middleware():void{
+    private middleware(): void {
         this.app.use(express.json());
+
+        // 🔹 Agregar CORS
+        this.app.use(cors({
+            origin: "http://localhost:8081", // tu frontend React
+            methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            credentials: true
+        }));
     }
 
-    private routes():void{
+    private routes(): void {
         this.app.use("/api", rolesRoutes);
         this.app.use("/api", departmentsRoutes);
         this.app.use("/api", document_typesRoutes);
@@ -55,7 +63,8 @@ class App{
         this.app.use("/api", userRoutes);
         this.app.use("/api", companyRoutes);
     }
-    getApp(){
+
+    getApp() {
         return this.app;
     }
 }

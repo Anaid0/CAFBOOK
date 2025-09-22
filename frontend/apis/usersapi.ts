@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const API = "http://localhost:4200"; 
+const API = "http://localhost:4200/api"; 
 
 
 export const loginUser = async (email: string, password: string) => {
