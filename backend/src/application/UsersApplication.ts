@@ -32,6 +32,8 @@ export class UsersApplication{
     async createUser(user: Omit<Users,"user_id" | "role_description" | "doc_type_description" | "photo_url">): Promise<number>{
         const existingUser = await this.port.getUserByEmail(user.email);
         if(!existingUser){
+            const hashedPass= await bcrypt.hash(user.password, 10);
+            user.password = hashedPass;
             return await this.port.createUser(user);
         }
         throw new Error("Ya existe un usuario asociado a este email");

@@ -1,4 +1,7 @@
 import { AdminApplication } from "../../application/AdminApplication";
+import {Request, Response} from "express";
+import { Validators } from "../config/validations";
+import { Admin } from '../../domain/Admin';
 
 export class AdminController{
     private app: AdminApplication;
@@ -32,18 +35,9 @@ async login(req: Request, res: Response): Promise<string | Response>{
     }
   }
 
-    async registerUser(request: Request, response: Response): Promise <Response>{
-        const { firts_name, last_name, document_number, email, password, doc_type_id } = request.body;
+    async registerAdmin(request: Request, response: Response): Promise <Response>{
+        const { email, password} = request.body;
         try{
-
-            if(!Validators.name(firts_name))
-                return response.status(400).json({message: "Nombres inválido"});
-
-            if(!Validators.name(last_name))
-                return response.status(400).json({message: "Apellidos inválido"});
-
-            if(!Validators.document(document_number))
-                return response.status(400).json({message: "Número de documento inválido"});
 
             if(!Validators.email(email))
                 return response.status(400).json({message: "Correo inválido"});
@@ -51,10 +45,10 @@ async login(req: Request, res: Response): Promise<string | Response>{
             if(!Validators.password(password))
                 return response.status(400).json({message:"La contraseña debe tener entre 6 y 25 caracteres, incluyendo al menos una letra y un número"});
         
-            const user: Omit<Users, "user_id" | "role_description" | "doc_type_description" | "photo_url"> = {
-                firts_name, last_name, document_number, doc_type_id, email, password, role_id: 1, status: 1, created_at: new Date()
+            const admin: Omit<Admin, "admin_id"> = {
+                email, password
             };
-            const user_id = await this.app.createUser(user);
+            const user_id = await this.app.createAdmin(admin);
 
             return response.status(201).json({message:"Usuario creado exitosamente:", user_id});
         }catch(error){
@@ -66,12 +60,12 @@ async login(req: Request, res: Response): Promise<string | Response>{
         return response.status(400).json({message:"Error en la petición"});
     }
 
-    async searchUserById (request: Request, response: Response): Promise<Response>{
+    async searchAdminById (request: Request, response: Response): Promise<Response>{
         try{
-            const user_id = parseInt(request.params.id);
-            if(isNaN(user_id)) return response.status(400).json({message:"Error en parámetro"});
-            const user = await this.app.getUserById(user_id);
-            if(!user) return response.status(404).json({message:"Usuario no encontrado"});
+            const admin_id = parseInt(request.params.id);
+            if(isNaN(admin_id)) return response.status(400).json({message:"Error en parámetro"});
+            const user = await this.app.getAdminById(admin_id);
+            if(!user) return response.status(404).json({message:"Admin no encontrado"});
 
             return response.status(200).json(user);
         
@@ -83,13 +77,13 @@ async login(req: Request, res: Response): Promise<string | Response>{
         return response.status(400).json({message:"Error en la petición"});
     }
 
-    async searchUserByEmail (request: Request, response: Response): Promise<Response>{
+    async searchAdminByEmail (request: Request, response: Response): Promise<Response>{
         try{
             const {email}= (request.params);
             if(!Validators.email(email))
                 return response.status(400).json({ error: "Correo electrónico no válido" });
  
-            const user = await this.app.getUserByEmail(email);
+            const user = await this.app.getAdminByEmail(email);
             if(!user) return response.status(404).json({message:"Usuario no encontrado"});
 
             return response.status(200).json(user);
