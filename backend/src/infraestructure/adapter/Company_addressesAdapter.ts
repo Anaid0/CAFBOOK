@@ -130,7 +130,7 @@ export class Company_addressAdapter implements Company_addressPort {
   
   async getCompanyAddressByDepartmentName(department_name: string): Promise<Company_addresses[]> {
     try {
-        const addresses = await this.companyAddressesRepository.find({ relations: ["department_id"] });
+        const addresses = await this.companyAddressesRepository.find({ relations: ["address_id", "address_id.city_id", "address_id.city_id.department_id", "company_id"] });
 
         const filtered = addresses.filter(Company_addresses => Company_addresses.address_id.city_id.department_id.department_name === department_name);
 

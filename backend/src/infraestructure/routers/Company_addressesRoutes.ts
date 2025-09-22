@@ -52,7 +52,7 @@ router.get("/company_addresses/department/name/:name", async (Request, Response)
   try {
     await company_addressController.getCompanyAddressByDepartmentName(Request, Response);
   } catch (error) {
-    console.error("Error en búsqueda por company_id: " + error);
+    console.error("Error en búsqueda por nombre de departamento: " + error);
     Response.status(400).json({ message: "Error en búsqueda de direcciones por compañía" });
   }
 });

@@ -46,7 +46,6 @@ export class UsersApplication{
             const emailTaken = await this.port.getUserByEmail(user.email)
             if(emailTaken && emailTaken.user_id !==user_id){
                 throw new Error("Error, no se puede actualizar el email")
-
             }
         }
         return await this.port.updateUser(user_id,user);

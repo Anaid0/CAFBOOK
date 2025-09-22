@@ -9,7 +9,6 @@ const user_addressAdapter = new User_addressAdapter();
 const user_addressApp = new User_addressApplication(user_addressAdapter);
 const user_addressController = new User_addressController(user_addressApp);
 
-
 router.post("/user_addresses", async (Request, Response) => {
   try {
     await user_addressController.registerUserAddress(Request, Response);
@@ -18,7 +17,6 @@ router.post("/user_addresses", async (Request, Response) => {
     Response.status(400).json({ message: "Error en la creación de la dirección de usuario" });
   }
 });
-
 
 router.get("/user_addresses", async (Request, Response) => {
   try {
@@ -29,7 +27,6 @@ router.get("/user_addresses", async (Request, Response) => {
   }
 });
 
-
 router.get("/user_addresses/:id", async (Request, Response) => {
   try {
     await user_addressController.searchUserAddressById(Request, Response);
@@ -38,7 +35,6 @@ router.get("/user_addresses/:id", async (Request, Response) => {
     Response.status(400).json({ message: "Error en búsqueda por ID de dirección de usuario" });
   }
 });
-
 
 router.get("/user_addresses/user/:id", async (Request, Response) => {
   try {
@@ -49,6 +45,23 @@ router.get("/user_addresses/user/:id", async (Request, Response) => {
   }
 });
 
+router.get("/user_addresses/user/email/:email", async (Request, Response) => {
+  try {
+    await user_addressController.searchUserAddressByUserEmail(Request, Response);
+  } catch (error) {
+    console.error("Error en búsqueda por user_id: " + error);
+    Response.status(400).json({ message: "Error en búsqueda de direcciones por usuario" });
+  }
+});
+
+router.get("/user_addresses/department/name/:name", async (Request, Response) => {
+  try {
+    await user_addressController.searchUserAddressByDepartmentName(Request, Response);
+  } catch (error) {
+    console.error("Error en búsqueda por user_id: " + error);
+    Response.status(400).json({ message: "Error en búsqueda de direcciones por usuario" });
+  }
+});
 
 router.delete("/user_addresses/:id", async (Request, Response) => {
   try {
