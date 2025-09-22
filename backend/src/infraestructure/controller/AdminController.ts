@@ -77,14 +77,14 @@ async login(req: Request, res: Response): Promise<string | Response>{
         return response.status(400).json({message:"Error en la petición"});
     }
 
-    async searchAdminByEmail (request: Request, response: Response): Promise<Response>{
+    async searchAdminByEmail(request: Request, response: Response): Promise<Response>{
         try{
             const {email}= (request.params);
             if(!Validators.email(email))
                 return response.status(400).json({ error: "Correo electrónico no válido" });
  
             const user = await this.app.getAdminByEmail(email);
-            if(!user) return response.status(404).json({message:"Usuario no encontrado"});
+            if(!user) return response.status(404).json({message:"Admin no encontrado"});
 
             return response.status(200).json(user);
         
@@ -96,10 +96,10 @@ async login(req: Request, res: Response): Promise<string | Response>{
         return response.status(400).json({message:"Error en la petición"});
     }
 
-    async allUsers (request: Request, response: Response): Promise<Response>{
+    async allAdmins(request: Request, response: Response): Promise<Response>{
         try{
-            const users = await this.app.getAllUsers();
-            return response.status(200).json(users)
+            const admins = await this.app.getAllAdmins();
+            return response.status(200).json(admins)
         }catch(error){
             if(error instanceof Error){
                 return response.status(500).json({message:"Error en el servidor"});
@@ -110,27 +110,10 @@ async login(req: Request, res: Response): Promise<string | Response>{
 
     async downdUser(request: Request, response: Response): Promise<Response>{
         try{
-            const user_id = parseInt(request.params.id);
-            if(isNaN(user_id)) return response.status(400).json({message:"Error en parámetro"});
-            const user = await this.app.deleteUser(user_id);
-            if(!user) return response.status(404).json({message:"Usuario no encontrado"});
-
-            return response.status(200).json(user);
-        
-        }catch(error){
-            if(error instanceof Error){
-                return response.status(500).json({message:"Error en el servidor"});
-            }
-        }
-        return response.status(400).json({message:"Error en la petición"});
-    }
-
-        async restoreUser(request: Request, response: Response): Promise<Response>{
-        try{
-            const user_id = parseInt(request.params.id);
-            if(isNaN(user_id)) return response.status(400).json({message:"Error en parámetro"});
-            const user = await this.app.restoreUser(user_id);
-            if(!user) return response.status(404).json({message:"Usuario no encontrado"});
+            const admin_id = parseInt(request.params.id);
+            if(isNaN(admin_id)) return response.status(400).json({message:"Error en parámetro"});
+            const user = await this.app.deleteAdmin(admin_id);
+            if(!user) return response.status(404).json({message:"Admin no encontrado"});
 
             return response.status(200).json(user);
         
@@ -142,25 +125,12 @@ async login(req: Request, res: Response): Promise<string | Response>{
         return response.status(400).json({message:"Error en la petición"});
     }
     
-    async updateUser(request: Request, response: Response): Promise<Response>{
+    async updateAdmin(request: Request, response: Response): Promise<Response>{
         try{
-            const userId = parseInt(request.params.id);
-            if(isNaN(userId)) return response.status(400).json({message:"Error en parámetro"});
+            const adminId = parseInt(request.params.id);
+            if(isNaN(adminId)) return response.status(400).json({message:"Error en parámetro"});
             
-            let { firts_name, last_name, document_number, email, password, doc_type_id, } = request.body;
-
-             // Validaciones antes de actualizar
-            if (firts_name && !Validators.name(firts_name)) 
-                return response.status(400).json({message:"El nombre debe tener al menos 3 caracteresponse y solo contener letras",
-            });
-
-            if (last_name && !Validators.name(last_name)) 
-                return response.status(400).json({message:"El apellido debe tener al menos 3 caracteresponse y solo contener letras",
-            });
-
-            if (document_number && !Validators.document(document_number)) 
-                return response.status(400).json({message:"número de documento debe ser váido",
-            });
+            let { email, password } = request.body;
  
             if (email && !Validators.email(email))
                 return response.status(400).json({ error: "Correo electrónico no válido" });
@@ -168,8 +138,8 @@ async login(req: Request, res: Response): Promise<string | Response>{
             if (password && !Validators.password(password))
                 return response.status(400).json({message:"La contraseña debe tener al menos 6 caracteres, incluyendo al menos una letra y un número"});
       
-      const updated = await this.app.updateUser(userId,{firts_name, last_name, document_number, email, password, doc_type_id, status: 1});
-      if(!updated) return response.status(404).json({message: "Usuario no encontrado o sin cambios"});
+      const updated = await this.app.updateAdmin(adminId,{email, password});
+      if(!updated) return response.status(404).json({message: "Admin no encontrado o sin cambios"});
 
       return response.status(200).json({message:"Usuaurio actualizaco exitosamente"})
  

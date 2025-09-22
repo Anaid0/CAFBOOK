@@ -22,7 +22,7 @@ export class CompaniesEntity {
     @Column({type: "character varying", length: 150})
     email!: string;
 
-    @Column({type: "character varying", length:25})
+    @Column({type: "character varying", length:150})
     password!: string;
 
     @Column({type: "character varying", length:150, nullable: true})
