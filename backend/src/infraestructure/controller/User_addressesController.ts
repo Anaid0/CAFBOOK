@@ -1,6 +1,7 @@
 import { User_addressApplication } from "../../application/User_addressesApplication";
 import { User_addresses } from "../../domain/User_addresses";
 import { Request, Response } from "express";
+import { Validators } from "../config/validations";
 
 export class User_addressController {
     private app: User_addressApplication;
@@ -20,7 +21,7 @@ export class User_addressController {
                 return response.status(400).json({ message: "ID de usuario inválido" });
             }
 
-            const userAddress: Omit<User_addresses, "user_address_id"> = {
+            const userAddress: Omit<User_addresses, "user_address_id" | "user_name" | "address_street"> = {
                 address_id: Number(address_id),
                 user_id: Number(user_id),
             };
@@ -73,6 +74,44 @@ export class User_addressController {
             }
 
             return response.status(200).json(userAddress);
+        } catch (error) {
+            if (error instanceof Error) {
+                return response.status(500).json({ message: "Error en el servidor" });
+            }
+        }
+        return response.status(400).json({ message: "Error en la petición" });
+    }
+
+    async searchUserAddressByUserEmail(request: Request, response: Response): Promise<Response> {
+        try {
+            const {email} = request.params;
+            const userAddress = await this.app.getUseraddressByUserEmail(email);
+            if (!userAddress) {
+                return response.status(404).json({ message: "Dirección de usuario no encontrada" });
+            }
+
+            return response.status(200).json(userAddress);
+        } catch (error) {
+            if (error instanceof Error) {
+                return response.status(500).json({ message: "Error en el servidor" });
+            }
+        }
+        return response.status(400).json({ message: "Error en la petición" });
+    }
+
+     async searchUserAddressByDepartmentName(request: Request, response: Response): Promise<Response> {
+        try {
+            const {department} = request.params;
+            if (!Validators.name(department)) {
+                return response.status(400).json({ error: "Nombre de departamento no válido" });
+            }
+
+            const addresses = await this.app.getUseraddressByDepartmentName(department);
+            if (!addresses || addresses.length === 0) {
+                return response.status(404).json({ message: "No se encontraron direcciones para ese departamento" });
+            }
+
+            return response.status(200).json(addresses);
         } catch (error) {
             if (error instanceof Error) {
                 return response.status(500).json({ message: "Error en el servidor" });

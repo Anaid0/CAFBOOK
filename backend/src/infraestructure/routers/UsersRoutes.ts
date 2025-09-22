@@ -2,7 +2,7 @@ import { Router, Response, Request } from "express";
 import { UsersAdapter } from "../adapter/UsersAdapter";
 import { UsersApplication } from "../../application/UsersApplication";
 import { UsersController } from "../controller/UsersController";
-import { authenticateToken } from "../web/authMiddleware";
+import { authenticateToken } from '../web/authMiddleware';
 
 const router = Router();
 
@@ -23,7 +23,7 @@ router.post("/users", async(Request, Response)=>{
     }
 });
 
-router.get("/users", async(Request, Response)=>{
+router.get("/users", authenticateToken, async(Request, Response)=>{
     try{
         await userController.allUsers(Request, Response);
     }catch(error){

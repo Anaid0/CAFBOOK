@@ -8,7 +8,7 @@ export class User_addressApplication {
         this.port = port;
     }
 
-    async createUseraddress(useraddress: Omit<User_addresses, "user_address_id">): Promise<number> {
+    async createUseraddress(useraddress: Omit<User_addresses, "user_address_id" | "user_name" | "address_street">): Promise<number> {
         const existingAddress = await this.port.getUserAddressByAddressId(useraddress.address_id);
         if (existingAddress.length === 0) {
             return await this.port.createUserAddress(useraddress);
@@ -46,6 +46,14 @@ export class User_addressApplication {
 
     async getUserAddressByAddressid(address_id: number): Promise<User_addresses[]> {
         return await this.port.getUserAddressByAddressId(address_id);
+    }
+
+    async getUseraddressByUserEmail(email: string): Promise<User_addresses[]> {
+        return await this.port.getUserAddressByUserEmail(email);
+    }
+
+    async getUseraddressByDepartmentName(department_name: string): Promise<User_addresses[]> {
+        return await this.port.getUserAddressByDepartmentName(department_name);
     }
 
     async getAllUserAddresses(): Promise<User_addresses[]> {

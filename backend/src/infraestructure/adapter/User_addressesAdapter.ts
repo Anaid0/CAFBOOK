@@ -1,8 +1,10 @@
 import { Repository } from "typeorm";
-import { User_addresses } from "../../domain/User_addresses";
+import { User_addresses } from '../../domain/User_addresses';
 import { User_addressPort } from "../../domain/User_addressesPort";
 import { User_addressesEntity } from "../entities/User_addressesEntity";
 import { AppDataSource } from "../config/con_data_bases";
+import { AddressesEntity } from "../entities/AddressesEntity";
+import { UserEntity } from "../entities/UsersEntity";
 
 export class User_addressAdapter implements User_addressPort {
   private userAddressesRepository: Repository<User_addressesEntity>;
@@ -14,15 +16,23 @@ export class User_addressAdapter implements User_addressPort {
   private toDomain(entity: User_addressesEntity): User_addresses {
     return {
       user_address_id: entity.user_address_id,
-      address_id: entity.address_id,
-      user_id: entity.user_id,
+      address_id: entity.address_id.address_id,
+      address_street: entity.address_id.street,
+      user_id: entity.user_id.user_id,
+      user_name: `${entity.user_id.firts_name} ${entity.user_id.last_name}`
     };
   }
 
   private toEntity(domain: Omit<User_addresses, "user_address_id">): User_addressesEntity {
     const entity = new User_addressesEntity();
-    entity.address_id = domain.address_id;
-    entity.user_id = domain.user_id;
+    const address = new AddressesEntity();
+    const user = new UserEntity();
+
+    address.address_id = domain.address_id;
+    user.user_id = domain.user_id;
+
+    entity.address_id = address;
+    entity.user_id = user;
     return entity;
   }
 
@@ -93,11 +103,40 @@ export class User_addressAdapter implements User_addressPort {
 
   async getUserAddressByAddressId(address_id: number): Promise<User_addresses[]> {
     try {
-      const entities = await this.userAddressesRepository.find({ where: { address_id } });
-      return entities.map((entity) => this.toDomain(entity));
+      const entities = await this.userAddressesRepository.find({relations:["address_id"] });
+
+      const filtered = entities.filter(User_addresses => User_addresses.address_id.address_id === address_id);
+
+      return filtered.map(entity => this.toDomain(entity));
     } catch (error) {
-      console.error("Error obteniendo direcciones de la compañía por address_id:", error);
-      throw new Error("Error obteniendo direcciones de la compañía por address_id");
+      console.error("Error obteniendo direcciones del usuario por address_id:", error);
+      throw new Error("Error obteniendo direcciones del usuario por address_id");
+    }
+  }
+
+  async getUserAddressByUserEmail(email: string): Promise<User_addresses[]> {
+    try {
+      const entities = await this.userAddressesRepository.find({relations:["address_id", "user_id"] });
+
+      const filtered = entities.filter(User_addresses => User_addresses.user_id.email === email);
+
+      return filtered.map(entity => this.toDomain(entity));
+    } catch (error) {
+      console.error("Error obteniendo direcciones del usuario por email:", error);
+      throw new Error("Error obteniendo direcciones del usuario por email");
+    }
+  }
+
+  async getUserAddressByDepartmentName(department_name: string): Promise<User_addresses[]> {
+    try {
+      const addresses = await this.userAddressesRepository.find({ relations: ["address_id", "address_id.city_id", "address_id.city_id.department_id", "user_id"] });
+
+        const filtered = addresses.filter(User_addresses => User_addresses.address_id.city_id.department_id.department_name === department_name);
+
+      return filtered.map(entity => this.toDomain(entity));
+    } catch (error) {
+      console.error("Error obteniendo direcciones del usuario por departamento", error);
+      throw new Error("Error obteniendo direcciones del usuario por departamento");
     }
   }
 }
