@@ -16,7 +16,7 @@ import { getAdmins, createAdmin, downAdmin, updateAdmin, restoreAdmin } from "..
 import { getAllDocumentTypes } from "../../apis/documentTypesApi";
 import RNPickerSelect from 'react-native-picker-select';
 
-const HomeScreen = () => {
+const HomeScreen = ({ searchTerm = "" }) => {
   const [activeTab, setActiveTab] = useState<"users" | "companies" | "admins">("users");
   const [users, setUsers] = useState<any[]>([]);
   const [companies, setCompanies] = useState<any[]>([]);
@@ -61,6 +61,13 @@ const HomeScreen = () => {
   useEffect(() => {
     loadTokenAndData();
   }, []);
+
+  // Efecto para mostrar información de búsqueda
+  useEffect(() => {
+    if (searchTerm) {
+      console.log(`Buscando: ${searchTerm}`);
+    }
+  }, [searchTerm]);
 
   const loadTokenAndData = async () => {
     try {
@@ -187,6 +194,34 @@ const HomeScreen = () => {
     }
   };
 
+  // Función para filtrar por email
+  const filterByEmail = (data: any[]) => {
+    if (!searchTerm) return data;
+    
+    return data.filter(item => 
+      item.email && item.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+
+  // Combinar filtros: primero por estado, luego por email
+  const filterData = (data: any[]) => {
+    let filteredData = data;
+    
+    // Filtro por estado
+    if (filter === "active") {
+      filteredData = data.filter(item => item.status === 1);
+    } else if (filter === "inactive") {
+      filteredData = data.filter(item => item.status === 0);
+    }
+    
+    // Filtro por email (si hay búsqueda)
+    if (searchTerm) {
+      filteredData = filterByEmail(filteredData);
+    }
+    
+    return filteredData;
+  };
+
   const handleCreateUser = async () => {
     try {
       if (!newUser.first_name || !newUser.last_name || !newUser.document_number || !newUser.email || !newUser.password) {
@@ -288,7 +323,7 @@ const HomeScreen = () => {
 
   const handleToggleUser = async (user: any) => {
     try {
-      if (user.status) {
+      if (user.status === 1) {
         await downUser(user.user_id);
         Alert.alert("Éxito", "Usuario desactivado correctamente");
       } else {
@@ -311,7 +346,7 @@ const HomeScreen = () => {
 
   const handleToggleCompany = async (company: any) => {
     try {
-      if (company.status) {
+      if (company.status === 1) {
         await downCompany(company.company_id);
         Alert.alert("Éxito", "Empresa desactivada correctamente");
       } else {
@@ -334,7 +369,7 @@ const HomeScreen = () => {
 
   const handleToggleAdmin = async (admin: any) => {
     try {
-      if (admin.status) {
+      if (admin.status === 1) {
         await downAdmin(admin.admin_id);
         Alert.alert("Éxito", "Administrador desactivado correctamente");
       } else {
@@ -374,7 +409,7 @@ const HomeScreen = () => {
         }
 
         const userDataToUpdate: any = {
-          first_name: editingItem.first_name, // CORREGIDO
+          first_name: editingItem.first_name,
           last_name: editingItem.last_name,
           document_number: editingItem.document_number,
           email: editingItem.email,
@@ -418,7 +453,7 @@ const HomeScreen = () => {
 
         const adminDataToUpdate: any = {
           email: editingItem.email,
-          first_name: editingItem.first_name || "", // CORREGIDO
+          first_name: editingItem.first_name || "",
           last_name: editingItem.last_name || "",
           document_number: editingItem.document_number || "",
           doc_type_id: editingItem.doc_type_id || 1
@@ -445,13 +480,6 @@ const HomeScreen = () => {
         Alert.alert("Error", error.response?.data?.message || "No se pudieron actualizar los datos");
       }
     }
-  };
-
-  const filterData = (data: any[]) => {
-    if (filter === "all") return data;
-    if (filter === "active") return data.filter(item => item.status);
-    if (filter === "inactive") return data.filter(item => !item.status);
-    return data;
   };
 
   const getDocTypeLabel = (docTypeId: number) => {
@@ -489,6 +517,18 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
+      {/* Información de búsqueda */}
+      {searchTerm && (
+        <View style={localStyles.searchInfo}>
+          <Text style={localStyles.searchText}>
+            Buscando: {searchTerm}
+          </Text>
+          <Text style={localStyles.searchResults}>
+            Resultados: {filterData(activeTab === "users" ? users : activeTab === "companies" ? companies : admins).length}
+          </Text>
+        </View>
+      )}
+
       {/* Tabs */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
@@ -542,9 +582,9 @@ const HomeScreen = () => {
               <RNPickerSelect
                 onValueChange={(value) => setNewUser({ ...newUser, doc_type_id: value || 1 })}
                 items={docTypes}
-                value={newUser.doc_type_id || 1} // CORREGIDO
+                value={newUser.doc_type_id || 1}
                 style={pickerSelectStyles}
-                placeholder={{ label: "Seleccione tipo de documento", value: undefined }} // CORREGIDO
+                placeholder={{ label: "Seleccione tipo de documento", value: undefined }}
               />
 
               <TextInput 
@@ -556,8 +596,8 @@ const HomeScreen = () => {
               <TextInput 
                 placeholder="Nombre" 
                 style={styles.input} 
-                value={newUser.first_name} // CORREGIDO
-                onChangeText={t => setNewUser({ ...newUser, first_name: t })} // CORREGIDO
+                value={newUser.first_name}
+                onChangeText={t => setNewUser({ ...newUser, first_name: t })}
               />
               <TextInput 
                 placeholder="Apellido" 
@@ -590,9 +630,9 @@ const HomeScreen = () => {
               <RNPickerSelect
                 onValueChange={(value) => setNewCompany({ ...newCompany, doc_type_id: value || 1 })}
                 items={docTypes}
-                value={newCompany.doc_type_id || 1} // CORREGIDO
+                value={newCompany.doc_type_id || 1}
                 style={pickerSelectStyles}
-                placeholder={{ label: "Seleccione tipo de documento", value: undefined }} // CORREGIDO
+                placeholder={{ label: "Seleccione tipo de documento", value: undefined }}
               />
 
               <TextInput 
@@ -672,13 +712,13 @@ const HomeScreen = () => {
                     <Text>Email: {u.email}</Text>
                     <Text>Documento: {u.document_number}</Text>
                     <Text>Tipo Doc: {getDocTypeLabel(u.doc_type_id)}</Text>
-                    <Text style={[styles.statusText, u.status ? styles.activeStatus : styles.inactiveStatus]}>
-                      Estado: {u.status ? "Activo" : "Inactivo"}
+                    <Text style={[styles.statusText, u.status === 1 ? styles.activeStatus : styles.inactiveStatus]}>
+                      Estado: {u.status === 1 ? "Activo" : "Inactivo"}
                     </Text>
                     <View style={styles.actionsContainer}>
                       <TouchableOpacity onPress={() => handleToggleUser(u)}>
-                        <Text style={[styles.actionText, u.status ? styles.deleteText : styles.restoreText]}>
-                          {u.status ? "Desactivar" : "Activar"}
+                        <Text style={[styles.actionText, u.status === 1 ? styles.deleteText : styles.restoreText]}>
+                          {u.status === 1 ? "Desactivar" : "Activar"}
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => handleEditItem(u)}>
@@ -699,13 +739,13 @@ const HomeScreen = () => {
                     <Text>Tipo Doc: {getDocTypeLabel(c.doc_type_id)}</Text>
                     <Text>Profesión: {c.profession}</Text>
                     <Text>Años experiencia: {c.years_experience}</Text>
-                    <Text style={[styles.statusText, c.status ? styles.activeStatus : styles.inactiveStatus]}>
-                      Estado: {c.status ? "Activo" : "Inactivo"}
+                    <Text style={[styles.statusText, c.status === 1 ? styles.activeStatus : styles.inactiveStatus]}>
+                      Estado: {c.status === 1 ? "Activo" : "Inactivo"}
                     </Text>
                     <View style={styles.actionsContainer}>
                       <TouchableOpacity onPress={() => handleToggleCompany(c)}>
-                        <Text style={[styles.actionText, c.status ? styles.deleteText : styles.restoreText]}>
-                          {c.status ? "Desactivar" : "Activar"}
+                        <Text style={[styles.actionText, c.status === 1 ? styles.deleteText : styles.restoreText]}>
+                          {c.status === 1 ? "Desactivar" : "Activar"}
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => handleEditItem(c)}>
@@ -722,13 +762,13 @@ const HomeScreen = () => {
                   <View key={a.admin_id} style={styles.card}>
                     <Text style={styles.cardTitle}>{a.first_name} {a.last_name}</Text>
                     <Text>Email: {a.email}</Text>
-                    <Text style={[styles.statusText, a.status ? styles.activeStatus : styles.inactiveStatus]}>
-                      Estado: {a.status ? "Activo" : "Inactivo"}
+                    <Text style={[styles.statusText, a.status === 1 ? styles.activeStatus : styles.inactiveStatus]}>
+                      Estado: {a.status === 1 ? "Activo" : "Inactivo"}
                     </Text>
                     <View style={styles.actionsContainer}>
                       <TouchableOpacity onPress={() => handleToggleAdmin(a)}>
-                        <Text style={[styles.actionText, a.status ? styles.deleteText : styles.restoreText]}>
-                          {a.status ? "Desactivar" : "Activar"}
+                        <Text style={[styles.actionText, a.status === 1 ? styles.deleteText : styles.restoreText]}>
+                          {a.status === 1 ? "Desactivar" : "Activar"}
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => handleEditItem(a)}>
@@ -743,7 +783,7 @@ const HomeScreen = () => {
         </View>
       </View>
 
-      {/* Modal de edición CORREGIDO */}
+      {/* Modal de edición */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -753,27 +793,26 @@ const HomeScreen = () => {
 
             {editingItem && (
               <>
-                {/* Ocultar Tipo de Documento solo para administradores */}
                 {activeTab !== "admins" && (
                   <>
                     <Text style={styles.label}>Tipo de Documento</Text>
                     <RNPickerSelect
                       onValueChange={(value) => setEditingItem({ ...editingItem, doc_type_id: value || 1 })}
                       items={docTypes}
-                      value={editingItem.doc_type_id || 1} // CORREGIDO
+                      value={editingItem.doc_type_id || 1}
                       style={pickerSelectStyles}
-                      placeholder={{ label: "Seleccione tipo de documento", value: undefined }} // CORREGIDO
+                      placeholder={{ label: "Seleccione tipo de documento", value: undefined }}
                     />
                   </>
                 )}
 
-                {(activeTab === "users") && (
+                {(activeTab === "users" || activeTab === "admins") && (
                   <>
                     <TextInput 
                       placeholder="Nombre" 
                       style={styles.input} 
-                      value={editingItem.first_name} // CORREGIDO
-                      onChangeText={t => setEditingItem({ ...editingItem, first_name: t })} // CORREGIDO
+                      value={editingItem.first_name}
+                      onChangeText={t => setEditingItem({ ...editingItem, first_name: t })}
                     />
                     <TextInput 
                       placeholder="Apellido" 
@@ -781,16 +820,15 @@ const HomeScreen = () => {
                       value={editingItem.last_name} 
                       onChangeText={t => setEditingItem({ ...editingItem, last_name: t })} 
                     />
-                    <TextInput 
+                  </>
+                )}
+
+                <TextInput 
                   placeholder="Número de Documento" 
                   style={styles.input} 
                   value={editingItem.document_number} 
                   onChangeText={t => setEditingItem({ ...editingItem, document_number: t })} 
                 />
-                  </>
-                )}
-
-                
 
                 {activeTab === "companies" && (
                   <>
@@ -848,7 +886,7 @@ const HomeScreen = () => {
   );
 };
 
-// Los estilos se mantienen igual...
+// Estilos principales
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
@@ -1044,6 +1082,28 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 5,
     color: "#2C3E50",
+  },
+});
+
+// Estilos locales para la información de búsqueda
+const localStyles = StyleSheet.create({
+  searchInfo: {
+    backgroundColor: "#E3F2FD",
+    padding: 10,
+    margin: 10,
+    borderRadius: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: "#2196F3",
+  },
+  searchText: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#1976D2",
+  },
+  searchResults: {
+    fontSize: 12,
+    color: "#666",
+    marginTop: 2,
   },
 });
 
