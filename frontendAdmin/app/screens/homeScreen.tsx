@@ -12,16 +12,22 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getUsers, createUser, downUser, updateUser, restoreUser } from "../../apis/usersapi";
 import { getAllCompanies, createCompany, updateCompany, downCompany, restoreCompany } from "../../apis/companiesApi";
+import { getAdmins, createAdmin, downAdmin, updateAdmin, restoreAdmin } from "../../apis/adminApi";
+import { getAllDocumentTypes } from "../../apis/documentTypesApi";
+import RNPickerSelect from 'react-native-picker-select';
 
 const HomeScreen = () => {
-  const [activeTab, setActiveTab] = useState<"users" | "companies">("users");
+  const [activeTab, setActiveTab] = useState<"users" | "companies" | "admins">("users");
   const [users, setUsers] = useState<any[]>([]);
   const [companies, setCompanies] = useState<any[]>([]);
+  const [admins, setAdmins] = useState<any[]>([]);
+  const [docTypes, setDocTypes] = useState<{ label: string; value: number }[]>([]);
   const [filter, setFilter] = useState<"all" | "active" | "inactive">("all");
   const [token, setToken] = useState<string>("");
 
+  // Estados para nuevos registros - CORREGIDOS
   const [newUser, setNewUser] = useState<any>({
-    firts_name: "",
+    first_name: "", // CORREGIDO: era firts_name
     last_name: "",
     document_number: "",
     email: "",
@@ -39,9 +45,18 @@ const HomeScreen = () => {
     doc_type_id: 1,
   });
 
+  const [newAdmin, setNewAdmin] = useState<any>({
+    first_name: "", // CORREGIDO: era firts_name
+    last_name: "",
+    document_number: "",
+    email: "",
+    password: "",
+    doc_type_id: 1,
+  });
+
   const [modalVisible, setModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
-  const [newPassword, setNewPassword] = useState(""); // ✅ Nuevo estado para contraseña
+  const [newPassword, setNewPassword] = useState("");
 
   useEffect(() => {
     loadTokenAndData();
@@ -57,11 +72,49 @@ const HomeScreen = () => {
       }
       
       setToken(userToken);
+      await fetchDocumentTypes(userToken);
       await fetchUsers(userToken);
       await fetchCompanies(userToken);
+      await fetchAdmins(userToken);
     } catch (error) {
       console.error("Error inicializando:", error);
       Alert.alert("Error", "No se pudieron cargar los datos");
+    }
+  };
+
+  const fetchDocumentTypes = async (userToken?: string) => {
+    try {
+      const authToken = userToken || token;
+      if (!authToken) {
+        Alert.alert("Error", "Token de autenticación no disponible");
+        return;
+      }
+      
+      const docTypesResponse = await getAllDocumentTypes();
+      const docTypesData = Array.isArray(docTypesResponse) ? docTypesResponse : (docTypesResponse.data || []);
+
+      if (Array.isArray(docTypesData) && docTypesData.length > 0) {
+        const formattedDocTypes = docTypesData.map((d: any) => ({
+          label: d.description || `Documento ${d.doc_type_id}`,
+          value: d.doc_type_id
+        }));
+        setDocTypes(formattedDocTypes);
+      } else {
+        setDocTypes([
+          { label: "Cédula de Ciudadanía", value: 1 },
+          { label: "Cédula de Extranjería", value: 2 },
+          { label: "NIT", value: 3 },
+          { label: "Pasaporte", value: 4 }
+        ]);
+      }
+    } catch (error: any) {
+      console.error("Error cargando tipos de documento:", error);
+      setDocTypes([
+        { label: "Cédula de Ciudadanía", value: 1 },
+        { label: "Cédula de Extranjería", value: 2 },
+        { label: "NIT", value: 3 },
+        { label: "Pasaporte", value: 4 }
+      ]);
     }
   };
 
@@ -76,10 +129,12 @@ const HomeScreen = () => {
       const res = await getUsers(authToken);
       setUsers(res);
     } catch (error: any) {
-      console.error("Error cargando usuarios:", error.response?.data);
+      console.error("Error cargando usuarios:", error);
       
       if (error.response?.status === 403) {
         Alert.alert("Error de Autenticación", "Token inválido o expirado. Por favor, inicie sesión nuevamente.");
+      } else if (error.code === 'ERR_NETWORK') {
+        Alert.alert("Error de Conexión", "No se puede conectar con el servidor. Verifica que el backend esté ejecutándose.");
       } else {
         Alert.alert("Error", "No se pudieron cargar los usuarios");
       }
@@ -97,27 +152,60 @@ const HomeScreen = () => {
       const res = await getAllCompanies();
       setCompanies(res);
     } catch (error: any) {
-      console.error("Error cargando empresas:", error.response?.data);
+      console.error("Error cargando empresas:", error);
       
       if (error.response?.status === 403) {
         Alert.alert("Error de Autenticación", "Token inválido o expirado. Por favor, inicie sesión nuevamente.");
+      } else if (error.code === 'ERR_NETWORK') {
+        Alert.alert("Error de Conexión", "No se puede conectar con el servidor. Verifica que el backend esté ejecutándose.");
       } else {
         Alert.alert("Error", "No se pudieron cargar las empresas");
       }
     }
   };
 
+  const fetchAdmins = async (userToken?: string) => {
+    try {
+      const authToken = userToken || token;
+      if (!authToken) {
+        Alert.alert("Error", "Token de autenticación no disponible");
+        return;
+      }
+
+      const res = await getAdmins(authToken);
+      setAdmins(res);
+    } catch (error: any) {
+      console.error("Error cargando administradores:", error);
+      
+      if (error.response?.status === 403) {
+        Alert.alert("Error de Autenticación", "Token inválido o expirado. Por favor, inicie sesión nuevamente.");
+      } else if (error.code === 'ERR_NETWORK') {
+        Alert.alert("Error de Conexión", "No se puede conectar con el servidor. Verifica que el backend esté ejecutándose.");
+      } else {
+        Alert.alert("Error", "No se pudieron cargar los administradores");
+      }
+    }
+  };
+
   const handleCreateUser = async () => {
     try {
-      if (!newUser.firts_name || !newUser.last_name || !newUser.document_number || !newUser.email || !newUser.password) {
+      if (!newUser.first_name || !newUser.last_name || !newUser.document_number || !newUser.email || !newUser.password) {
         Alert.alert("Error", "Todos los campos son obligatorios");
         return;
       }
 
-      await createUser(newUser);
-      fetchUsers();
+      // Asegurar que doc_type_id tenga un valor válido
+      const userData = {
+        ...newUser,
+        doc_type_id: newUser.doc_type_id || 1
+      };
+
+      console.log("Enviando datos de usuario:", userData);
+
+      await createUser(userData);
+      await fetchUsers();
       setNewUser({
-        firts_name: "",
+        first_name: "",
         last_name: "",
         document_number: "",
         email: "",
@@ -128,7 +216,10 @@ const HomeScreen = () => {
     } catch (error: any) {
       console.error("Error creando usuario:", error.response?.data);
       
-      if (error.response?.status === 403) {
+      if (error.response?.status === 500) {
+        Alert.alert("Error del Servidor", "Hubo un problema interno en el servidor. Verifica la consola para más detalles.");
+        console.error("Detalles del error 500:", error.response.data);
+      } else if (error.response?.status === 403) {
         Alert.alert("Error de Autenticación", "Token inválido o expirado");
       } else {
         Alert.alert("Error", error.response?.data?.message || "No se pudo crear el usuario");
@@ -166,6 +257,35 @@ const HomeScreen = () => {
     }
   };
 
+  const handleCreateAdmin = async () => {
+    try {
+      if (!newAdmin.email || !newAdmin.password) {
+        Alert.alert("Error", "Email y contraseña son obligatorios");
+        return;
+      }
+
+      await createAdmin(newAdmin);
+      fetchAdmins();
+      setNewAdmin({
+        first_name: "",
+        last_name: "",
+        document_number: "",
+        email: "",
+        password: "",
+        doc_type_id: 1,
+      });
+      Alert.alert("Éxito", "Administrador creado correctamente");
+    } catch (error: any) {
+      console.error("Error creando administrador:", error.response?.data);
+      
+      if (error.response?.status === 403) {
+        Alert.alert("Error de Autenticación", "Token inválido o expirado");
+      } else {
+        Alert.alert("Error", error.response?.data?.message || "No se pudo crear el administrador");
+      }
+    }
+  };
+
   const handleToggleUser = async (user: any) => {
     try {
       if (user.status) {
@@ -177,9 +297,11 @@ const HomeScreen = () => {
       }
       fetchUsers();
     } catch (error: any) {
-      console.error("Error cambiando estado:", error.response?.data);
+      console.error("Error cambiando estado usuario:", error);
       
-      if (error.response?.status === 403) {
+      if (error.code === 'ERR_NETWORK') {
+        Alert.alert("Error de Conexión", "No se puede conectar con el servidor. Verifica que el backend esté ejecutándose.");
+      } else if (error.response?.status === 403) {
         Alert.alert("Error de Autenticación", "Token inválido o expirado");
       } else {
         Alert.alert("Error", error.response?.data?.message || "No se pudo cambiar el estado del usuario");
@@ -198,9 +320,11 @@ const HomeScreen = () => {
       }
       fetchCompanies();
     } catch (error: any) {
-      console.error("Error cambiando estado:", error.response?.data);
+      console.error("Error cambiando estado empresa:", error);
       
-      if (error.response?.status === 403) {
+      if (error.code === 'ERR_NETWORK') {
+        Alert.alert("Error de Conexión", "No se puede conectar con el servidor. Verifica que el backend esté ejecutándose.");
+      } else if (error.response?.status === 403) {
         Alert.alert("Error de Autenticación", "Token inválido o expirado");
       } else {
         Alert.alert("Error", error.response?.data?.message || "No se pudo cambiar el estado de la empresa");
@@ -208,30 +332,55 @@ const HomeScreen = () => {
     }
   };
 
+  const handleToggleAdmin = async (admin: any) => {
+    try {
+      if (admin.status) {
+        await downAdmin(admin.admin_id);
+        Alert.alert("Éxito", "Administrador desactivado correctamente");
+      } else {
+        if (restoreAdmin) {
+          await restoreAdmin(admin.admin_id);
+          Alert.alert("Éxito", "Administrador activado correctamente");
+        } else {
+          Alert.alert("Info", "Función de reactivación no disponible temporalmente");
+        }
+      }
+      fetchAdmins();
+    } catch (error: any) {
+      console.error("Error cambiando estado administrador:", error);
+      
+      if (error.code === 'ERR_NETWORK') {
+        Alert.alert("Error de Conexión", "No se puede conectar con el servidor. Verifica que el backend esté ejecutándose.");
+      } else if (error.response?.status === 403) {
+        Alert.alert("Error de Autenticación", "Token inválido o expirado");
+      } else {
+        Alert.alert("Error", error.response?.data?.message || "No se pudo cambiar el estado del administrador");
+      }
+    }
+  };
+
   const handleEditItem = (item: any) => {
     setEditingItem({ ...item });
-    setNewPassword(""); // ✅ Limpiar contraseña al abrir modal
+    setNewPassword("");
     setModalVisible(true);
   };
 
   const handleSaveEdit = async () => {
     try {
       if (activeTab === "users") {
-        if (!editingItem.firts_name || !editingItem.last_name || !editingItem.document_number || !editingItem.email) {
+        if (!editingItem.first_name || !editingItem.last_name || !editingItem.document_number || !editingItem.email) {
           Alert.alert("Error", "Todos los campos son obligatorios");
           return;
         }
 
-        // ✅ Crear objeto con contraseña opcional
         const userDataToUpdate: any = {
-          firts_name: editingItem.firts_name,
+          first_name: editingItem.first_name, // CORREGIDO
           last_name: editingItem.last_name,
           document_number: editingItem.document_number,
           email: editingItem.email,
           doc_type_id: editingItem.doc_type_id || 1
         };
 
-        // ✅ Solo agregar contraseña si se proporcionó una nueva
         if (newPassword && newPassword.trim() !== "") {
           userDataToUpdate.password = newPassword;
         }
@@ -245,7 +394,6 @@ const HomeScreen = () => {
           return;
         }
 
-        // ✅ Lógica similar para empresas
         const companyDataToUpdate: any = {
           bussines_name: editingItem.bussines_name,
           document_number: editingItem.document_number,
@@ -261,11 +409,32 @@ const HomeScreen = () => {
 
         await updateCompany(editingItem.company_id, companyDataToUpdate);
         fetchCompanies();
+      
+      } else if (activeTab === "admins") {
+        if (!editingItem.email) {
+          Alert.alert("Error", "El email es obligatorio");
+          return;
+        }
+
+        const adminDataToUpdate: any = {
+          email: editingItem.email,
+          first_name: editingItem.first_name || "", // CORREGIDO
+          last_name: editingItem.last_name || "",
+          document_number: editingItem.document_number || "",
+          doc_type_id: editingItem.doc_type_id || 1
+        };
+
+        if (newPassword && newPassword.trim() !== "") {
+          adminDataToUpdate.password = newPassword;
+        }
+
+        await updateAdmin(editingItem.admin_id, adminDataToUpdate);
+        fetchAdmins();
       }
       
       setModalVisible(false);
       setEditingItem(null);
-      setNewPassword(""); // ✅ Limpiar contraseña
+      setNewPassword("");
       Alert.alert("Éxito", "Datos actualizados correctamente");
     } catch (error: any) {
       console.error("Error actualizando:", error.response?.data);
@@ -280,9 +449,42 @@ const HomeScreen = () => {
 
   const filterData = (data: any[]) => {
     if (filter === "all") return data;
-    if (filter === "active") return data.filter(item => item.status === true);
-    if (filter === "inactive") return data.filter(item => item.status === false);
+    if (filter === "active") return data.filter(item => item.status);
+    if (filter === "inactive") return data.filter(item => !item.status);
     return data;
+  };
+
+  const getDocTypeLabel = (docTypeId: number) => {
+    const docType = docTypes.find(doc => doc.value === docTypeId);
+    return docType ? docType.label : "Desconocido";
+  };
+
+  const pickerSelectStyles = {
+    inputIOS: { 
+      fontSize: 16, 
+      paddingVertical: 12, 
+      paddingHorizontal: 10, 
+      borderWidth: 1, 
+      borderColor: '#D5D8DC', 
+      borderRadius: 8, 
+      color: 'black', 
+      paddingRight: 30, 
+      backgroundColor: '#FFFFFF', 
+      marginBottom: 10 
+    },
+    inputAndroid: { 
+      fontSize: 16, 
+      paddingHorizontal: 10, 
+      paddingVertical: 8, 
+      borderWidth: 1, 
+      borderColor: '#D5D8DC', 
+      borderRadius: 8, 
+      color: 'black', 
+      paddingRight: 30, 
+      backgroundColor: '#FFFFFF', 
+      marginBottom: 10 
+    },
+    placeholder: { color: '#999' },
   };
 
   return (
@@ -305,6 +507,14 @@ const HomeScreen = () => {
             Empresas
           </Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === "admins" && styles.activeTab]}
+          onPress={() => setActiveTab("admins")}
+        >
+          <Text style={[styles.tabText, activeTab === "admins" && styles.activeTabText]}>
+            Administradores
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {/* Filtros */}
@@ -320,221 +530,297 @@ const HomeScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.scroll}>
-        {activeTab === "users" ? (
-          <>
-            <Text style={styles.sectionTitle}>Usuarios ({filterData(users).length})</Text>
-            {filterData(users).map(u => (
-              <View key={u.user_id} style={styles.card}>
-                <Text style={styles.cardTitle}>{u.firts_name} {u.last_name}</Text>
-                <Text>Email: {u.email}</Text>
-                <Text>Documento: {u.document_number}</Text>
-                <Text style={[styles.statusText, u.status ? styles.activeStatus : styles.inactiveStatus]}>
-                  Estado: {u.status ? "Activo" : "Inactivo"}
-                </Text>
-                <View style={styles.actionsContainer}>
-                  <TouchableOpacity onPress={() => handleToggleUser(u)}>
-                    <Text style={[styles.actionText, u.status ? styles.deleteText : styles.restoreText]}>
-                      {u.status ? "Desactivar" : "Activar"}
+      {/* Diseño de dos columnas */}
+      <View style={styles.twoColumnsContainer}>
+        {/* Columna Izquierda - Formularios */}
+        <View style={styles.leftColumn}>
+          {activeTab === "users" ? (
+            <View style={styles.formContainer}>
+              <Text style={styles.sectionTitle}>Crear Nuevo Usuario</Text>
+              
+              <Text style={styles.label}>Tipo de Documento</Text>
+              <RNPickerSelect
+                onValueChange={(value) => setNewUser({ ...newUser, doc_type_id: value || 1 })}
+                items={docTypes}
+                value={newUser.doc_type_id || 1} // CORREGIDO
+                style={pickerSelectStyles}
+                placeholder={{ label: "Seleccione tipo de documento", value: undefined }} // CORREGIDO
+              />
+
+              <TextInput 
+                placeholder="Número de Documento" 
+                style={styles.input} 
+                value={newUser.document_number} 
+                onChangeText={t => setNewUser({ ...newUser, document_number: t })} 
+              />
+              <TextInput 
+                placeholder="Nombre" 
+                style={styles.input} 
+                value={newUser.first_name} // CORREGIDO
+                onChangeText={t => setNewUser({ ...newUser, first_name: t })} // CORREGIDO
+              />
+              <TextInput 
+                placeholder="Apellido" 
+                style={styles.input} 
+                value={newUser.last_name} 
+                onChangeText={t => setNewUser({ ...newUser, last_name: t })} 
+              />
+              <TextInput 
+                placeholder="Correo" 
+                style={styles.input} 
+                value={newUser.email} 
+                onChangeText={t => setNewUser({ ...newUser, email: t })} 
+              />
+              <TextInput 
+                placeholder="Contraseña" 
+                secureTextEntry 
+                style={styles.input} 
+                value={newUser.password} 
+                onChangeText={t => setNewUser({ ...newUser, password: t })} 
+              />
+              <TouchableOpacity style={styles.createBtn} onPress={handleCreateUser}>
+                <Text style={styles.createBtnText}>Crear Usuario</Text>
+              </TouchableOpacity>
+            </View>
+          ) : activeTab === "companies" ? (
+            <View style={styles.formContainer}>
+              <Text style={styles.sectionTitle}>Crear Nueva Empresa</Text>
+              
+              <Text style={styles.label}>Tipo de Documento</Text>
+              <RNPickerSelect
+                onValueChange={(value) => setNewCompany({ ...newCompany, doc_type_id: value || 1 })}
+                items={docTypes}
+                value={newCompany.doc_type_id || 1} // CORREGIDO
+                style={pickerSelectStyles}
+                placeholder={{ label: "Seleccione tipo de documento", value: undefined }} // CORREGIDO
+              />
+
+              <TextInput 
+                placeholder="Número de Documento" 
+                style={styles.input} 
+                value={newCompany.document_number} 
+                onChangeText={t => setNewCompany({ ...newCompany, document_number: t })} 
+              />
+              <TextInput 
+                placeholder="Nombre Empresa" 
+                style={styles.input} 
+                value={newCompany.bussines_name} 
+                onChangeText={t => setNewCompany({ ...newCompany, bussines_name: t })} 
+              />
+              <TextInput 
+                placeholder="Profesión" 
+                style={styles.input} 
+                value={newCompany.profession} 
+                onChangeText={t => setNewCompany({ ...newCompany, profession: t })} 
+              />
+              <TextInput 
+                placeholder="Años de Experiencia" 
+                keyboardType="numeric" 
+                style={styles.input} 
+                value={String(newCompany.years_experience)} 
+                onChangeText={t => setNewCompany({ ...newCompany, years_experience: Number(t) || 0 })} 
+              />
+              <TextInput 
+                placeholder="Correo" 
+                style={styles.input} 
+                value={newCompany.email} 
+                onChangeText={t => setNewCompany({ ...newCompany, email: t })} 
+              />
+              <TextInput 
+                placeholder="Contraseña" 
+                secureTextEntry 
+                style={styles.input} 
+                value={newCompany.password} 
+                onChangeText={t => setNewCompany({ ...newCompany, password: t })} 
+              />
+              <TouchableOpacity style={styles.createBtn} onPress={handleCreateCompany}>
+                <Text style={styles.createBtnText}>Crear Empresa</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.formContainer}>
+              <Text style={styles.sectionTitle}>Crear Nuevo Administrador</Text>
+              <TextInput 
+                placeholder="Correo" 
+                style={styles.input} 
+                value={newAdmin.email} 
+                onChangeText={t => setNewAdmin({ ...newAdmin, email: t })} 
+              />
+              <TextInput 
+                placeholder="Contraseña" 
+                secureTextEntry 
+                style={styles.input} 
+                value={newAdmin.password} 
+                onChangeText={t => setNewAdmin({ ...newAdmin, password: t })} 
+              />
+              <TouchableOpacity style={styles.createBtn} onPress={handleCreateAdmin}>
+                <Text style={styles.createBtnText}>Crear Administrador</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+
+        {/* Columna Derecha - Listas */}
+        <View style={styles.rightColumn}>
+          <ScrollView style={styles.scroll}>
+            {activeTab === "users" ? (
+              <>
+                <Text style={styles.sectionTitle}>Lista de Usuarios ({filterData(users).length})</Text>
+                {filterData(users).map(u => (
+                  <View key={u.user_id} style={styles.card}>
+                    <Text style={styles.cardTitle}>{u.first_name} {u.last_name}</Text>
+                    <Text>Email: {u.email}</Text>
+                    <Text>Documento: {u.document_number}</Text>
+                    <Text>Tipo Doc: {getDocTypeLabel(u.doc_type_id)}</Text>
+                    <Text style={[styles.statusText, u.status ? styles.activeStatus : styles.inactiveStatus]}>
+                      Estado: {u.status ? "Activo" : "Inactivo"}
                     </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => handleEditItem(u)}>
-                    <Text style={[styles.actionText, styles.editText]}>Editar</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))}
-
-            {/* Crear usuario */}
-            <Text style={styles.sectionTitle}>Crear Usuario</Text>
-            <TextInput 
-              placeholder="Nombre" 
-              style={styles.input} 
-              value={newUser.firts_name} 
-              onChangeText={t => setNewUser({ ...newUser, firts_name: t })} 
-            />
-            <TextInput 
-              placeholder="Apellido" 
-              style={styles.input} 
-              value={newUser.last_name} 
-              onChangeText={t => setNewUser({ ...newUser, last_name: t })} 
-            />
-            <TextInput 
-              placeholder="Documento" 
-              style={styles.input} 
-              value={newUser.document_number} 
-              onChangeText={t => setNewUser({ ...newUser, document_number: t })} 
-            />
-            <TextInput 
-              placeholder="Correo" 
-              style={styles.input} 
-              value={newUser.email} 
-              onChangeText={t => setNewUser({ ...newUser, email: t })} 
-            />
-            <TextInput 
-              placeholder="Contraseña" 
-              secureTextEntry 
-              style={styles.input} 
-              value={newUser.password} 
-              onChangeText={t => setNewUser({ ...newUser, password: t })} 
-            />
-            <TouchableOpacity style={styles.createBtn} onPress={handleCreateUser}>
-              <Text style={styles.createBtnText}>Crear Usuario</Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <>
-            <Text style={styles.sectionTitle}>Empresas ({filterData(companies).length})</Text>
-            {filterData(companies).map(c => (
-              <View key={c.company_id} style={styles.card}>
-                <Text style={styles.cardTitle}>{c.bussines_name}</Text>
-                <Text>Email: {c.email}</Text>
-                <Text>Documento: {c.document_number}</Text>
-                <Text>Profesión: {c.profession}</Text>
-                <Text>Años experiencia: {c.years_experience}</Text>
-                <Text style={[styles.statusText, c.status ? styles.activeStatus : styles.inactiveStatus]}>
-                  Estado: {c.status ? "Activo" : "Inactivo"}
-                </Text>
-                <View style={styles.actionsContainer}>
-                  <TouchableOpacity onPress={() => handleToggleCompany(c)}>
-                    <Text style={[styles.actionText, c.status ? styles.deleteText : styles.restoreText]}>
-                      {c.status ? "Desactivar" : "Activar"}
+                    <View style={styles.actionsContainer}>
+                      <TouchableOpacity onPress={() => handleToggleUser(u)}>
+                        <Text style={[styles.actionText, u.status ? styles.deleteText : styles.restoreText]}>
+                          {u.status ? "Desactivar" : "Activar"}
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => handleEditItem(u)}>
+                        <Text style={[styles.actionText, styles.editText]}>Editar</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))}
+              </>
+            ) : activeTab === "companies" ? (
+              <>
+                <Text style={styles.sectionTitle}>Lista de Empresas ({filterData(companies).length})</Text>
+                {filterData(companies).map(c => (
+                  <View key={c.company_id} style={styles.card}>
+                    <Text style={styles.cardTitle}>{c.bussines_name}</Text>
+                    <Text>Email: {c.email}</Text>
+                    <Text>Documento: {c.document_number}</Text>
+                    <Text>Tipo Doc: {getDocTypeLabel(c.doc_type_id)}</Text>
+                    <Text>Profesión: {c.profession}</Text>
+                    <Text>Años experiencia: {c.years_experience}</Text>
+                    <Text style={[styles.statusText, c.status ? styles.activeStatus : styles.inactiveStatus]}>
+                      Estado: {c.status ? "Activo" : "Inactivo"}
                     </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => handleEditItem(c)}>
-                    <Text style={[styles.actionText, styles.editText]}>Editar</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))}
+                    <View style={styles.actionsContainer}>
+                      <TouchableOpacity onPress={() => handleToggleCompany(c)}>
+                        <Text style={[styles.actionText, c.status ? styles.deleteText : styles.restoreText]}>
+                          {c.status ? "Desactivar" : "Activar"}
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => handleEditItem(c)}>
+                        <Text style={[styles.actionText, styles.editText]}>Editar</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))}
+              </>
+            ) : (
+              <>
+                <Text style={styles.sectionTitle}>Lista de Administradores ({filterData(admins).length})</Text>
+                {filterData(admins).map(a => (
+                  <View key={a.admin_id} style={styles.card}>
+                    <Text style={styles.cardTitle}>{a.first_name} {a.last_name}</Text>
+                    <Text>Email: {a.email}</Text>
+                    <Text style={[styles.statusText, a.status ? styles.activeStatus : styles.inactiveStatus]}>
+                      Estado: {a.status ? "Activo" : "Inactivo"}
+                    </Text>
+                    <View style={styles.actionsContainer}>
+                      <TouchableOpacity onPress={() => handleToggleAdmin(a)}>
+                        <Text style={[styles.actionText, a.status ? styles.deleteText : styles.restoreText]}>
+                          {a.status ? "Desactivar" : "Activar"}
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => handleEditItem(a)}>
+                        <Text style={[styles.actionText, styles.editText]}>Editar</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))}
+              </>
+            )}
+          </ScrollView>
+        </View>
+      </View>
 
-            {/* Crear empresa */}
-            <Text style={styles.sectionTitle}>Crear Empresa</Text>
-            <TextInput 
-              placeholder="Nombre Empresa" 
-              style={styles.input} 
-              value={newCompany.bussines_name} 
-              onChangeText={t => setNewCompany({ ...newCompany, bussines_name: t })} 
-            />
-            <TextInput 
-              placeholder="Documento" 
-              style={styles.input} 
-              value={newCompany.document_number} 
-              onChangeText={t => setNewCompany({ ...newCompany, document_number: t })} 
-            />
-            <TextInput 
-              placeholder="Profesión" 
-              style={styles.input} 
-              value={newCompany.profession} 
-              onChangeText={t => setNewCompany({ ...newCompany, profession: t })} 
-            />
-            <TextInput 
-              placeholder="Años de Experiencia" 
-              keyboardType="numeric" 
-              style={styles.input} 
-              value={String(newCompany.years_experience)} 
-              onChangeText={t => setNewCompany({ ...newCompany, years_experience: Number(t) || 0 })} 
-            />
-            <TextInput 
-              placeholder="Correo" 
-              style={styles.input} 
-              value={newCompany.email} 
-              onChangeText={t => setNewCompany({ ...newCompany, email: t })} 
-            />
-            <TextInput 
-              placeholder="Contraseña" 
-              secureTextEntry 
-              style={styles.input} 
-              value={newCompany.password} 
-              onChangeText={t => setNewCompany({ ...newCompany, password: t })} 
-            />
-            <TouchableOpacity style={styles.createBtn} onPress={handleCreateCompany}>
-              <Text style={styles.createBtnText}>Crear Empresa</Text>
-            </TouchableOpacity>
-          </>
-        )}
-      </ScrollView>
-
-      {/* Modal de edición */}
+      {/* Modal de edición CORREGIDO */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>
-              Editar {activeTab === "users" ? "Usuario" : "Empresa"}
+              Editar {activeTab === "users" ? "Usuario" : activeTab === "companies" ? "Empresa" : "Administrador"}
             </Text>
 
-            {editingItem && activeTab === "users" && (
+            {editingItem && (
               <>
-                <TextInput 
-                  placeholder="Nombre" 
-                  style={styles.input} 
-                  value={editingItem.firts_name} 
-                  onChangeText={t => setEditingItem({ ...editingItem, firts_name: t })} 
-                />
-                <TextInput 
-                  placeholder="Apellido" 
-                  style={styles.input} 
-                  value={editingItem.last_name} 
-                  onChangeText={t => setEditingItem({ ...editingItem, last_name: t })} 
-                />
-                <TextInput 
-                  placeholder="Documento" 
-                  style={styles.input} 
-                  value={editingItem.document_number} 
-                  onChangeText={t => setEditingItem({ ...editingItem, document_number: t })} 
-                />
-                <TextInput 
-                  placeholder="Correo" 
-                  style={styles.input} 
-                  value={editingItem.email} 
-                  onChangeText={t => setEditingItem({ ...editingItem, email: t })} 
-                />
-                {/* ✅ Campo para nueva contraseña */}
-                <TextInput 
-                  placeholder="Nueva contraseña (opcional)" 
-                  secureTextEntry 
-                  style={styles.input} 
-                  value={newPassword} 
-                  onChangeText={setNewPassword} 
-                />
-                <Text style={styles.helpText}>Dejar vacío para mantener la contraseña actual</Text>
-              </>
-            )}
+                {/* Ocultar Tipo de Documento solo para administradores */}
+                {activeTab !== "admins" && (
+                  <>
+                    <Text style={styles.label}>Tipo de Documento</Text>
+                    <RNPickerSelect
+                      onValueChange={(value) => setEditingItem({ ...editingItem, doc_type_id: value || 1 })}
+                      items={docTypes}
+                      value={editingItem.doc_type_id || 1} // CORREGIDO
+                      style={pickerSelectStyles}
+                      placeholder={{ label: "Seleccione tipo de documento", value: undefined }} // CORREGIDO
+                    />
+                  </>
+                )}
 
-            {editingItem && activeTab === "companies" && (
-              <>
+                {(activeTab === "users" || activeTab === "admins") && (
+                  <>
+                    <TextInput 
+                      placeholder="Nombre" 
+                      style={styles.input} 
+                      value={editingItem.first_name} // CORREGIDO
+                      onChangeText={t => setEditingItem({ ...editingItem, first_name: t })} // CORREGIDO
+                    />
+                    <TextInput 
+                      placeholder="Apellido" 
+                      style={styles.input} 
+                      value={editingItem.last_name} 
+                      onChangeText={t => setEditingItem({ ...editingItem, last_name: t })} 
+                    />
+                  </>
+                )}
+
                 <TextInput 
-                  placeholder="Nombre Empresa" 
-                  style={styles.input} 
-                  value={editingItem.bussines_name} 
-                  onChangeText={t => setEditingItem({ ...editingItem, bussines_name: t })} 
-                />
-                <TextInput 
-                  placeholder="Documento" 
+                  placeholder="Número de Documento" 
                   style={styles.input} 
                   value={editingItem.document_number} 
                   onChangeText={t => setEditingItem({ ...editingItem, document_number: t })} 
                 />
-                <TextInput 
-                  placeholder="Profesión" 
-                  style={styles.input} 
-                  value={editingItem.profession} 
-                  onChangeText={t => setEditingItem({ ...editingItem, profession: t })} 
-                />
-                <TextInput 
-                  placeholder="Años de Experiencia" 
-                  keyboardType="numeric" 
-                  style={styles.input} 
-                  value={String(editingItem.years_experience)} 
-                  onChangeText={t => setEditingItem({ ...editingItem, years_experience: Number(t) || 0 })} 
-                />
+
+                {activeTab === "companies" && (
+                  <>
+                    <TextInput 
+                      placeholder="Nombre Empresa" 
+                      style={styles.input} 
+                      value={editingItem.bussines_name} 
+                      onChangeText={t => setEditingItem({ ...editingItem, bussines_name: t })} 
+                    />
+                    <TextInput 
+                      placeholder="Profesión" 
+                      style={styles.input} 
+                      value={editingItem.profession} 
+                      onChangeText={t => setEditingItem({ ...editingItem, profession: t })} 
+                    />
+                    <TextInput 
+                      placeholder="Años de Experiencia" 
+                      keyboardType="numeric" 
+                      style={styles.input} 
+                      value={String(editingItem.years_experience)} 
+                      onChangeText={t => setEditingItem({ ...editingItem, years_experience: Number(t) || 0 })} 
+                    />
+                  </>
+                )}
+
                 <TextInput 
                   placeholder="Correo" 
                   style={styles.input} 
                   value={editingItem.email} 
                   onChangeText={t => setEditingItem({ ...editingItem, email: t })} 
                 />
-                {/* ✅ Campo para nueva contraseña */}
                 <TextInput 
                   placeholder="Nueva contraseña (opcional)" 
                   secureTextEntry 
@@ -561,40 +847,203 @@ const HomeScreen = () => {
   );
 };
 
+// Los estilos se mantienen igual...
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5F5F5", padding: 15 },
-  tabContainer: { flexDirection: "row", backgroundColor: "#EAEDED", borderRadius: 8, marginBottom: 10 },
-  tab: { flex: 1, padding: 12, alignItems: "center", borderRadius: 8 },
-  activeTab: { backgroundColor: "#1ABC9C" },
-  tabText: { fontWeight: "bold", color: "#1C2833" },
-  activeTabText: { color: "#FFFFFF" },
-  filterContainer: { flexDirection: "row", justifyContent: "space-around", paddingVertical: 10, backgroundColor: "#FFFFFF", borderRadius: 8, marginBottom: 10 },
-  filterText: { color: "#7F8C8D", fontWeight: "600" },
-  activeFilter: { color: "#1ABC9C", fontWeight: "bold" },
-  scroll: { flex: 1 },
-  sectionTitle: { fontSize: 18, fontWeight: "bold", marginVertical: 10, color: "#2C3E50" },
-  card: { backgroundColor: "#fff", padding: 15, borderRadius: 8, marginBottom: 10, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 },
-  cardTitle: { fontSize: 16, fontWeight: "bold", marginBottom: 5, color: "#2C3E50" },
-  statusText: { marginTop: 5, fontWeight: "600" },
-  activeStatus: { color: "#27AE60" },
-  inactiveStatus: { color: "#E74C3C" },
-  actionsContainer: { flexDirection: "row", gap: 15, marginTop: 10 },
-  actionText: { fontWeight: "600" },
-  deleteText: { color: "#E74C3C" },
-  restoreText: { color: "#27AE60" },
-  editText: { color: "#1ABC9C" },
-  input: { backgroundColor: "#fff", padding: 12, borderRadius: 8, marginBottom: 10, borderWidth: 1, borderColor: "#D5D8DC" },
-  createBtn: { backgroundColor: "#1ABC9C", padding: 15, borderRadius: 8, alignItems: "center", marginBottom: 10 },
-  createBtnText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
-  modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" },
-  modalContent: { backgroundColor: "#fff", padding: 20, borderRadius: 10, width: "90%", maxHeight: "80%" },
-  modalTitle: { fontSize: 20, fontWeight: "bold", marginBottom: 15, textAlign: "center", color: "#2C3E50" },
-  modalButtons: { flexDirection: "row", justifyContent: "space-between", marginTop: 10 },
-  modalButton: { flex: 1, padding: 12, borderRadius: 8, alignItems: "center", marginHorizontal: 5 },
-  saveButton: { backgroundColor: "#1ABC9C" },
-  cancelButton: { backgroundColor: "#E74C3C" },
-  modalButtonText: { color: "#fff", fontWeight: "bold" },
-  helpText: { fontSize: 12, color: "#7F8C8D", marginBottom: 10, fontStyle: "italic" }, // ✅ Nuevo estilo para texto de ayuda
+  container: { 
+    flex: 1, 
+    backgroundColor: "#F5F5F5", 
+    padding: 15 
+  },
+  twoColumnsContainer: {
+    flex: 1,
+    flexDirection: "row",
+    marginTop: 10,
+  },
+  leftColumn: {
+    flex: 1,
+    marginRight: 10,
+    maxWidth: 400,
+  },
+  rightColumn: {
+    flex: 2,
+    marginLeft: 10,
+  },
+  formContainer: {
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  tabContainer: { 
+    flexDirection: "row", 
+    backgroundColor: "#EAEDED", 
+    borderRadius: 8, 
+    marginBottom: 10 
+  },
+  tab: { 
+    flex: 1, 
+    padding: 12, 
+    alignItems: "center", 
+    borderRadius: 8 
+  },
+  activeTab: { 
+    backgroundColor: "#1ABC9C" 
+  },
+  tabText: { 
+    fontWeight: "bold", 
+    color: "#1C2833" 
+  },
+  activeTabText: { 
+    color: "#FFFFFF" 
+  },
+  filterContainer: { 
+    flexDirection: "row", 
+    justifyContent: "space-around", 
+    paddingVertical: 10, 
+    backgroundColor: "#FFFFFF", 
+    borderRadius: 8, 
+    marginBottom: 10 
+  },
+  filterText: { 
+    color: "#7F8C8D", 
+    fontWeight: "600" 
+  },
+  activeFilter: { 
+    color: "#1ABC9C", 
+    fontWeight: "bold" 
+  },
+  scroll: { 
+    flex: 1 
+  },
+  sectionTitle: { 
+    fontSize: 18, 
+    fontWeight: "bold", 
+    marginVertical: 10, 
+    color: "#2C3E50" 
+  },
+  card: { 
+    backgroundColor: "#fff", 
+    padding: 15, 
+    borderRadius: 8, 
+    marginBottom: 10, 
+    shadowColor: "#000", 
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.1, 
+    shadowRadius: 4, 
+    elevation: 3 
+  },
+  cardTitle: { 
+    fontSize: 16, 
+    fontWeight: "bold", 
+    marginBottom: 5, 
+    color: "#2C3E50" 
+  },
+  statusText: { 
+    marginTop: 5, 
+    fontWeight: "600" 
+  },
+  activeStatus: { 
+    color: "#27AE60" 
+  },
+  inactiveStatus: { 
+    color: "#E74C3C" 
+  },
+  actionsContainer: { 
+    flexDirection: "row", 
+    gap: 15, 
+    marginTop: 10 
+  },
+  actionText: { 
+    fontWeight: "600" 
+  },
+  deleteText: { 
+    color: "#E74C3C" 
+  },
+  restoreText: { 
+    color: "#27AE60" 
+  },
+  editText: { 
+    color: "#1ABC9C" 
+  },
+  input: { 
+    backgroundColor: "#fff", 
+    padding: 12, 
+    borderRadius: 8, 
+    marginBottom: 10, 
+    borderWidth: 1, 
+    borderColor: "#D5D8DC" 
+  },
+  createBtn: { 
+    backgroundColor: "#1ABC9C", 
+    padding: 15, 
+    borderRadius: 8, 
+    alignItems: "center", 
+    marginBottom: 10 
+  },
+  createBtnText: { 
+    color: "#fff", 
+    fontWeight: "bold", 
+    fontSize: 16 
+  },
+  modalContainer: { 
+    flex: 1, 
+    justifyContent: "center", 
+    alignItems: "center", 
+    backgroundColor: "rgba(0,0,0,0.5)" 
+  },
+  modalContent: { 
+    backgroundColor: "#fff", 
+    padding: 20, 
+    borderRadius: 10, 
+    width: "90%", 
+    maxHeight: "80%" 
+  },
+  modalTitle: { 
+    fontSize: 20, 
+    fontWeight: "bold", 
+    marginBottom: 15, 
+    textAlign: "center", 
+    color: "#2C3E50" 
+  },
+  modalButtons: { 
+    flexDirection: "row", 
+    justifyContent: "space-between", 
+    marginTop: 10 
+  },
+  modalButton: { 
+    flex: 1, 
+    padding: 12, 
+    borderRadius: 8, 
+    alignItems: "center", 
+    marginHorizontal: 5 
+  },
+  saveButton: { 
+    backgroundColor: "#1ABC9C" 
+  },
+  cancelButton: { 
+    backgroundColor: "#E74C3C" 
+  },
+  modalButtonText: { 
+    color: "#fff", 
+    fontWeight: "bold" 
+  },
+  helpText: { 
+    fontSize: 12, 
+    color: "#7F8C8D", 
+    marginBottom: 10, 
+    fontStyle: "italic" 
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 5,
+    color: "#2C3E50",
+  },
 });
 
 export default HomeScreen;

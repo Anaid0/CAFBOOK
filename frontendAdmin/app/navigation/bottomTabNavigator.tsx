@@ -1,46 +1,24 @@
 import React, { useState } from 'react';
-import { createBottomTabNavigator, BottomTabBarButtonProps } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import { 
-  Image, 
-  TouchableOpacity, 
   View, 
   StyleSheet, 
   Text, 
   TextInput, 
   SafeAreaView,
   Platform,
-  StatusBar 
+  StatusBar,
+  TouchableOpacity,
+  Image
 } from 'react-native';
 
 // Importa tus pantallas
 import HomeScreen from '../screens/homeScreen';
-import ManualesScreen from '../screens/manualesScreen';
-import TutorialesScreen from '../screens/tutorialesScreen';
-import ForosScreen from '../screens/forosScreen';
-import ProfileScreen from '../screens/profileScreenUser';
-import AgregarScreen from '../screens/agregarScreen';
-import CultivosScreen from '../screens/cultivosScreen';
 
-const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
-// Define la interfaz para las props
-interface CustomTabBarButtonProps extends BottomTabBarButtonProps {
-  children: React.ReactNode;
-}
-
-const CustomTabBarButton = ({ children, onPress }: CustomTabBarButtonProps) => (
-  <TouchableOpacity
-    style={styles.customButton}
-    onPress={onPress}
-  >
-    <View style={styles.buttonContainer}>
-      {children}
-    </View>
-  </TouchableOpacity>
-);
-
-// Componente de Header Fijo
-const FixedHeader = () => {
+// Componente de Header Personalizado
+const CustomHeader = () => {
   const [searchText, setSearchText] = useState("");
 
   const handleSearch = () => {
@@ -54,7 +32,7 @@ const FixedHeader = () => {
   return (
     <SafeAreaView style={headerStyles.safeArea}>
       <View style={headerStyles.topBar}>
-        <Text style={headerStyles.appName}>CAF-BOOK</Text>
+        <Text style={headerStyles.appName}>CAFBOOK</Text>
         <View style={headerStyles.searchContainer}>
           <TextInput
             style={headerStyles.searchInput}
@@ -75,135 +53,22 @@ const FixedHeader = () => {
   );
 };
 
-const BottomTabNavigator = () => {
+// Componente principal con navegación Stack
+const MainNavigator = () => {
   return (
     <View style={styles.container}>
-      {/* Header Fijo con SafeArea */}
-      <FixedHeader />
+      {/* Header Fijo con CAFBOOK y buscador */}
+      <CustomHeader />
       
-      {/* Contenido de las pantallas */}
+      {/* Contenido de navegación */}
       <View style={styles.content}>
-        <Tab.Navigator
+        <Stack.Navigator
           screenOptions={{
-            headerShown: false,
-            tabBarActiveTintColor: '#1ABC9C',
-            tabBarInactiveTintColor: '#95A5A6',
-            tabBarStyle: {
-              backgroundColor: '#FFFFFF',
-              borderTopWidth: 1,
-              borderTopColor: '#E0E0E0',
-              height: 60,
-              paddingBottom: 5,
-              paddingTop: 5,
-            },
-            tabBarLabelStyle: {
-              fontSize: 10,
-              fontWeight: '500',
-            },
+            headerShown: false // Ocultar headers nativos de Stack
           }}
         >
-          <Tab.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{
-              tabBarLabel: 'Inicio',
-              tabBarIcon: ({ color, size }) => (
-                <Image
-                  source={{ uri: 'https://cdn-icons-png.flaticon.com/512/25/25694.png' }}
-                  style={{ width: size, height: size, tintColor: color }}
-                />
-              ),
-            }}
-          />
-
-          <Tab.Screen
-            name="Tutoriales"
-            component={TutorialesScreen}
-            options={{
-              tabBarLabel: 'Tutoriales',
-              tabBarIcon: ({ color, size }) => (
-                <Image
-                  source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2889/2889676.png' }}
-                  style={{ width: size, height: size, tintColor: color }}
-                />
-              ),
-            }}
-          />
-
-          <Tab.Screen
-            name="Manuales"
-            component={ManualesScreen}
-            options={{
-              tabBarLabel: 'Manuales',
-              tabBarIcon: ({ color, size }) => (
-                <Image
-                  source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2168/2168285.png' }}
-                  style={{ width: size, height: size, tintColor: color }}
-                />
-              ),
-            }}
-          />
-          
-          <Tab.Screen
-            name="Agregar"
-            component={AgregarScreen}
-            options={{
-              tabBarLabel: 'Agregar',
-              tabBarIcon: ({ color, size }) => (
-                <Image
-                  source={{ uri: 'https://cdn-icons-png.flaticon.com/512/3524/3524388.png' }}
-                  style={{ width: size + 5, height: size + 5, tintColor: '#FFFFFF' }}
-                />
-              ),
-              tabBarButton: (props) => (
-                <CustomTabBarButton {...props} />
-              ),
-            }}
-          />
-          
-          
-          <Tab.Screen
-            name="Foros"
-            component={ForosScreen}
-            options={{
-              tabBarLabel: 'Foros',
-              tabBarIcon: ({ color, size }) => (
-                <Image
-                  source={{ uri: 'https://cdn-icons-png.flaticon.com/512/3594/3594466.png' }}
-                  style={{ width: size, height: size, tintColor: color }}
-                />
-              ),
-            }}
-          />
-
-          <Tab.Screen
-            name="Cultivos"
-            component={CultivosScreen}
-            options={{
-              tabBarLabel: 'Cultivos',
-              tabBarIcon: ({ color, size }) => (
-                <Image
-                  source={{ uri: '' }}
-                  style={{ width: size, height: size, tintColor: color }}
-                />
-              ),
-            }}
-          />
-
-          <Tab.Screen
-            name="Profile"
-            component={ProfileScreen}
-            options={{
-              tabBarLabel: 'Perfil',
-              tabBarIcon: ({ color, size }) => (
-                <Image
-                  source={{ uri: 'https://cdn-icons-png.flaticon.com/512/1077/1077063.png' }}
-                  style={{ width: size, height: size, tintColor: color }}
-                />
-              ),
-            }}
-          />
-        </Tab.Navigator>
+          <Stack.Screen name="Home" component={HomeScreen} />
+        </Stack.Navigator>
       </View>
     </View>
   );
@@ -216,24 +81,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-  },
-  customButton: {
-    top: -20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#1ABC9C',
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
   },
 });
 
@@ -281,4 +128,4 @@ const headerStyles = StyleSheet.create({
   },
 });
 
-export default BottomTabNavigator;
+export default MainNavigator;
