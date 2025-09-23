@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
   Image,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -31,7 +31,7 @@ const LoginScreen = () => {
 
     try {
       let response;
-      
+
       // Intentar login según el tipo seleccionado
       if (userType === "user") {
         response = await loginUser(email, password);
@@ -43,27 +43,15 @@ const LoginScreen = () => {
 
       // Manejar la respuesta (puede ser response.data o response directamente)
       const data = response.data || response;
-      const { token, id, role } = data;
+      const { token, id } = data;
 
-      if (token && id && role) {
-        console.log("Login exitoso:", { token, id, role });
-        
-        // Guardar en AsyncStorage
+      if (token && id) {
+        console.log("Login exitoso:", { token, id });
+
         await AsyncStorage.setItem("userToken", token);
         await AsyncStorage.setItem("userId", id.toString());
-        await AsyncStorage.setItem("userRole", role);
 
-        // 🔎 Validación de roles
-        if (userType === "user" && role === "user") {
-          navigation.navigate("MainUser", { userId: id, token });
-        } else if (userType === "company" && role === "company") {
-          navigation.navigate("MainCompany", { companyId: id, token });
-        } else {
-          Alert.alert(
-            "Error",
-            `Estás intentando iniciar sesión como ${userType}, pero tu cuenta es de tipo ${role}.`
-          );
-        }
+        navigation.navigate("Main", { userId: id, token });
       } else {
         Alert.alert("Error", "Credenciales incorrectas");
       }
@@ -82,7 +70,7 @@ const LoginScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
-        <Image 
+        <Image
           source={require("../../assets/images/logoCAFBOOKK.png")}
           style={styles.logo}
         />
@@ -92,55 +80,67 @@ const LoginScreen = () => {
 
       {/* Selector de tipo de usuario */}
       <View style={styles.userTypeContainer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[
-            styles.userTypeButton, 
-            userType === "user" && styles.userTypeButtonActive
+            styles.userTypeButton,
+            userType === "user" && styles.userTypeButtonActive,
           ]}
           onPress={() => setUserType("user")}
         >
-          <Text style={[
-            styles.userTypeText,
-            userType === "user" && styles.userTypeTextActive
-          ]}>Usuario</Text>
+          <Text
+            style={[
+              styles.userTypeText,
+              userType === "user" && styles.userTypeTextActive,
+            ]}
+          >
+            Usuario
+          </Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={[
-            styles.userTypeButton, 
-            userType === "company" && styles.userTypeButtonActive
+            styles.userTypeButton,
+            userType === "company" && styles.userTypeButtonActive,
           ]}
           onPress={() => setUserType("company")}
         >
-          <Text style={[
-            styles.userTypeText,
-            userType === "company" && styles.userTypeTextActive
-          ]}>Empresa</Text>
+          <Text
+            style={[
+              styles.userTypeText,
+              userType === "company" && styles.userTypeTextActive,
+            ]}
+          >
+            Empresa
+          </Text>
         </TouchableOpacity>
       </View>
 
-      <TextInput 
-        style={styles.input} 
-        placeholder="Correo Electrónico" 
+      <TextInput
+        style={styles.input}
+        placeholder="Correo Electrónico"
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
         keyboardType="email-address"
       />
-      <TextInput 
-        style={styles.input} 
-        placeholder="Contraseña" 
-        secureTextEntry 
+
+      <TextInput
+        style={styles.input}
+        placeholder="Contraseña"
+        secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
 
-      <TouchableOpacity onPress={navigateToForgotPassword} style={styles.forgotPasswordLink}>
+      <TouchableOpacity
+        onPress={navigateToForgotPassword}
+        style={styles.forgotPasswordLink}
+      >
         <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity 
-        style={[styles.loginButton, isLoading && styles.disabledButton]} 
+      <TouchableOpacity
+        style={[styles.loginButton, isLoading && styles.disabledButton]}
         onPress={handleLogin}
         disabled={isLoading}
       >
@@ -154,9 +154,15 @@ const LoginScreen = () => {
       </TouchableOpacity>
 
       <Text style={styles.orText}>Or</Text>
-      <TouchableOpacity style={styles.googleButton} onPress={() => Alert.alert("Google Login", "No implementado aún")}>
+
+      <TouchableOpacity
+        style={styles.googleButton}
+        onPress={() => Alert.alert("Google Login", "No implementado aún")}
+      >
         <Image
-          source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" }}
+          source={{
+            uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png",
+          }}
           style={styles.googleLogo}
         />
         <Text style={styles.googleText}>Continue with Google</Text>
@@ -164,7 +170,8 @@ const LoginScreen = () => {
 
       <TouchableOpacity onPress={navigateToRegister}>
         <Text style={styles.createAccountText}>
-          ¿No tienes una cuenta? <Text style={styles.createAccountLink}>Crear cuenta</Text>
+          ¿No tienes una cuenta?{" "}
+          <Text style={styles.createAccountLink}>Crear cuenta</Text>
         </Text>
       </TouchableOpacity>
 
@@ -181,25 +188,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
   },
-  logoContainer: { 
-    alignItems: "center", 
-    marginBottom: 30 
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 30,
   },
-  logo: { 
-    width: 100, 
-    height: 100, 
-    resizeMode: "contain", 
-    marginBottom: 15 
+  logo: {
+    width: 100,
+    height: 100,
+    resizeMode: "contain",
+    marginBottom: 15,
   },
-  title: { 
-    fontSize: 32, 
-    fontWeight: "bold", 
-    color: "#1C2833" 
+  title: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#1C2833",
   },
-  subtitle: { 
-    fontSize: 18, 
-    color: "#1C2833", 
-    marginBottom: 15 
+  subtitle: {
+    fontSize: 18,
+    color: "#1C2833",
+    marginBottom: 15,
   },
   userTypeContainer: {
     flexDirection: "row",
@@ -255,15 +262,15 @@ const styles = StyleSheet.create({
   disabledButton: {
     backgroundColor: "#85C1E9",
   },
-  loginButtonText: { 
-    color: "#fff", 
-    fontWeight: "bold", 
-    fontSize: 16 
+  loginButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
   },
-  orText: { 
-    marginVertical: 15, 
-    fontSize: 14, 
-    color: "#555" 
+  orText: {
+    marginVertical: 15,
+    fontSize: 14,
+    color: "#555",
   },
   googleButton: {
     flexDirection: "row",
@@ -273,15 +280,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
-  googleLogo: { 
-    width: 24, 
-    height: 24, 
-    resizeMode: "contain", 
-    marginRight: 10 
+  googleLogo: {
+    width: 24,
+    height: 24,
+    resizeMode: "contain",
+    marginRight: 10,
   },
-  googleText: { 
-    fontSize: 14, 
-    color: "#555" 
+  googleText: {
+    fontSize: 14,
+    color: "#555",
   },
   createAccountText: {
     fontSize: 14,
@@ -292,10 +299,10 @@ const styles = StyleSheet.create({
     color: "#1ABC9C",
     fontWeight: "bold",
   },
-  footer: { 
-    fontSize: 12, 
-    color: "#555", 
-    marginTop: 20 
+  footer: {
+    fontSize: 12,
+    color: "#555",
+    marginTop: 20,
   },
 });
 
