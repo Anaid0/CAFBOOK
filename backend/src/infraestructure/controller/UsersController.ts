@@ -34,7 +34,6 @@ export class UsersController{
   }
 }
 
-
     async registerUser(request: Request, response: Response): Promise <Response>{
         const { firts_name, last_name, document_number, email, password, doc_type_id } = request.body;
         try{
