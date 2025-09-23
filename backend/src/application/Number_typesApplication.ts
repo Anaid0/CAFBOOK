@@ -1,4 +1,4 @@
-import { Number_types } from "../domain/domain/Number_types"
+import { Number_types } from "../domain/Number_types"
 import { Number_typesPort } from '../domain/Number_typesPort';
 
 export class Number_typesApplication {

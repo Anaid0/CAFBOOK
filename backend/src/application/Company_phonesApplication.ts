@@ -1,4 +1,4 @@
-import { Company_phones } from '../domain/domain/Company_phones';
+import { Company_phones } from '../domain/Company_phones';
 import { Company_phonesPort } from '../domain/Company_phonesPort';
 
 export class Company_phonesApplication {

@@ -1,5 +1,5 @@
-import { Addresses } from '../domain/domain/Addresses';
-import { AddressesPort } from '../domain/ports/AddressesPort';
+import { Addresses } from '../domain/Addresses';
+import { AddressesPort } from '../domain/AddressesPort';
 
 export class AddressesApplication {
     private port: AddressesPort;

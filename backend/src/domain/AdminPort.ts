@@ -1,4 +1,4 @@
-import { Admin } from "../domain/Admin";
+import { Admin } from "./Admin";
 
 export interface AdminPort{
     createAdmin(admin: Omit<Admin,"admin_id">): Promise<number>;

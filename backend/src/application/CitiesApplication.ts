@@ -1,4 +1,4 @@
-import { Cities } from "../domain/domain/Cities"
+import { Cities } from "../domain/Cities"
 import { CitiesPort } from '../domain/CitiesPort';
 
 export class CitiesApplication {

@@ -1,4 +1,4 @@
-import { Medias } from "./domain/Medias";
+import { Medias } from "./Medias";
 export interface MediasPort {
     createMedia(media: Omit<Medias, "media_id" | "media_type_description">): Promise<number>;
     updateMedia(media_id: number, media: Partial<Medias>): Promise<boolean>;

@@ -1,4 +1,4 @@
-import { Number_types } from "./domain/Number_types";
+import { Number_types } from "./Number_types";
 export interface Number_typesPort{
      createNumber_type(number_type: Omit<Number_types,"number_type_id">): Promise<number>;
      updateNumber_type(number_type_id:number, number_type:Partial<Number_types>):Promise<boolean>;

@@ -1,5 +1,5 @@
-import { Phones } from "../domain/domain/Phones"
-import { PhonesPort } from '../domain/domain/PhonesPort';
+import { Phones } from "../domain/Phones"
+import { PhonesPort } from '../domain/PhonesPort';
 
 export class PhonesApplication {
     private port: PhonesPort;

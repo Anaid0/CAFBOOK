@@ -1,5 +1,5 @@
-import { Document_types } from "../domain/domain/Document_types";
-import { Document_typesPort } from "../domain/ports/Document_typesPort";
+import { Document_types } from "../domain/Document_types";
+import { Document_typesPort } from "../domain/Document_typesPort";
 
 export class Document_typesApplication {
     private port: Document_typesPort;

@@ -1,7 +1,7 @@
 import { AdminApplication } from "../../application/AdminApplication";
 import {Request, Response} from "express";
 import { Validators } from "../config/validations";
-import { Admin } from '../../domain/domain/Admin';
+import { Admin } from '../../domain/Admin';
 
 export class AdminController{
     private app: AdminApplication;

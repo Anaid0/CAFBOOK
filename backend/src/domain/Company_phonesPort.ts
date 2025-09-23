@@ -1,4 +1,4 @@
-import { Company_phones } from "./domain/Company_phones";
+import { Company_phones } from "./Company_phones";
 export interface Company_phonesPort {
     createCompanyPhone(companyphone: Omit<Company_phones, "company_phone" | "phone_number" | "bussines_name" | "company_email">): Promise<number>;
     updateCompanyPhone(company_phone: number, companyphone: Partial<Company_phones>): Promise<boolean>;

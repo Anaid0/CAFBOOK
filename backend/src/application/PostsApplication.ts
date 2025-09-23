@@ -1,4 +1,4 @@
-import { Posts } from "../domain/domain/Posts"
+import { Posts } from "../domain/Posts"
 import { PostsPort } from '../domain/PostsPort';
 
 export class PostsApplication {

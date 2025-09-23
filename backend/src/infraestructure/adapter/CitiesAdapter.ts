@@ -1,5 +1,5 @@
 import { Repository } from "typeorm";
-import { Cities } from '../../domain/domain/Cities';
+import { Cities } from '../../domain/Cities';
 import { CitiesPort } from "../../domain/CitiesPort";
 import { CitiesEntity } from "../entities/CitiesEntity";
 import { AppDataSource } from "../config/con_data_bases";

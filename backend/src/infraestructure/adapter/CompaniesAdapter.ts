@@ -1,8 +1,8 @@
 import { Repository } from "typeorm";
-import { CompaniesPort } from "../../domain/ports/CompaniesPort";
+import { CompaniesPort } from "../../domain/CompaniesPort";
 import { AppDataSource } from "../config/con_data_bases";
 import { CompaniesEntity } from "../entities/CompaniesEntity";
-import { Companies } from "../../domain/domain/Companies";
+import { Companies } from "../../domain/Companies";
 import { RolesEntity } from "../entities/RolesEntity";
 import { Document_typesEntity } from "../entities/Document_typesEntity";
 

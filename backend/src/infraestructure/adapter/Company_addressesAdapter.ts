@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
-import { Company_addresses } from '../../domain/domain/Company_addresses';
-import { Company_addressPort } from "../../domain/ports/Company_addressesPort";
+import { Company_addresses } from '../../domain/Company_addresses';
+import { Company_addressPort } from "../../domain/Company_addressesPort";
 import { Company_addressesEntity } from "../entities/Company_addressesEntity";
 import { AppDataSource } from "../config/con_data_bases";
 import { AddressesEntity } from "../entities/AddressesEntity";

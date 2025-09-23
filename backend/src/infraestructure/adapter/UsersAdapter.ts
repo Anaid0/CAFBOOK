@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
-import { Users } from "../../domain/domain/Users";
-import { UserPort } from "../../domain/ports/UsersPort";
+import { Users } from "../../domain/Users";
+import { UserPort } from "../../domain/UsersPort";
 import { UserEntity } from "../entities/UsersEntity";
 import { AppDataSource } from "../config/con_data_bases";
 import { RolesEntity } from "../entities/RolesEntity";

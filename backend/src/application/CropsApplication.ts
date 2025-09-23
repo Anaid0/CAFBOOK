@@ -1,4 +1,4 @@
-import { Crops } from "../domain/domain/Crops";
+import { Crops } from "../domain/Crops";
 import { CropsPort } from "../domain/CropsPort";
 
 export class CropsApplication {

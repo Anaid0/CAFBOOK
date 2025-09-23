@@ -1,5 +1,5 @@
 import { Company_addressApplication } from "../../application/Company_addressesApplicattion";
-import { Company_addresses } from "../../domain/domain/Company_addresses";
+import { Company_addresses } from "../../domain/Company_addresses";
 import { Request, Response } from "express";
 import { Validators } from "../config/validations";
 
