@@ -12,7 +12,6 @@ export const loginUser = async (email: string, password: string) => {
   return res.data;
 };
 
-
 export const createUser = async (userData: any) => {
   const res = await axios.post(`${API_URL}/users`, userData);
   return res.data;
@@ -24,24 +23,20 @@ export const getUsers = async () => {
   return res.data;
 };
 
-
 export const getUserById = async (id: number) => {
   const res = await axios.get(`${API_URL}/users/${id}`);
   return res.data;
 };
-
 
 export const getUserByEmail = async (email: string) => {
   const res = await axios.get(`${API_URL}/users/email/${email}`);
   return res.data;
 };
 
-
 export const updateUser = async (id: number, userData: any) => {
   const res = await axios.put(`${API_URL}/users/${id}`, userData);
   return res.data;
 };
-
 
 export const downUser = async (id: number) => {
   const res = await axios.put(`${API_URL}/users/down/${id}`);

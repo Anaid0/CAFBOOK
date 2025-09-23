@@ -17,7 +17,7 @@ import HomeScreen from '../screens/homeScreen';
 import ManualesScreen from '../screens/manualesScreen';
 import TutorialesScreen from '../screens/tutorialesScreen';
 import ForosScreen from '../screens/forosScreen';
-import ProfileScreen from '../screens/profileScreen';
+import ProfileScreen from '../screens/profileScreenUser';
 import AgregarScreen from '../screens/agregarScreen';
 import CultivosScreen from '../screens/cultivosScreen';
 

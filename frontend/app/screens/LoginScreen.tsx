@@ -10,6 +10,7 @@ import {
   ActivityIndicator
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { loginUser } from "../../apis/usersapi";
 
 const LoginScreen = () => {
@@ -33,8 +34,10 @@ const LoginScreen = () => {
 
       if (token && id) {
         console.log("Login exitoso:", { token, id });
-        // Navegamos al homeScreen enviando el id y token
+        await AsyncStorage.setItem("userToken", token);
+        await AsyncStorage.setItem("userId", id.toString());
         navigation.navigate("Main", { userId: id, token });
+        
       } else {
         Alert.alert("Error", "Credenciales incorrectas");
       }
