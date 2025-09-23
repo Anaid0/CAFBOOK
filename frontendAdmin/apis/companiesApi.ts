@@ -3,39 +3,40 @@ import axios from "axios";
 const isWeb = typeof window !== "undefined" && window.document;
 
 export const API_URL = isWeb 
-  ? "http://localhost:4200/api"   // Para web
+  ? "http://localhost:4200/api"
   : "http://192.168.1.2:4200/api";
 
-export const loginCompany = async (credentials: any) => {
-  return await axios.post(`${API_URL}/login`, credentials);
-};
-
-
-export const createCompany = async (companyData: any) => {
-  return await axios.post(`${API_URL}/companies`, companyData);
-};
-
-
+// 🔹 Obtener todas las empresas
 export const getAllCompanies = async () => {
-  return await axios.get(`${API_URL}/companies`);
+  const res = await axios.get(`${API_URL}/companies`);
+  return res.data;
 };
 
-
-export const getCompanyById = async (id: number) => {
-  return await axios.get(`${API_URL}/companies/${id}`);
+// 🔹 Crear empresa
+export const createCompany = async (companyData: any) => {
+  const res = await axios.post(`${API_URL}/companies`, companyData);
+  return res.data;
 };
 
-
-export const getCompanyByEmail = async (email: string) => {
-  return await axios.get(`${API_URL}/companies/email/${email}`);
-};
-
-
+// 🔹 Actualizar empresa
 export const updateCompany = async (id: number, companyData: any) => {
-  return await axios.put(`${API_URL}/companies/${id}`, companyData);
+  const res = await axios.put(`${API_URL}/companies/${id}`, companyData);
+  return res.data;
 };
 
-
+// En apis/companiesApi.ts
 export const downCompany = async (id: number) => {
-  return await axios.put(`${API_URL}/companies/down/${id}`);
+  const res = await axios.put(`${API_URL}/companies/down/${id}`);
+  return res.data;
+};
+
+export const restoreCompany = async (id: number) => {
+  const res = await axios.put(`${API_URL}/companies/restore/${id}`);
+  return res.data;
+};
+
+// 🔹 Obtener empresa por ID
+export const getCompanyById = async (id: number) => {
+  const res = await axios.get(`${API_URL}/companies/${id}`);
+  return res.data;
 };

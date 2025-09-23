@@ -3,9 +3,8 @@ import axios from "axios";
 const isWeb = typeof window !== "undefined" && window.document;
 
 export const API_URL = isWeb 
-  ? "http://localhost:4200/api"   // Para web
-  : "http://192.168.1.2:4200/api"; // Para Android (IP de tu PC en la misma red)
-
+  ? "http://localhost:4200/api"
+  : "http://192.168.1.2:4200/api";
 
 export const loginUser = async (email: string, password: string) => {
   const res = await axios.post(`${API_URL}/login`, { email, password });
@@ -17,9 +16,12 @@ export const createUser = async (userData: any) => {
   return res.data;
 };
 
-
-export const getUsers = async () => {
-  const res = await axios.get(`${API_URL}/users`);
+export const getUsers = async (token: string) => {
+  const res = await axios.get(`${API_URL}/users`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return res.data;
 };
 
@@ -33,12 +35,22 @@ export const getUserByEmail = async (email: string) => {
   return res.data;
 };
 
-export const updateUser = async (id: number, userData: any) => {
-  const res = await axios.put(`${API_URL}/users/${id}`, userData);
+// ✅ AGREGADO: Función updateUser que faltaba
+export const updateUser = async (id: number, userData: any, token: string) => {
+  const res = await axios.put(`${API_URL}/users/${id}`, userData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return res.data;
 };
 
 export const downUser = async (id: number) => {
   const res = await axios.put(`${API_URL}/users/down/${id}`);
+  return res.data;
+};
+
+export const restoreUser = async (id: number) => {
+  const res = await axios.put(`${API_URL}/users/restore/${id}`);
   return res.data;
 };
