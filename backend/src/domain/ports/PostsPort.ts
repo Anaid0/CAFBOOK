@@ -12,3 +12,4 @@ export interface PostsPort {
     getPostByPostUserEmail(user_email: string): Promise<Posts[]>;
     restorePost(post_id: number): Promise<boolean>;
   }
+  //

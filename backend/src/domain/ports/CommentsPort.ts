@@ -9,3 +9,4 @@ export interface CommentsPort {
     getCommentsByUserEmail(email: string): Promise<Comments[]>;
     getCommentsByPostId(user_id: number): Promise<Comments[]>;
   }
+  //

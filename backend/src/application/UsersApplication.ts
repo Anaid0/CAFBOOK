@@ -31,7 +31,7 @@ export class UsersApplication{
 }
 
     
-    async createUser(user: Omit<Users,"user_id" | "role_description" | "doc_type_description" | "photo_url">): Promise<number>{
+    async createUser(user: Omit<Users,"user_id" | "role_description" | "doc_type_description">): Promise<number>{
         const existingUser = await this.port.getUserByEmail(user.email);
         if(!existingUser){
             const hashedPass= await bcrypt.hash(user.password, 10);

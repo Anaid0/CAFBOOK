@@ -8,3 +8,4 @@ export interface Post_categoriesPort{
      getPost_categoryByDescription(description:string): Promise <Post_categories | null>;
 
 }
+//

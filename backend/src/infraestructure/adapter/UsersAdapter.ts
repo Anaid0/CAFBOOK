@@ -79,6 +79,7 @@ export class UsersAdapter implements UserPort{
                first_name: user.firts_name ??  existingUser.firts_name,
                last_name: user.last_name ?? existingUser.last_name,
                document_number: user.document_number ?? existingUser.document_number,
+               photo_url: user.photo_url ?? existingUser.photo_url,
                email: user.email ?? existingUser.email,
                password: user.password ?? existingUser.password,
                doc_type_id: user.doc_type_id ?? existingUser.doc_type_id,

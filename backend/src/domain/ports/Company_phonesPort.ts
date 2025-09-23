@@ -10,3 +10,4 @@ export interface Company_phonesPort {
     getCompanyPhonesByBussinesName(bussines_name:string): Promise <Company_phones[]>;
     getCompanyPhonesByCompanyEmail(email:string): Promise <Company_phones[]>;
   }
+  //

@@ -10,3 +10,4 @@ export interface Posts{
     status: number;
     deleted_at: Date | null;
 }
+//

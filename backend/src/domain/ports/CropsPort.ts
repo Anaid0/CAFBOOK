@@ -9,3 +9,4 @@ export interface CropsPort {
     getCropByCropTypeId(crop_type_id: number): Promise<Crops[]>;
     getCropByCropTypeDescription(crop_type_description: string): Promise<Crops[]>;
   }
+  //

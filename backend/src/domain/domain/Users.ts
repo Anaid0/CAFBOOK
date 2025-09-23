@@ -7,7 +7,7 @@ export interface Users{
     document_number: string;
     doc_type_id: number;
     doc_type_description: string;
-    photo_url: string;
+    photo_url: string | null;
     email: string;
     password: string;
     status: number;

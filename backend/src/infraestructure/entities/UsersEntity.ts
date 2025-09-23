@@ -26,7 +26,7 @@ export class UserEntity{
     status!: number;
 
     @Column({type: "character varying", length:150, nullable: true})
-    photo_url!: string;
+    photo_url!: string | null;
 
     @Column({type: "date"})
     created_at!: Date;

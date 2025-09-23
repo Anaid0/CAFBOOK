@@ -8,3 +8,4 @@ export interface DepartmentsPort{
      getDepartmentByName(department_name:string): Promise <Departments | null>;
 
 }
+//
