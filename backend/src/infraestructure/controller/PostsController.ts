@@ -1,5 +1,5 @@
 import { PostsApplication } from "../../application/PostsApplication";
-import { Posts } from "../../domain/Posts";
+import { Posts } from "../../domain/domain/Posts";
 import { Request, Response } from "express";
 import { Validators } from "../config/validations";
 

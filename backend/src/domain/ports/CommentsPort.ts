@@ -1,4 +1,4 @@
-import { Comments } from "./Comments";
+import { Comments } from "../domain/Comments";
 export interface CommentsPort {
     createComments(comment: Omit<Comments, "comment_id" | "user_name">): Promise<number>;
     updateComments(comment_id: number, comment: Partial<Comments>): Promise<boolean>;

@@ -1,5 +1,5 @@
-import { Post_categories } from '../domain/Post_categories';
-import { Post_categoriesPort } from '../domain/Post_categoriesPort';
+import { Post_categories } from '../domain/domain/Post_categories';
+import { Post_categoriesPort } from '../domain/ports/Post_categoriesPort';
 
 export class Post_categoriesApplication {
     private port: Post_categoriesPort;

@@ -1,4 +1,4 @@
-import { Roles } from "../domain/Roles"
+import { Roles } from "../domain/domain/Roles"
 import { RolesPort } from '../domain/RolesPort';
 
 export class RolesApplication {

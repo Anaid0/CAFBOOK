@@ -1,4 +1,4 @@
-import { Users } from "./Users";
+import { Users } from "../domain/Users";
 
 export interface UserPort{
     createUser(user: Omit<Users,"user_id" | "role_description" | "doc_type_description" | "photo_url">): Promise<number>;

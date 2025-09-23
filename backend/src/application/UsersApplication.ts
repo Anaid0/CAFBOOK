@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
-import { UserPort } from "../domain/UsersPort";
-import { Users } from "../domain/Users";
+import { UserPort } from "../domain/ports/UsersPort";
+import { Users } from "../domain/domain/Users";
 import { AuthApplication } from "./AuthApplication";
 
 export class UsersApplication{

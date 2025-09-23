@@ -1,4 +1,4 @@
-import { Media_types } from "./Media_types";
+import { Media_types } from "../domain/Media_types";
 export interface Media_typesPort{
      createMedia_type(media_type: Omit<Media_types,"media_type_id">): Promise<number>;
      updateMedia_type(media_type_id:number, media_type:Partial<Media_types>):Promise<boolean>;

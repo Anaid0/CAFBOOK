@@ -1,6 +1,6 @@
-import { Crop_types } from "../../domain/Crop_types";
+import { Crop_types } from "../../domain/domain/Crop_types";
 import { Repository } from "typeorm";
-import { Crop_typesPort } from "../../domain/Crop_typesPort";
+import { Crop_typesPort } from "../../domain/ports/Crop_typesPort";
 import { AppDataSource } from "../config/con_data_bases";
 import { Crop_typesEntity } from "../entities/Crop_typesEntity";
 

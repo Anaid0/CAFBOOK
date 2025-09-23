@@ -1,4 +1,4 @@
-import { Posts } from "./Posts";
+import { Posts } from "./domain/Posts";
 export interface PostsPort {
     createPost(post: Omit<Posts, "post_id" | "user_email" | "post_category_description" | "deleted_at">): Promise<number>;
     updatePost(post_id: number, post: Partial<Posts>): Promise<boolean>;

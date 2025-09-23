@@ -1,8 +1,8 @@
 import { Repository } from "typeorm";
-import { AdminPort } from "../../domain/AdminPort";
+import { AdminPort } from "../../domain/ports/AdminPort";
 import { AdminEntity } from "../entities/AdminEntity";
 import { AppDataSource } from "../config/con_data_bases";
-import { Admin } from '../../domain/Admin';
+import { Admin } from '../../domain/domain/Admin';
 
 export class AdminAdapter implements AdminPort{
     private adminRepository: Repository<AdminEntity>

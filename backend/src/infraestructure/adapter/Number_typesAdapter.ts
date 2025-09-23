@@ -1,5 +1,5 @@
 import { Repository } from "typeorm";
-import { Number_types } from '../../domain/Number_types';
+import { Number_types } from '../../domain/domain/Number_types';
 import { Number_typesPort } from "../../domain/Number_typesPort";
 import { Number_typesEntity } from '../entities/Number_typesEntity';
 import { AppDataSource } from "../config/con_data_bases";

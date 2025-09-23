@@ -1,4 +1,4 @@
-import { Departments } from "../domain/Departments"
+import { Departments } from "../domain/domain/Departments"
 import { DepartmentsPort } from '../domain/DepartmentsPort';
 
 export class DepartmentsApplication {

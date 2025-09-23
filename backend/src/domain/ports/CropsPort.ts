@@ -1,4 +1,4 @@
-import { Crops } from "./Crops";
+import { Crops } from "./domain/Crops";
 export interface CropsPort {
     createCrop(crop: Omit<Crops, "crop_id" | "user_email" | "crop_type_description" | "created_at">): Promise<number>;
     updateCrop(crop_id: number, crop: Partial<Crops>): Promise<boolean>;

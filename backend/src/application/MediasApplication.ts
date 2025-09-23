@@ -1,4 +1,4 @@
-import { Medias } from "../domain/Medias"
+import { Medias } from "../domain/domain/Medias"
 import { MediasPort } from '../domain/MediasPort';
 
 export class MediasApplication {

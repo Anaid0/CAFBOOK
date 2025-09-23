@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
-import { CompaniesPort } from "../domain/CompaniesPort";
+import { CompaniesPort } from "../domain/ports/CompaniesPort";
 import { AuthApplication } from "./AuthApplication";
-import { Companies } from "../domain/Companies";
+import { Companies } from "../domain/domain/Companies";
 
 export class CompaniesApplication{
     private port: CompaniesPort;

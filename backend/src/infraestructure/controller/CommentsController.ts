@@ -1,5 +1,5 @@
 import { CommentsApplication } from "../../application/CommentsApplication";
-import { Comments } from "../../domain/Comments";
+import { Comments } from "../../domain/domain/Comments";
 import { Request, Response } from "express";
 import { Validators } from "../config/validations";
 

@@ -1,4 +1,4 @@
-import { User_phones } from "./User_phones";
+import { User_phones } from "../domain/User_phones";
 export interface User_phonesPort {
     createUserPhone(userphone: Omit<User_phones, "user_phone" | "user_name" | "phone_number"| "user_email">): Promise<number>;
     updateUserPhone(user_phone: number, userphone: Partial<User_phones>): Promise<boolean>;

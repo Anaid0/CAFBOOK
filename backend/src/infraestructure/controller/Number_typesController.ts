@@ -1,5 +1,5 @@
 import { Number_typesApplication } from "../../application/Number_typesApplication";
-import { Number_types } from "../../domain/Number_types";
+import { Number_types } from "../../domain/domain/Number_types";
 import {Request, Response} from "express";
 import { Validators } from "../config/validations";
 

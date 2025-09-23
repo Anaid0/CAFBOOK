@@ -1,4 +1,4 @@
-import { Departments } from "./Departments";
+import { Departments } from "./domain/Departments";
 export interface DepartmentsPort{
      createDepartment(department: Omit<Departments,"department_id">): Promise<number>;
      updateDepartment(department_id:number, roles:Partial<Departments>):Promise<boolean>;

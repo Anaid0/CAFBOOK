@@ -1,5 +1,5 @@
 import { Repository } from "typeorm";
-import { Crops } from "../../domain/Crops";
+import { Crops } from "../../domain/domain/Crops";
 import { CropsPort } from "../../domain/CropsPort";
 import { CropsEntity } from "../entities/CropsEntity";
 import { AppDataSource } from "../config/con_data_bases";
