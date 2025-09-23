@@ -1,0 +1,327 @@
+{
+  "aggregate": {
+    "counters": {
+      "vusers.created_by_name.Flujo completo de Companies con token fijo": 1,
+      "vusers.created": 1,
+      "http.requests": 3,
+      "http.codes.200": 1,
+      "http.responses": 3,
+      "http.downloaded_bytes": 1256,
+      "plugins.metrics-by-endpoint./api/companies.codes.200": 1,
+      "http.codes.403": 1,
+      "plugins.metrics-by-endpoint./api/companies/1.codes.403": 1,
+      "http.codes.201": 1,
+      "plugins.metrics-by-endpoint./api/companies.codes.201": 1,
+      "errors.Failed capture or match": 1,
+      "vusers.failed": 1
+    },
+    "rates": {
+      "http.request_rate": 3
+    },
+    "firstCounterAt": 1758649150211,
+    "firstHistogramAt": 1758649150401,
+    "lastCounterAt": 1758649150590,
+    "lastHistogramAt": 1758649150590,
+    "firstMetricAt": 1758649150211,
+    "lastMetricAt": 1758649150590,
+    "period": 1758649150000,
+    "summaries": {
+      "http.response_time": {
+        "min": 4,
+        "max": 162,
+        "count": 3,
+        "mean": 94.3,
+        "p50": 117.9,
+        "median": 117.9,
+        "p75": 117.9,
+        "p90": 117.9,
+        "p95": 117.9,
+        "p99": 117.9,
+        "p999": 117.9
+      },
+      "http.response_time.2xx": {
+        "min": 117,
+        "max": 162,
+        "count": 2,
+        "mean": 139.5,
+        "p50": 117.9,
+        "median": 117.9,
+        "p75": 117.9,
+        "p90": 117.9,
+        "p95": 117.9,
+        "p99": 117.9,
+        "p999": 117.9
+      },
+      "plugins.metrics-by-endpoint.response_time./api/companies": {
+        "min": 117,
+        "max": 162,
+        "count": 2,
+        "mean": 139.5,
+        "p50": 117.9,
+        "median": 117.9,
+        "p75": 117.9,
+        "p90": 117.9,
+        "p95": 117.9,
+        "p99": 117.9,
+        "p999": 117.9
+      },
+      "http.response_time.4xx": {
+        "min": 4,
+        "max": 4,
+        "count": 1,
+        "mean": 4,
+        "p50": 4,
+        "median": 4,
+        "p75": 4,
+        "p90": 4,
+        "p95": 4,
+        "p99": 4,
+        "p999": 4
+      },
+      "plugins.metrics-by-endpoint.response_time./api/companies/1": {
+        "min": 4,
+        "max": 4,
+        "count": 1,
+        "mean": 4,
+        "p50": 4,
+        "median": 4,
+        "p75": 4,
+        "p90": 4,
+        "p95": 4,
+        "p99": 4,
+        "p999": 4
+      }
+    },
+    "histograms": {
+      "http.response_time": {
+        "min": 4,
+        "max": 162,
+        "count": 3,
+        "mean": 94.3,
+        "p50": 117.9,
+        "median": 117.9,
+        "p75": 117.9,
+        "p90": 117.9,
+        "p95": 117.9,
+        "p99": 117.9,
+        "p999": 117.9
+      },
+      "http.response_time.2xx": {
+        "min": 117,
+        "max": 162,
+        "count": 2,
+        "mean": 139.5,
+        "p50": 117.9,
+        "median": 117.9,
+        "p75": 117.9,
+        "p90": 117.9,
+        "p95": 117.9,
+        "p99": 117.9,
+        "p999": 117.9
+      },
+      "plugins.metrics-by-endpoint.response_time./api/companies": {
+        "min": 117,
+        "max": 162,
+        "count": 2,
+        "mean": 139.5,
+        "p50": 117.9,
+        "median": 117.9,
+        "p75": 117.9,
+        "p90": 117.9,
+        "p95": 117.9,
+        "p99": 117.9,
+        "p999": 117.9
+      },
+      "http.response_time.4xx": {
+        "min": 4,
+        "max": 4,
+        "count": 1,
+        "mean": 4,
+        "p50": 4,
+        "median": 4,
+        "p75": 4,
+        "p90": 4,
+        "p95": 4,
+        "p99": 4,
+        "p999": 4
+      },
+      "plugins.metrics-by-endpoint.response_time./api/companies/1": {
+        "min": 4,
+        "max": 4,
+        "count": 1,
+        "mean": 4,
+        "p50": 4,
+        "median": 4,
+        "p75": 4,
+        "p90": 4,
+        "p95": 4,
+        "p99": 4,
+        "p999": 4
+      }
+    }
+  },
+  "intermediate": [
+    {
+      "counters": {
+        "vusers.created_by_name.Flujo completo de Companies con token fijo": 1,
+        "vusers.created": 1,
+        "http.requests": 3,
+        "http.codes.200": 1,
+        "http.responses": 3,
+        "http.downloaded_bytes": 1256,
+        "plugins.metrics-by-endpoint./api/companies.codes.200": 1,
+        "http.codes.403": 1,
+        "plugins.metrics-by-endpoint./api/companies/1.codes.403": 1,
+        "http.codes.201": 1,
+        "plugins.metrics-by-endpoint./api/companies.codes.201": 1,
+        "errors.Failed capture or match": 1,
+        "vusers.failed": 1
+      },
+      "rates": {
+        "http.request_rate": 3
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1758649150211,
+      "firstHistogramAt": 1758649150401,
+      "lastCounterAt": 1758649150590,
+      "lastHistogramAt": 1758649150590,
+      "firstMetricAt": 1758649150211,
+      "lastMetricAt": 1758649150590,
+      "period": "1758649150000",
+      "summaries": {
+        "http.response_time": {
+          "min": 4,
+          "max": 162,
+          "count": 3,
+          "mean": 94.3,
+          "p50": 117.9,
+          "median": 117.9,
+          "p75": 117.9,
+          "p90": 117.9,
+          "p95": 117.9,
+          "p99": 117.9,
+          "p999": 117.9
+        },
+        "http.response_time.2xx": {
+          "min": 117,
+          "max": 162,
+          "count": 2,
+          "mean": 139.5,
+          "p50": 117.9,
+          "median": 117.9,
+          "p75": 117.9,
+          "p90": 117.9,
+          "p95": 117.9,
+          "p99": 117.9,
+          "p999": 117.9
+        },
+        "plugins.metrics-by-endpoint.response_time./api/companies": {
+          "min": 117,
+          "max": 162,
+          "count": 2,
+          "mean": 139.5,
+          "p50": 117.9,
+          "median": 117.9,
+          "p75": 117.9,
+          "p90": 117.9,
+          "p95": 117.9,
+          "p99": 117.9,
+          "p999": 117.9
+        },
+        "http.response_time.4xx": {
+          "min": 4,
+          "max": 4,
+          "count": 1,
+          "mean": 4,
+          "p50": 4,
+          "median": 4,
+          "p75": 4,
+          "p90": 4,
+          "p95": 4,
+          "p99": 4,
+          "p999": 4
+        },
+        "plugins.metrics-by-endpoint.response_time./api/companies/1": {
+          "min": 4,
+          "max": 4,
+          "count": 1,
+          "mean": 4,
+          "p50": 4,
+          "median": 4,
+          "p75": 4,
+          "p90": 4,
+          "p95": 4,
+          "p99": 4,
+          "p999": 4
+        }
+      },
+      "histograms": {
+        "http.response_time": {
+          "min": 4,
+          "max": 162,
+          "count": 3,
+          "mean": 94.3,
+          "p50": 117.9,
+          "median": 117.9,
+          "p75": 117.9,
+          "p90": 117.9,
+          "p95": 117.9,
+          "p99": 117.9,
+          "p999": 117.9
+        },
+        "http.response_time.2xx": {
+          "min": 117,
+          "max": 162,
+          "count": 2,
+          "mean": 139.5,
+          "p50": 117.9,
+          "median": 117.9,
+          "p75": 117.9,
+          "p90": 117.9,
+          "p95": 117.9,
+          "p99": 117.9,
+          "p999": 117.9
+        },
+        "plugins.metrics-by-endpoint.response_time./api/companies": {
+          "min": 117,
+          "max": 162,
+          "count": 2,
+          "mean": 139.5,
+          "p50": 117.9,
+          "median": 117.9,
+          "p75": 117.9,
+          "p90": 117.9,
+          "p95": 117.9,
+          "p99": 117.9,
+          "p999": 117.9
+        },
+        "http.response_time.4xx": {
+          "min": 4,
+          "max": 4,
+          "count": 1,
+          "mean": 4,
+          "p50": 4,
+          "median": 4,
+          "p75": 4,
+          "p90": 4,
+          "p95": 4,
+          "p99": 4,
+          "p999": 4
+        },
+        "plugins.metrics-by-endpoint.response_time./api/companies/1": {
+          "min": 4,
+          "max": 4,
+          "count": 1,
+          "mean": 4,
+          "p50": 4,
+          "median": 4,
+          "p75": 4,
+          "p90": 4,
+          "p95": 4,
+          "p99": 4,
+          "p999": 4
+        }
+      }
+    }
+  ]
+}

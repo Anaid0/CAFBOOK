@@ -3,6 +3,7 @@ import { UsersAdapter } from "../adapter/UsersAdapter";
 import { UsersApplication } from "../../application/UsersApplication";
 import { UsersController } from "../controller/UsersController";
 import { authenticateToken } from '../web/authMiddleware';
+import { upload } from "../web/multer";
 
 const router = Router();
 
@@ -51,7 +52,7 @@ router.get("/users/email/:email", async (Request, Response)=>{
     }
 });
 
-router.put("/users/:id", async(Request, Response)=>{
+router.put("/users/:id", upload.single("profile_image"), async(Request, Response)=>{
     try{
         await userController.updateUser(Request, Response);
     }catch(error){

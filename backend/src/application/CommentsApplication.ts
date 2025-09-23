@@ -1,5 +1,5 @@
-import { Comments } from "../domain/Comments";
-import { CommentsPort } from "../domain/CommentsPort";
+import { Comments } from "../domain/entities/Comments";
+import { CommentsPort } from "../domain/port/CommentsPort";
 
 export class CommentsApplication {
     private port: CommentsPort;

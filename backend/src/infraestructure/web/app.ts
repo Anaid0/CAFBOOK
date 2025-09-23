@@ -1,5 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
+import path from "path";  // 👈 necesario para resolver rutas
 // import cors from "cors"; // Ya no hace falta
+
 import rolesRoutes from "../routers/RolesRoutes";
 import departmentsRoutes from "../routers/DepartmentsRoutes";
 import document_typesRoutes from "../routers/Document_typesRouter";
@@ -42,11 +44,13 @@ class App {
             res.header("Access-Control-Allow-Credentials", "true");
 
             if (req.method === "OPTIONS") {
-                // Preflight request
+                
                 return res.sendStatus(204);
             }
             next();
         });
+
+        this.app.use("/uploads", express.static(path.join(__dirname, "../../uploads")));
     }
 
     private routes(): void {

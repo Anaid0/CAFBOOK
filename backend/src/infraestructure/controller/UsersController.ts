@@ -1,7 +1,7 @@
 import { UsersApplication } from "../../application/UsersApplication";
 import {Request, Response} from "express";
 import { Validators } from "../config/validations";
-import { Users } from "../../domain/Users";
+import { Users } from "../../domain/entities/Users";
 
 export class UsersController{
     private app: UsersApplication;
@@ -35,10 +35,10 @@ export class UsersController{
 }
 
     async registerUser(request: Request, response: Response): Promise <Response>{
-        const { firts_name, last_name, document_number, email, password, doc_type_id } = request.body;
+        const { first_name, last_name, document_number, email, password, doc_type_id } = request.body;
         try{
 
-            if(!Validators.name(firts_name))
+            if(!Validators.name(first_name))
                 return response.status(400).json({message: "Nombres inválido"});
 
             if(!Validators.name(last_name))
@@ -52,13 +52,15 @@ export class UsersController{
 
             if(!Validators.password(password))
                 return response.status(400).json({message:"La contraseña debe tener entre 6 y 25 caracteres, incluyendo al menos una letra y un número"});
+
+            const photo_url = request.file ? request.file.path : null;
         
-            const user: Omit<Users, "user_id" | "role_description" | "doc_type_description" | "photo_url"> = {
-                firts_name, last_name, document_number, doc_type_id, email, password, role_id: 1, status: 1, created_at: new Date()
+            const user: Omit<Users, "user_id" | "role_description" | "doc_type_description"> = {
+                first_name, last_name, document_number, doc_type_id, email, password, photo_url, role_id: 1, status: 1, created_at: new Date()
             };
             const user_id = await this.app.createUser(user);
 
-            return response.status(201).json({message:"Usuario creado exitosamente:", user_id});
+            return response.status(201).json({message:"Usuario creado exitosamente:", user_id, photo_url});
         }catch(error){
 
             if(error instanceof Error){
@@ -155,10 +157,14 @@ export class UsersController{
             const userId = parseInt(request.params.id);
             if(isNaN(userId)) return response.status(400).json({message:"Error en parámetro"});
             
-            let { firts_name, last_name, document_number, email, password, doc_type_id, } = request.body;
+            let { first_name, last_name, document_number, email, password, doc_type_id, } = request.body;
+            let photo_url: string | null = null;
+            if (request.file) {
+                photo_url = `${process.env.BASE_URL || "http://192.168.2.30:4200"}/uploads/${request.file.filename}`;
+            }
 
              // Validaciones antes de actualizar
-            if (firts_name && !Validators.name(firts_name)) 
+            if (first_name && !Validators.name(first_name)) 
                 return response.status(400).json({message:"El nombre debe tener al menos 3 caracteresponse y solo contener letras",
             });
 
@@ -176,10 +182,12 @@ export class UsersController{
             if (password && !Validators.password(password))
                 return response.status(400).json({message:"La contraseña debe tener al menos 6 caracteres, incluyendo al menos una letra y un número"});
       
-      const updated = await this.app.updateUser(userId,{firts_name, last_name, document_number, email, password, doc_type_id, status: 1});
+      const updated = await this.app.updateUser(userId,{first_name, last_name, document_number, email, password, doc_type_id, photo_url: photo_url,status: 1});
       if(!updated) return response.status(404).json({message: "Usuario no encontrado o sin cambios"});
-
-      return response.status(200).json({message:"Usuaurio actualizaco exitosamente"})
+      const userUpdated = await this.app.getUserById(userId);
+      
+      return response.status(200).json({message:"Usuario actualizado exitosamente",user: userUpdated
+      });
  
         }catch(error){
             if(error instanceof Error){

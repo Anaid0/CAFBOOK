@@ -81,6 +81,15 @@ router.get("/posts/category/name/:name", async (Request, Response) => {
   }
 });
 
+router.get("/posts/user/:userId/category/:categoryId", async (Request, Response) => {
+  try {
+    await postsController.searchPostByUserIdAndCategoryId(Request, Response);
+  } catch (error) {
+    console.error("Error obteniendo posts por categoría y user: " + error);
+    Response.status(400).json({ message: "Error obteniendo posts por categoría y por user" });
+  }
+});
+
 router.put("/posts/:id", async (Request, Response) => {
   try {
     await postsController.updatePost(Request, Response);

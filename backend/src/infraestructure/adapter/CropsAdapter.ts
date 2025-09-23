@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
-import { Crops } from "../../domain/Crops";
-import { CropsPort } from "../../domain/CropsPort";
+import { Crops } from "../../domain/entities/Crops";
+import { CropsPort } from "../../domain/port/CropsPort";
 import { CropsEntity } from "../entities/CropsEntity";
 import { AppDataSource } from "../config/con_data_bases";
 import { UserEntity } from "../entities/UsersEntity";

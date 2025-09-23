@@ -1,0 +1,53 @@
+config:
+  target: "http://localhost:4200"
+  phases:
+    - duration: 1        # tiempo total de la prueba
+      arrivalRate: 1     # usuarios virtuales por segundo
+  variables:
+    fixedToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJwaXBldGVuaml0b0BnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc1ODY0MTk3NywiZXhwIjoxNzU4NjQ1NTc3fQ.OCjZYYeclWh-VqKFYFBv8ldp38A2CqePdydv1Jd1X24"
+
+scenarios:
+  - name: "Flujo completo de Users con token fijo"
+    flow:
+      # 1. Obtener lista de usuarios
+      - get:
+          url: "/api/users"
+          headers:
+            Authorization: "Bearer {{ fixedToken }}"
+
+      # 2. Obtener un usuario por id
+      - get:
+          url: "/api/users/1"
+          headers:
+            Authorization: "Bearer {{ fixedToken }}"
+
+      # 3. Crear usuario (POST)
+      - post:
+          url: "/api/users"
+          headers:
+            Authorization: "Bearer {{ fixedToken }}"
+          json:
+            firts_name: "Laura"
+            last_name: "Martinez"
+            document_number: "987654321"
+            email: "lauramartinez@gmail.com"
+            password: "LauraMtz2025"
+            role_id: 1
+            doc_type_id: 1
+          capture:
+            - json: "$.id"
+              as: "newUserId"
+
+      # 4. Actualizar usuario creado (PUT)
+      - put:
+          url: "/api/users/{{ newUserId }}"
+          headers:
+            Authorization: "Bearer {{ fixedToken }}"
+          json:
+            firts_name: "Laura"
+            last_name: "Martinez"
+            document_number: "987654321"
+            email: "lauramartinezupdate@gmail.com"
+            password: "Laura2025"
+            role_id: 1
+            doc_type_id: 1

@@ -1,5 +1,5 @@
 import { Crop_typesApplication } from "../../application/Crop_typesApplication";
-import { Crop_types } from "../../domain/Crop_types";
+import { Crop_types } from "../../domain/entities/Crop_types";
 import { Validators } from "../config/validations";
 import {Request, Response} from "express";
 

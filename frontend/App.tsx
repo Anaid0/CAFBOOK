@@ -15,6 +15,8 @@ import EditarTutorialScreen from "./app/screens/EditarTutorialScreen";
 import AgregarScreen from "./app/screens/agregarScreen";
 import CultivosScreen from "./app/screens/cultivosScreen";
 import homeScreen from "./app/screens/homeScreen";
+import EditProfileUser from "./app/screens/editProfileUser";
+import ProfileScreenUser from "./app/screens/profileScreenUser";
 
 const Stack = createNativeStackNavigator();
 
@@ -39,7 +41,8 @@ export default function App() {
         <Stack.Screen name="agregarScreen" component={AgregarScreen} />
         <Stack.Screen name="cultivosScreen" component={CultivosScreen} />
         <Stack.Screen name="homeScreen" component={homeScreen} />
-
+        <Stack.Screen name="EditProfileUser" component={EditProfileUser} />
+        <Stack.Screen name="ProfileScreenUser" component={ProfileScreenUser} />
 
       </Stack.Navigator>
     </NavigationContainer>

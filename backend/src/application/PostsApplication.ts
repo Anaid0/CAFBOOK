@@ -1,5 +1,5 @@
-import { Posts } from "../domain/Posts"
-import { PostsPort } from '../domain/PostsPort';
+import { Posts } from "../domain/entities/Posts"
+import { PostsPort } from '../domain/port/PostsPort';
 
 export class PostsApplication {
     private port: PostsPort;
@@ -70,6 +70,10 @@ export class PostsApplication {
     
     async getAllPostsActive(status:1): Promise<Posts[]> {
         return await this.port.getAllPostsActive(status);
+    }
+
+    async getPostByUserIdAndCategoryId(user_id: number, post_category: number): Promise<Posts[]> {
+        return await this.port.getPostByUserIdAndCategoryId(user_id, post_category);
     }
 }
     

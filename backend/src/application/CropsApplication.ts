@@ -1,5 +1,5 @@
-import { Crops } from "../domain/Crops";
-import { CropsPort } from "../domain/CropsPort";
+import { Crops } from "../domain/entities/Crops";
+import { CropsPort } from "../domain/port/CropsPort";
 
 export class CropsApplication {
     private port: CropsPort;

@@ -1,5 +1,5 @@
-import { Cities } from "../domain/Cities"
-import { CitiesPort } from '../domain/CitiesPort';
+import { Cities } from "../domain/entities/Cities"
+import { CitiesPort } from '../domain/port/CitiesPort';
 
 export class CitiesApplication {
     private port: CitiesPort;

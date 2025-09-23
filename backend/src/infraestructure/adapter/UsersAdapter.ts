@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
-import { Users } from "../../domain/Users";
-import { UserPort } from "../../domain/UsersPort";
+import { Users } from "../../domain/entities/Users";
+import { UserPort } from "../../domain/port/UsersPort";
 import { UserEntity } from "../entities/UsersEntity";
 import { AppDataSource } from "../config/con_data_bases";
 import { RolesEntity } from "../entities/RolesEntity";
@@ -16,7 +16,7 @@ export class UsersAdapter implements UserPort{
     private toDomain(user: UserEntity): Users{
         return{
             user_id: user.user_id,
-            firts_name: user.firts_name,
+            first_name: user.first_name,
             last_name: user.last_name,
             document_number: user.document_number,
             email: user.email,
@@ -38,7 +38,7 @@ export class UsersAdapter implements UserPort{
 
         rolesEntity.role_id = user.role_id;
         document_type.doc_type_id = user.doc_type_id;
-        userEntity.firts_name = user.firts_name;
+        userEntity.first_name = user.first_name;
         userEntity.last_name = user.last_name;
         userEntity.document_number = user.document_number;
         userEntity.email = user.email;
@@ -76,9 +76,10 @@ export class UsersAdapter implements UserPort{
             }
             
             Object.assign(existingUser,{
-               first_name: user.firts_name ??  existingUser.firts_name,
+               first_name: user.first_name ??  existingUser.first_name,
                last_name: user.last_name ?? existingUser.last_name,
                document_number: user.document_number ?? existingUser.document_number,
+               photo_url: user.photo_url ?? existingUser.photo_url,
                email: user.email ?? existingUser.email,
                password: user.password ?? existingUser.password,
                doc_type_id: user.doc_type_id ?? existingUser.doc_type_id,

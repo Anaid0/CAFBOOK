@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
-import { UserPort } from "../domain/UsersPort";
-import { Users } from "../domain/Users";
+import { UserPort } from "../domain/port/UsersPort";
+import { Users } from "../domain/entities/Users";
 import { AuthApplication } from "./AuthApplication";
 
 export class UsersApplication{
@@ -21,17 +21,20 @@ export class UsersApplication{
         throw new Error("Credenciales inválidas");
     }
 
+    if(existingUser.status === 0){
+        throw new Error("Usuario deshabilitado, comunicate con el admin para recuperarla")
+    }
+
     const token = AuthApplication.generateToken({
         id: existingUser.user_id,
-        email: existingUser.email,
-        role: "user"
+        email: existingUser.email
     });
 
     return { token, id: existingUser.user_id };
 }
 
     
-    async createUser(user: Omit<Users,"user_id" | "role_description" | "doc_type_description" | "photo_url">): Promise<number>{
+    async createUser(user: Omit<Users,"user_id" | "role_description" | "doc_type_description">): Promise<number>{
         const existingUser = await this.port.getUserByEmail(user.email);
         if(!existingUser){
             const hashedPass= await bcrypt.hash(user.password, 10);

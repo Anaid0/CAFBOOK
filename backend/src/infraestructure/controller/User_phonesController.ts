@@ -1,5 +1,5 @@
 import { User_phonesApplication } from "../../application/User_phonesApplication";
-import { User_phones } from "../../domain/User_phones";
+import { User_phones } from "../../domain/entities/User_phones";
 import { Request, Response } from "express";
 
 export class User_phonesController {

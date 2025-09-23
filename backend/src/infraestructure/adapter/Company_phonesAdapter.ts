@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
-import { Company_phones } from '../../domain/Company_phones';
-import { Company_phonesPort } from "../../domain/Company_phonesPort";
+import { Company_phones } from '../../domain/entities/Company_phones';
+import { Company_phonesPort } from "../../domain/port/Company_phonesPort";
 import { Company_phonesEntity } from "../entities/Company_phonesEntity";
 import { AppDataSource } from "../config/con_data_bases";
 import { CompaniesEntity } from "../entities/CompaniesEntity";

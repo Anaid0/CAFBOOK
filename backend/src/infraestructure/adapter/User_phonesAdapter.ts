@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
-import { User_phones } from '../../domain/User_phones';
-import { User_phonesPort } from "../../domain/User_PhonesPort";
+import { User_phones } from '../../domain/entities/User_phones';
+import { User_phonesPort } from "../../domain/port/User_PhonesPort";
 import { User_phonesEntity } from "../entities/User_phonesEntity";
 import { AppDataSource } from "../config/con_data_bases";
 import { number } from 'joi';
@@ -20,7 +20,7 @@ export class User_phonesAdapter implements User_phonesPort {
       phone_id: entity.phone_id.phone_id,
       phone_number: entity.phone_id.number,
       user_id: entity.user_id.user_id,
-      user_name: `${entity.user_id.firts_name} ${entity.user_id.last_name}`,
+      user_name: `${entity.user_id.first_name} ${entity.user_id.last_name}`,
       user_email: entity.user_id.email
     };
   }

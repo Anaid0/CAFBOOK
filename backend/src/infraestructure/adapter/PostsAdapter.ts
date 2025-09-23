@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
-import { Posts } from "../../domain/Posts";
-import { PostsPort } from "../../domain/PostsPort";
+import { Posts } from "../../domain/entities/Posts";
+import { PostsPort } from "../../domain/port/PostsPort";
 import { PostsEntity } from "../entities/PostsEntity";
 import { AppDataSource } from "../config/con_data_bases";
 import { UserEntity } from "../entities/UsersEntity";
@@ -195,5 +195,23 @@ async getPostByPostUserEmail(user_email: string): Promise<Posts[]> {
     throw new Error("Error obteniendo posts por user_email");
   }
 }
-  
+
+async getPostByUserIdAndCategoryId(user_id: number, post_category: number): Promise<Posts[]> {
+  try {
+    const entities = await this.postsRepository.find({
+      relations: ["user_id", "post_category_id"],
+    });
+
+    const filtered = entities.filter(PostsEntity =>PostsEntity.user_id.user_id === user_id &&
+    PostsEntity.post_category_id.post_category_id === post_category
+    );
+
+    return filtered.map(entity => this.toDomain(entity));
+  } catch (error) {
+    console.error("Error obteniendo posts por user_id y post_category:", error);
+    throw new Error("Error obteniendo posts por user_id y post_category");
+  }
+}
+
+
 }
