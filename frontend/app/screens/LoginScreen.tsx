@@ -11,12 +11,14 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { loginUser } from "../../apis/usersapi";
+import { loginCompany } from "../../apis/companiesApi";
 
 const LoginScreen = () => {
   const navigation = useNavigation<any>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [userType, setUserType] = useState<"user" | "company">("user");
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -27,14 +29,40 @@ const LoginScreen = () => {
     setIsLoading(true);
 
     try {
-      // Desestructuramos token e id del backend
-      const { token, id } = await loginUser(email, password);
+      let response;
+      
+      // Intentar login según el tipo seleccionado
+      if (userType === "user") {
+        response = await loginUser(email, password);
+      } else {
+        response = await loginCompany({ email, password });
+      }
+
       setIsLoading(false);
 
+      // Manejar la respuesta (puede ser response.data o response directamente)
+      const data = response.data || response;
+      const { token, id } = data;
+
       if (token && id) {
-        console.log("Login exitoso:", { token, id });
-        // Navegamos al homeScreen enviando el id y token
-        navigation.navigate("Main", { userId: id, token });
+        console.log("Login exitoso:", { token, id, userType });
+        
+        // Redirigir según el tipo de usuario
+        if (userType === "user") {
+          // Usuario normal - va al Home normal
+          navigation.navigate("Main", { 
+            userId: id, 
+            token,
+            userType: "user"
+          });
+        } else {
+          // Compañía - va a una vista específica (por ahora al mismo Main pero con userType diferente)
+          navigation.navigate("Main", { 
+            companyId: id, 
+            token,
+            userType: "company"
+          });
+        }
       } else {
         Alert.alert("Error", "Credenciales incorrectas");
       }
@@ -59,6 +87,35 @@ const LoginScreen = () => {
         />
         <Text style={styles.title}>CAF-BOOK</Text>
         <Text style={styles.subtitle}>Inicia Sesión</Text>
+      </View>
+
+      {/* Selector de tipo de usuario */}
+      <View style={styles.userTypeContainer}>
+        <TouchableOpacity 
+          style={[
+            styles.userTypeButton, 
+            userType === "user" && styles.userTypeButtonActive
+          ]}
+          onPress={() => setUserType("user")}
+        >
+          <Text style={[
+            styles.userTypeText,
+            userType === "user" && styles.userTypeTextActive
+          ]}>Usuario</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={[
+            styles.userTypeButton, 
+            userType === "company" && styles.userTypeButtonActive
+          ]}
+          onPress={() => setUserType("company")}
+        >
+          <Text style={[
+            styles.userTypeText,
+            userType === "company" && styles.userTypeTextActive
+          ]}>Empresa</Text>
+        </TouchableOpacity>
       </View>
 
       <TextInput 
@@ -89,7 +146,9 @@ const LoginScreen = () => {
         {isLoading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
+          <Text style={styles.loginButtonText}>
+            Iniciar Sesión como {userType === "user" ? "Usuario" : "Empresa"}
+          </Text>
         )}
       </TouchableOpacity>
 
@@ -140,6 +199,32 @@ const styles = StyleSheet.create({
     fontSize: 18, 
     color: "#1C2833", 
     marginBottom: 15 
+  },
+  userTypeContainer: {
+    flexDirection: "row",
+    width: "100%",
+    marginBottom: 20,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    padding: 5,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  userTypeButton: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 6,
+    alignItems: "center",
+  },
+  userTypeButtonActive: {
+    backgroundColor: "#1ABC9C",
+  },
+  userTypeText: {
+    color: "#555",
+    fontWeight: "bold",
+  },
+  userTypeTextActive: {
+    color: "#fff",
   },
   input: {
     width: "100%",

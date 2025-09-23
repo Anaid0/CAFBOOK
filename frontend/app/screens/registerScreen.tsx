@@ -1,4 +1,3 @@
-// app/screens/registerScreen.tsx
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -13,77 +12,71 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
 import { getRoles } from "../../apis/rolesApi";
 import { getAllDocumentTypes } from "../../apis/documentTypesApi";
-import { createUser } from "../../apis/usersapi";
+import { createUser } from "../../apis/usersapi"; // API para usuarios
+import { createCompany } from "../../apis/companiesApi"; // API para empresas
+import { Ionicons } from "@expo/vector-icons";
+import RNPickerSelect from 'react-native-picker-select';
 
 const RegisterScreen = () => {
   const navigation = useNavigation<any>();
 
-  // Roles y tipos de documento
+  const handleGoBack = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate("Login");
+    }
+  };
+
   const [roles, setRoles] = useState<{ label: string; value: number }[]>([]);
   const [docTypes, setDocTypes] = useState<{ label: string; value: number }[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [role, setRole] = useState<number>(1);
+  const [role, setRole] = useState<number>(1); // 1 = User, 2 = Company
   const [docType, setDocType] = useState<number>(1);
 
-  // Datos personales
-  const [firts_name, setFirtsName] = useState("");
-  const [last_name, setLastName] = useState("");
+  // Campos comunes
   const [document_number, setDocNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Empresa
-  const [businessName, setBusinessName] = useState("");
-  const [isCattleRancher, setIsCattleRancher] = useState(false);
-  const [nit, setNit] = useState("");
+  // Campos específicos para USER
+  const [firts_name, setFirtsName] = useState("");
+  const [last_name, setLastName] = useState("");
+
+  // Campos específicos para COMPANY
+  const [bussines_name, setBusinessName] = useState("");
   const [profession, setProfession] = useState("");
-  const [yearsOfExperience, setYearsOfExperience] = useState("");
+  const [years_experience, setYearsExperience] = useState("");
 
-  const [loading, setLoading] = useState(true);
-
-  // 🔹 Traer roles y tipos de documento desde el backend con Axios
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [rolesResponse, docTypesResponse] = await Promise.all([getRoles(), getAllDocumentTypes()]);
-
-        // Verificar y ajustar según la estructura real de la respuesta
         const rolesData = Array.isArray(rolesResponse) ? rolesResponse : (rolesResponse.data || []);
         const docTypesData = Array.isArray(docTypesResponse) ? docTypesResponse : (docTypesResponse.data || []);
 
-        // Mapear correctamente según la estructura {doc_type_id, description} y {role_id, description}
-        if (Array.isArray(rolesData)) {
-          const formattedRoles = rolesData.map((r: any) => ({ 
-            label: r.description || `Rol ${r.role_id}`, 
-            value: r.role_id 
+        if (Array.isArray(rolesData) && rolesData.length > 0) {
+          const formattedRoles = rolesData.map((r: any) => ({
+            label: r.description || `Rol ${r.role_id}`,
+            value: r.role_id
           }));
           setRoles(formattedRoles);
-          
-          if (formattedRoles.length > 0) {
-            setRole(formattedRoles[0].value);
-          }
         } else {
-          console.warn("Roles data is not an array:", rolesData);
           setRoles([{ label: "Usuario", value: 1 }, { label: "Empresa", value: 2 }]);
         }
 
-        if (Array.isArray(docTypesData)) {
-          const formattedDocTypes = docTypesData.map((d: any) => ({ 
-            label: d.description || `Documento ${d.doc_type_id}`, 
-            value: d.doc_type_id 
+        if (Array.isArray(docTypesData) && docTypesData.length > 0) {
+          const formattedDocTypes = docTypesData.map((d: any) => ({
+            label: d.description || `Documento ${d.doc_type_id}`,
+            value: d.doc_type_id
           }));
           setDocTypes(formattedDocTypes);
-          
-          if (formattedDocTypes.length > 0) {
-            setDocType(formattedDocTypes[0].value);
-          }
         } else {
-          console.warn("Document types data is not an array:", docTypesData);
           setDocTypes([
             { label: "Cédula de Ciudadanía", value: 1 },
             { label: "Cédula de Extranjería", value: 2 },
@@ -91,12 +84,9 @@ const RegisterScreen = () => {
             { label: "Pasaporte", value: 4 }
           ]);
         }
-
       } catch (error: any) {
         Alert.alert("Error", "No se pudieron cargar roles o tipos de documento");
         console.error("Error fetching data:", error);
-        
-        // Datos por defecto en caso de error
         setRoles([{ label: "Usuario", value: 1 }, { label: "Empresa", value: 2 }]);
         setDocTypes([
           { label: "Cédula de Ciudadanía", value: 1 },
@@ -108,122 +98,128 @@ const RegisterScreen = () => {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
+  // ========= SECCIÓN CORREGIDA =========
   const handleRegister = async () => {
-    if (!firts_name || !last_name || !email || !password || !confirmPassword || !document_number) {
+    // 1. Validaciones comunes
+    if (!email || !password || !confirmPassword || !document_number) {
       Alert.alert("Error", "Por favor completa todos los campos obligatorios");
       return;
     }
-
     if (password !== confirmPassword) {
       Alert.alert("Error", "Las contraseñas no coinciden");
       return;
     }
-
     if (password.length < 6) {
       Alert.alert("Error", "La contraseña debe tener al menos 6 caracteres");
       return;
     }
 
-    // Ajustado para coincidir con el JSON proporcionado
-    const userData: any = {
-      firts_name,
-      last_name,
-      document_number,
-      email,
-      password,
-      doc_type_id: docType,
-    };
-
-    // Solo incluir role_id si es diferente del valor por defecto
-    if (role !== 1) {
-      userData.role_id = role;
-    }
-
-    if (role === 2) {
-      if (!businessName || !nit) {
-        Alert.alert("Error", "Para cuenta empresarial, debe completar razón social y NIT");
-        return;
-      }
-      
-      userData.businessName = businessName;
-      userData.isCattleRancher = isCattleRancher;
-      userData.nit = nit;
-      userData.profession = profession;
-      userData.yearsOfExperience = yearsOfExperience;
-    }
-
     try {
-      await createUser(userData);
+      // 2. Lógica condicional según el rol
+      if (role === 1) { // Si es USUARIO
+        if (!firts_name || !last_name) {
+          Alert.alert("Error", "Para cuenta de usuario, debe completar nombres y apellidos");
+          return;
+        }
+        const userData = {
+          firts_name, // OJO: Revisa si tu API espera "firts_name" o "first_name"
+          last_name,
+          document_number,
+          email,
+          password,
+          doc_type_id: docType,
+          role_id: role,
+        };
+        await createUser(userData); // Llama a la API de usuarios
+
+      } else if (role === 2) { // Si es EMPRESA
+        if (!bussines_name || !profession) {
+          Alert.alert("Error", "Para cuenta empresarial, debe completar razón social y profesión");
+          return;
+        }
+        const companyData = {
+          bussines_name, // OJO: Revisa si tu API espera "bussines_name" o "business_name"
+          profession,
+          years_experience: years_experience ? parseInt(years_experience, 10) : 0,
+          document_number,
+          email,
+          password,
+          doc_type_id: docType,
+          role_id: role,
+        };
+        await createCompany(companyData); // Llama a la API de empresas
+      }
+
+      // 3. Respuesta de éxito para ambos casos
       Alert.alert("Éxito", "Cuenta creada correctamente");
       navigation.navigate("Login");
+
     } catch (error: any) {
+      // 4. Manejo de errores centralizado
       console.error("Registration error:", error);
       Alert.alert(
-        "Error", 
-        error.response?.data?.message || 
-        error.message || 
+        "Error",
+        error.response?.data?.message ||
+        error.message ||
         "Error al crear la cuenta. Por favor intenta nuevamente."
       );
     }
   };
+  // ========= FIN DE LA SECCIÓN CORREGIDA =========
 
-  const renderRoleSpecificFields = () => {
-    if (role === 2) {
+
+  const renderUserFields = () => {
+    if (role === 1) { // USER
+      return (
+        <>
+          <Text style={styles.label}>Nombres *</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Tu nombre"
+            value={firts_name}
+            onChangeText={setFirtsName}
+          />
+          <Text style={styles.label}>Apellidos *</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Tus apellidos"
+            value={last_name}
+            onChangeText={setLastName}
+          />
+        </>
+      );
+    }
+    return null;
+  };
+
+  const renderCompanyFields = () => {
+    if (role === 2) { // COMPANY
       return (
         <View style={styles.roleSection}>
           <Text style={styles.sectionTitle}>Información de la Empresa</Text>
-
           <Text style={styles.label}>Razón Social *</Text>
           <TextInput
             style={styles.input}
             placeholder="Nombre de la empresa"
-            value={businessName}
+            value={bussines_name}
             onChangeText={setBusinessName}
           />
-
-          <Text style={styles.label}>NIT *</Text>
+          <Text style={styles.label}>Profesión/Actividad Principal *</Text>
           <TextInput
             style={styles.input}
-            placeholder="Número de Identificación Tributaria"
-            value={nit}
-            onChangeText={setNit}
-            keyboardType="numeric"
-          />
-
-          <Text style={styles.label}>¿Está registrado en la Cámara de Ganadería?</Text>
-          <View style={styles.radioContainer}>
-            <TouchableOpacity
-              style={[styles.radioOption, isCattleRancher && styles.radioSelected]}
-              onPress={() => setIsCattleRancher(true)}
-            >
-              <Text style={isCattleRancher ? styles.radioTextSelected : styles.radioText}>Sí</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.radioOption, !isCattleRancher && styles.radioSelected]}
-              onPress={() => setIsCattleRancher(false)}
-            >
-              <Text style={!isCattleRancher ? styles.radioTextSelected : styles.radioText}>No</Text>
-            </TouchableOpacity>
-          </View>
-
-          <Text style={styles.label}>Actividad Principal</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Ej: Ganadería, Agricultura, Distribución"
+            placeholder="Ej: Ganadería, Agricultura, Comercio"
             value={profession}
             onChangeText={setProfession}
           />
-
           <Text style={styles.label}>Años de Experiencia</Text>
           <TextInput
             style={styles.input}
             placeholder="Años en el sector"
-            value={yearsOfExperience}
-            onChangeText={setYearsOfExperience}
+            value={years_experience}
+            onChangeText={setYearsExperience}
             keyboardType="numeric"
           />
         </View>
@@ -232,23 +228,31 @@ const RegisterScreen = () => {
     return null;
   };
 
+  const pickerSelectStyles = {
+    inputIOS: { fontSize: 16, paddingVertical: 12, paddingHorizontal: 10, borderWidth: 1, borderColor: '#CCC', borderRadius: 8, color: 'black', paddingRight: 30, backgroundColor: '#FFFFFF', marginBottom: 10 },
+    inputAndroid: { fontSize: 16, paddingHorizontal: 10, paddingVertical: 8, borderWidth: 1, borderColor: '#CCC', borderRadius: 8, color: 'black', paddingRight: 30, backgroundColor: '#FFFFFF', marginBottom: 10 },
+    placeholder: { color: '#999' },
+  };
+
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="#1ABC9C" />
-        <Text>Cargando roles y tipos de documento...</Text>
+        <Text>Cargando datos...</Text>
       </View>
     );
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+          <Ionicons name="arrow-back" size={24} color="#1C2833" />
+          <Text style={styles.backButtonText}>Atrás</Text>
+        </TouchableOpacity>
+
         <View style={styles.logoContainer}>
-          <Image 
+          <Image
             source={require("../../assets/images/logoCAFBOOKK.png")}
             style={styles.logo}
           />
@@ -257,54 +261,25 @@ const RegisterScreen = () => {
         </View>
 
         <Text style={styles.label}>Tipo de Cuenta *</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={role}
-            onValueChange={(itemValue) => setRole(itemValue)}
-            style={styles.picker}
-          >
-            {roles.map((roleItem, index) => (
-              <Picker.Item
-                key={`role-${roleItem.value}-${index}`}
-                label={roleItem.label}
-                value={roleItem.value}
-              />
-            ))}
-          </Picker>
-        </View>
-
-        <Text style={styles.label}>Nombres *</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Tu nombre"
-          value={firts_name}
-          onChangeText={setFirtsName}
+        <RNPickerSelect
+          onValueChange={(value) => setRole(value || 1)}
+          items={roles}
+          value={role}
+          style={pickerSelectStyles}
+          placeholder={{}}
         />
 
-        <Text style={styles.label}>Apellidos *</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Tus apellidos"
-          value={last_name}
-          onChangeText={setLastName}
-        />
+        {renderUserFields()}
+        {renderCompanyFields()}
 
         <Text style={styles.label}>Tipo de Documento *</Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={docType}
-            onValueChange={(itemValue) => setDocType(itemValue)}
-            style={styles.picker}
-          >
-            {docTypes.map((typeItem, index) => (
-              <Picker.Item
-                key={`doc-${typeItem.value}-${index}`}
-                label={typeItem.label}
-                value={typeItem.value}
-              />
-            ))}
-          </Picker>
-        </View>
+        <RNPickerSelect
+          onValueChange={(value) => setDocType(value || 1)}
+          items={docTypes}
+          value={docType}
+          style={pickerSelectStyles}
+          placeholder={{}}
+        />
 
         <Text style={styles.label}>Número de Documento *</Text>
         <TextInput
@@ -343,13 +318,11 @@ const RegisterScreen = () => {
           onChangeText={setConfirmPassword}
         />
 
-        {renderRoleSpecificFields()}
-
         <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
           <Text style={styles.registerButtonText}>Crear Cuenta</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.loginLink}
           onPress={() => navigation.navigate("Login")}
         >
@@ -362,25 +335,20 @@ const RegisterScreen = () => {
   );
 };
 
-// Estilos (se mantienen igual)
+// ... (los estilos se mantienen igual)
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#A9DFBF" },
-  scrollContent: { padding: 20, paddingTop: 40 },
+  scrollContent: { padding: 20, paddingTop: 20 },
+  backButton: { flexDirection: "row", alignItems: "center", marginBottom: 10, padding: 5 },
+  backButtonText: { fontSize: 16, color: "#1C2833", marginLeft: 5, fontWeight: "600" },
   logoContainer: { alignItems: "center", marginBottom: 30 },
   logo: { width: 100, height: 100, resizeMode: "contain", marginBottom: 15 },
   title: { fontSize: 32, fontWeight: "bold", color: "#1C2833", marginBottom: 5 },
   subtitle: { fontSize: 18, color: "#1C2833", marginBottom: 20 },
   label: { fontSize: 14, fontWeight: "600", color: "#1C2833", marginBottom: 5, marginTop: 10 },
   sectionTitle: { fontSize: 18, fontWeight: "bold", color: "#1C2833", marginTop: 20, marginBottom: 15, borderBottomWidth: 1, borderBottomColor: "#1ABC9C", paddingBottom: 5 },
-  pickerContainer: { backgroundColor: "#FFFFFF", borderRadius: 8, marginBottom: 10, borderWidth: 1, borderColor: "#CCC" },
-  picker: { width: "100%" },
   input: { backgroundColor: "#FFFFFF", padding: 15, borderRadius: 8, marginBottom: 10, borderWidth: 1, borderColor: "#CCC", fontSize: 16 },
   roleSection: { backgroundColor: "#E8F8F5", borderRadius: 10, padding: 15, marginTop: 15, marginBottom: 20 },
-  radioContainer: { flexDirection: "row", marginBottom: 15 },
-  radioOption: { padding: 12, marginRight: 10, borderRadius: 8, borderWidth: 1, borderColor: "#CCC", backgroundColor: "#FFFFFF", minWidth: 60, alignItems: "center" },
-  radioSelected: { backgroundColor: "#1ABC9C", borderColor: "#1ABC9C" },
-  radioText: { color: "#1C2833" },
-  radioTextSelected: { color: "#FFFFFF", fontWeight: "bold" },
   registerButton: { backgroundColor: "#1ABC9C", padding: 15, borderRadius: 8, alignItems: "center", marginTop: 25, marginBottom: 15 },
   registerButtonText: { color: "#FFFFFF", fontWeight: "bold", fontSize: 16 },
   loginLink: { alignItems: "center", marginBottom: 20 },
