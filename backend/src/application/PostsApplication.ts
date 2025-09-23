@@ -9,11 +9,7 @@ export class PostsApplication {
     }
 
     async createPost(post: Omit<Posts, "post_id" | "user_email" | "post_category_description" | "deleted_at">): Promise<number> {
-        const existingPosts = await this.port.getPostByPostCategoryId(post.post_category_id);
-        if (existingPosts.length === 0) {
-            return await this.port.createPost(post);
-        }
-        throw new Error("Ya existe un post en esta categoría");
+        return await this.port.createPost(post);
     }
 
     async updatePost(post_id: number, post: Partial<Posts>): Promise<boolean> {

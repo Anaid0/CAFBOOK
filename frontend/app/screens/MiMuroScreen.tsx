@@ -1,4 +1,5 @@
-import React, { useState, useEffect} from "react";
+// app/screens/MismuroScreen.tsx
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,62 +10,102 @@ import {
   ActivityIndicator
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { getPostsByCategoryId } from "../../apis/postsApi";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getPostsByUserIdAndCategoryId } from "../../apis/postsApi"; 
 
-const ManualesScreen = () => {
+const MiMuroScreen = () => {
   const navigation = useNavigation<any>();
-  const [manuales, setManuales] = useState<any[]>([]);
+  const [muro, setMuro] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
-   const categoriaId= 2;
-
-   useEffect(() => {
-    const fetchManuales = async () => {
+  
+  const categoriaId = 4;
+  useEffect(() => {
+    const fetchmuro = async () => {
       try {
-        const data = await getPostsByCategoryId(categoriaId);
-        setManuales(data);
+        const id = await AsyncStorage.getItem("userId"); 
+        if (!id) return;
+
+        const data = await getPostsByUserIdAndCategoryId(Number(id), categoriaId);
+        setMuro(data);
       } catch (error) {
-        console.error("Error cargando manuales:", error);
-        Alert.alert("Error", "No se pudieron cargar los manuales");
+        console.error("Error cargando muro:", error);
+        Alert.alert("Error", "No se pudo cargar el muro");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchManuales();
+    fetchmuro();
   }, []);
-  
-  
-  if (loading) {
-      return (
-        <View style={styles.loader}>
-          <ActivityIndicator size="large" color="#1ABC9C" />
-          <Text>Cargando manuales...</Text>
-        </View>
-      );
-    }
 
- return (
+  const handleEditar = (id: number) => {
+    navigation.navigate("editarmuroScreen", { id });
+  };
+
+  const handleEliminar = (id: number) => {
+    Alert.alert(
+      "Eliminar muro",
+      "¿Estás seguro de que quieres eliminar este muro?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Eliminar",
+          onPress: () => {
+            setMuro(muro.filter(t => t.id !== id));
+            Alert.alert("Éxito", "eliminado de correctamente");
+          }
+        }
+      ]
+    );
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="#1ABC9C" />
+        <Text>Cargando muro...</Text>
+      </View>
+    );
+  }
+
+  return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Manuales</Text>
-        <Text style={styles.headerSubtitle}>{manuales.length} manuales creados</Text>
+        <Text style={styles.headerTitle}>Mi muro</Text>
+        <Text style={styles.headerSubtitle}>{muro.length} muro creados</Text>
       </View>
 
       <ScrollView style={styles.scrollView}>
-        {manuales.map((manual) => (
-          <View key={manual.post_id} style={styles.manualCard}>
-            <View style={styles.manualHeader}>
-              <Text style={styles.manualCategoria}>
-                {manual.post_category_description || "Sin categoría"}
+        {muro.map((muro) => (
+          <View key={muro.post_id} style={styles.muroCard}>
+            <View style={styles.muroHeader}>
+              <Text style={styles.muroCategoria}>
+                {muro.post_category_description || "Sin categoría"}
               </Text>
-              <Text style={styles.manualFecha}>{manual.created_at || "Sin fecha"}</Text>
+              <Text style={styles.muroFecha}>{muro.created_at || "Sin fecha"}</Text>
             </View>
 
-            <Text style={styles.manualFecha}>{manual.user_email}</Text>
+            <Text style={styles.muroFecha}>{muro.user_email}</Text>
             
-            <Text style={styles.manualTitulo}>{manual.tittle}</Text>
-            <Text style={styles.manualTitulo}>{manual.description}</Text>
+            <Text style={styles.muroTitulo}>{muro.tittle}</Text>
+            <Text style={styles.muroTitulo}>{muro.description}</Text>
+
+            <View style={styles.actionsContainer}>
+              <TouchableOpacity 
+                style={[styles.actionButton, styles.editarButton]}
+                onPress={() => handleEditar(muro.post_id)}
+              >
+                <Text style={styles.actionButtonText}>Editar</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[styles.actionButton, styles.eliminarButton]}
+                onPress={() => handleEliminar(muro
+.post_id)}
+              >
+                <Text style={styles.actionButtonText}>Eliminar</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ))}
       </ScrollView>
@@ -73,11 +114,13 @@ const ManualesScreen = () => {
         style={styles.crearButton}
         onPress={() => navigation.navigate("agregarScreen")}
       >
-        <Text style={styles.crearButtonText}>+ Crear Nuevo manual</Text>
+        <Text style={styles.crearButtonText}>+ Crear Nuevo muro
+</Text>
       </TouchableOpacity>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   loader: {
     flex: 1,
@@ -108,7 +151,7 @@ const styles = StyleSheet.create({
     padding: 15,
     flex: 1,
   },
-  manualCard: {
+  muroCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 15,
@@ -119,13 +162,13 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  manualHeader: {
+  muroHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 10,
   },
-  manualCategoria: {
+  muroCategoria: {
     fontSize: 12,
     fontWeight: "600",
     color: "#1ABC9C",
@@ -134,18 +177,18 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
   },
-  manualFecha: {
+  muroFecha: {
     fontSize: 12,
     color: "#7F8C8D",
   },
-  manualTitulo: {
+  muroTitulo: {
     fontSize: 16,
     fontWeight: "600",
     color: "#1C2833",
     marginBottom: 15,
     lineHeight: 22,
   },
-  manualStats: {
+  murotats: {
     flexDirection: "row",
     marginBottom: 15,
   },
@@ -199,4 +242,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-export default ManualesScreen;
+
+export default MiMuroScreen;

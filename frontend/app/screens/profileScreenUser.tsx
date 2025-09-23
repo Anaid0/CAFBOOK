@@ -89,7 +89,7 @@ const ProfileScreenUser = () => {
             await AsyncStorage.clear();
             navigation.reset({
               index: 0,
-              routes: [{ name: "Login" }],
+              routes: [{ name: "LoginScreen" }],
             });
           },
         },
@@ -131,7 +131,9 @@ const ProfileScreenUser = () => {
       navigation.navigate("MisManuales");
     } else if (option === "Mis Foros") {
       navigation.navigate("MisForos");
-    } else {
+    } else if(option === ("Mi Muro")){
+      navigation.navigate("MiMuroScreen")
+    }else {
       Alert.alert(option, `Navegando a ${option}`);
     }
   };
@@ -218,7 +220,7 @@ const ProfileScreenUser = () => {
 
           <TouchableOpacity 
             style={styles.optionButton}
-            onPress={() => handleOptionPress("Mi muro")}
+            onPress={() => handleOptionPress("Mi Muro")}
           >
             <Text style={styles.optionText}>Mi muro</Text>
           </TouchableOpacity>

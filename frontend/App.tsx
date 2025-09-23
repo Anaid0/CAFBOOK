@@ -17,6 +17,7 @@ import CultivosScreen from "./app/screens/cultivosScreen";
 import homeScreen from "./app/screens/homeScreen";
 import EditProfileUser from "./app/screens/editProfileUser";
 import ProfileScreenUser from "./app/screens/profileScreenUser";
+import MiMuroScreen from "./app/screens/MiMuroScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +44,7 @@ export default function App() {
         <Stack.Screen name="homeScreen" component={homeScreen} />
         <Stack.Screen name="EditProfileUser" component={EditProfileUser} />
         <Stack.Screen name="ProfileScreenUser" component={ProfileScreenUser} />
+        <Stack.Screen name="MiMuroScreen" component={MiMuroScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>

@@ -6,7 +6,6 @@ export const API_URL = isWeb
   ? "http://localhost:4200/api"   // Para web
   : "http:192.168.2.30:4200/api"; // Para Android (IP de tu PC en la misma red)
 
-
 export const loginUser = async (email: string, password: string) => {
   const res = await axios.post(`${API_URL}/login`, { email, password });
   return res.data;

@@ -23,13 +23,15 @@ const EditProfileUser = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const [user, setUser] = useState<any>(null);
+ const [user, setUser] = useState<any>(null);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [documentNumber, setDocumentNumber] = useState("");
   const [email, setEmail] = useState("");
   const [docType, setDocType] = useState<number | null>(null);
+  const [password, setPassword] = useState("");
+
   const [docTypes, setDocTypes] = useState<{ label: string; value: number }[]>([]);
 
   useEffect(() => {
@@ -64,26 +66,35 @@ const EditProfileUser = () => {
   }, []);
 
   const handleSave = async () => {
-  if (!firstName || !lastName || !documentNumber || !email || !docType) {
-    Alert.alert("Error", "Todos los campos son obligatorios.");
-    return;
-  }
+    if (!firstName || !lastName || !documentNumber || !email || !docType) {
+      Alert.alert("Error", "Todos los campos son obligatorios.");
+      return;
+    }
 
-  try {
-    setSaving(true);
-    const id = await AsyncStorage.getItem("userId");
-    if (!id) return;
+    try {
+      setSaving(true);
+      const id = await AsyncStorage.getItem("userId");
+      if (!id) return;
 
-    const updatedData: any = {
-      first_name: firstName,
-      last_name: lastName,
-      document_number: documentNumber,
-      email,
-      doc_type_id: docType,
-    };
+      const updatedData: any = {
+        first_name: firstName,
+        last_name: lastName,
+        document_number: documentNumber,
+        email,
+        doc_type_id: docType,
+      };
 
-    const updatedUser = await updateUser(Number(id), updatedData);
+      if (password) {
+        if (password.length < 6) {
+          Alert.alert("Error", "La contraseña debe tener mínimo 6 caracteres.");
+          setSaving(false);
+          return;
+        }
+        updatedData.password = password;
+      }
 
+      const updatedUser = await updateUser(Number(id), updatedData);
+      setUser(updatedUser);
     await AsyncStorage.setItem("userData", JSON.stringify(updatedUser));
 
     Alert.alert("Éxito", "Perfil actualizado correctamente");
@@ -150,6 +161,15 @@ const EditProfileUser = () => {
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
+        />
+
+        <Text style={styles.label}>Contraseña (opcional)</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Nueva contraseña"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
         />
 
         <TouchableOpacity

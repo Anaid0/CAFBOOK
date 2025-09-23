@@ -120,7 +120,7 @@ router.delete("/posts/:id", async (Request, Response) => {
 
 router.get("/posts", async (Request, Response) => {
   try {
-    await postsController.allPosts(Request, Response);
+    await postsController.allPostsActive(Request, Response);
   } catch (error) {
     console.error("Error obteniendo todos los posts: " + error);
     Response.status(400).json({ message: "Error obteniendo todos los posts" });

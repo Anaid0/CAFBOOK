@@ -50,6 +50,10 @@ export class AdminApplication{
                 throw new Error("Error, no se puede actualizar el email")
             }
         }
+        if(admin.password){
+            const hashedPass= await bcrypt.hash(admin.password, 10);
+            admin.password = hashedPass;
+                }
         return await this.port.updateAdmin(admin_id, admin);
     }
 
