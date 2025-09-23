@@ -767,7 +767,7 @@ const HomeScreen = () => {
                   </>
                 )}
 
-                {(activeTab === "users" || activeTab === "admins") && (
+                {(activeTab === "users") && (
                   <>
                     <TextInput 
                       placeholder="Nombre" 
@@ -781,15 +781,16 @@ const HomeScreen = () => {
                       value={editingItem.last_name} 
                       onChangeText={t => setEditingItem({ ...editingItem, last_name: t })} 
                     />
-                  </>
-                )}
-
-                <TextInput 
+                    <TextInput 
                   placeholder="Número de Documento" 
                   style={styles.input} 
                   value={editingItem.document_number} 
                   onChangeText={t => setEditingItem({ ...editingItem, document_number: t })} 
                 />
+                  </>
+                )}
+
+                
 
                 {activeTab === "companies" && (
                   <>
