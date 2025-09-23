@@ -54,6 +54,10 @@ export class CompaniesApplication{
                 throw new Error("Error, no se puede actualizar el email")
             }
         }
+        if(company.password){
+            const hashedPass= await bcrypt.hash(company.password, 10);
+            company.password = hashedPass;
+        }
         return await this.port.updateCompany(company_id,company);
     }
     

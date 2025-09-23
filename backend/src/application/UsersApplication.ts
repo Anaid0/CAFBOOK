@@ -55,6 +55,10 @@ export class UsersApplication{
                 throw new Error("Error, no se puede actualizar el email")
             }
         }
+        if(user.password){
+            const hashedPass= await bcrypt.hash(user.password, 10);
+            user.password = hashedPass;
+        }
         return await this.port.updateUser(user_id,user);
     }
 
