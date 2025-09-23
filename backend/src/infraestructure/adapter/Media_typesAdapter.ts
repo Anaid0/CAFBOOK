@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
-import { Media_types } from '../../domain/Media_types';
-import { Media_typesPort } from "../../domain/Media_typesPort";
+import { Media_types } from '../../domain/entities/Media_types';
+import { Media_typesPort } from "../../domain/port/Media_typesPort";
 import { Media_typesEntity } from '../entities/Media_typesEntity';
 import { AppDataSource } from "../config/con_data_bases";
 

@@ -1,5 +1,5 @@
 import { CitiesApplication } from "../../application/CitiesApplication";
-import { Cities } from "../../domain/Cities";
+import { Cities } from "../../domain/entities/Cities";
 import { Request, Response } from "express";
 import { Validators } from "../config/validations";
 

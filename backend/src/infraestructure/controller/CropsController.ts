@@ -1,5 +1,5 @@
 import { CropsApplication } from "../../application/CropsApplication";
-import { Crops } from "../../domain/Crops";
+import { Crops } from "../../domain/entities/Crops";
 import { Request, Response } from "express";
 import { Validators } from "../config/validations";
 import e from "cors";

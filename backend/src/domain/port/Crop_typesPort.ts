@@ -1,4 +1,4 @@
-import { Crop_types } from './Crop_types';
+import { Crop_types } from '../entities/Crop_types';
 export interface Crop_typesPort{
     createCrop_type(crop_type: Omit<Crop_types,"crop_type_id">): Promise<number>;
     updateCrop_type(crop_type_id:number, crop_type:Partial<Crop_types>):Promise<boolean>;

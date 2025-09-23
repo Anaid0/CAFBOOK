@@ -1,5 +1,5 @@
 import { PostsApplication } from "../../application/PostsApplication";
-import { Posts } from "../../domain/Posts";
+import { Posts } from "../../domain/entities/Posts";
 import { Request, Response } from "express";
 import { Validators } from "../config/validations";
 
@@ -142,6 +142,32 @@ export class PostsController {
     }
     return response.status(400).json({ message: "Error en la petición" });
   }
+
+  async searchPostByUserIdAndCategoryId(request: Request, response: Response): Promise<Response> {
+  try {
+    const userId = parseInt(request.params.userId);
+    if (isNaN(userId)) {
+      return response.status(400).json({ error: "ID de usuario no válido" });
+    }
+
+    const postcategoryId = parseInt(request.params.categoryId);
+    if (isNaN(postcategoryId)) {
+      return response.status(400).json({ error: "ID de la categoría de post no válido" });
+    }
+
+    const posts = await this.app.getPostByUserIdAndCategoryId(userId, postcategoryId);
+
+    if (!posts || posts.length === 0) {
+      return response.status(404).json({ message: "No se encontraron posts para ese usuario y categoría" });
+    }
+
+    return response.status(200).json(posts);
+  } catch (error) {
+    console.error("Error en searchPostByUserIdAndCategoryId:", error);
+    return response.status(500).json({ message: "Error en el servidor" });
+  }
+}
+
 
   async searchPostByUserId(request: Request, response: Response): Promise<Response> {
     try {

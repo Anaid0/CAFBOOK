@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
-import { Admin } from "../domain/Admin";
-import { AdminPort } from "../domain/AdminPort";
+import { Admin } from "../domain/entities/Admin";
+import { AdminPort } from "../domain/port/AdminPort";
 import { AuthApplication } from "./AuthApplication";
 
 export class AdminApplication{

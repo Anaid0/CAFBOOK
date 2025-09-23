@@ -1,5 +1,5 @@
-import { Roles } from "../domain/Roles"
-import { RolesPort } from '../domain/RolesPort';
+import { Roles } from "../domain/entities/Roles"
+import { RolesPort } from '../domain/port/RolesPort';
 
 export class RolesApplication {
     private port: RolesPort;

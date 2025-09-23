@@ -1,5 +1,5 @@
 import { AddressesApplication } from "../../application/AddressesApplication";
-import { Addresses } from "../../domain/Addresses";
+import { Addresses } from "../../domain/entities/Addresses";
 import { Request, Response } from "express";
 import { Validators } from "../config/validations";
 

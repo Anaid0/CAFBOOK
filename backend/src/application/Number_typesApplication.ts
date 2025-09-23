@@ -1,5 +1,5 @@
-import { Number_types } from "../domain/Number_types"
-import { Number_typesPort } from '../domain/Number_typesPort';
+import { Number_types } from "../domain/entities/Number_types"
+import { Number_typesPort } from '../domain/port/Number_typesPort';
 
 export class Number_typesApplication {
     private port: Number_typesPort;

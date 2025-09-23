@@ -1,7 +1,7 @@
 import { UsersApplication } from "../../application/UsersApplication";
 import {Request, Response} from "express";
 import { Validators } from "../config/validations";
-import { Users } from "../../domain/Users";
+import { Users } from "../../domain/entities/Users";
 
 export class UsersController{
     private app: UsersApplication;

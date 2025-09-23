@@ -1,5 +1,5 @@
 import { Company_phonesApplication } from "../../application/Company_phonesApplication";
-import { Company_phones } from "../../domain/Company_phones";
+import { Company_phones } from "../../domain/entities/Company_phones";
 import { Request, Response } from "express";
 import { Validators } from "../config/validations";
 import { number } from "joi";

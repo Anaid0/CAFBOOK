@@ -1,4 +1,4 @@
-import { Phones } from "./Phones";
+import { Phones } from "../entities/Phones";
 export interface PhonesPort{
      createPhone(phone: Omit<Phones,"phone_id">): Promise<number>;
      updatePhone(phone_id:number, phones:Partial<Phones>):Promise<boolean>;

@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
-import { CompaniesPort } from "../domain/CompaniesPort";
+import { CompaniesPort } from "../domain/port/CompaniesPort";
 import { AuthApplication } from "./AuthApplication";
-import { Companies } from "../domain/Companies";
+import { Companies } from "../domain/entities/Companies";
 
 export class CompaniesApplication{
     private port: CompaniesPort;
@@ -19,6 +19,10 @@ export class CompaniesApplication{
             const passwordMath= await bcrypt.compare(password, existingCompany.password);
             if(!passwordMath){
                 throw new Error("Invalid Credencials")
+            }
+
+            if(existingCompany.status === 0){
+                throw new Error("Usuario deshabilitado, comunicate con el admin para recuperarla")
             }
     
             const token = AuthApplication.generateToken({

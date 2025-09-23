@@ -1,4 +1,4 @@
-import { Companies } from './Companies';
+import { Companies } from '../entities/Companies';
 
 export interface CompaniesPort{
     createCompany(company: Omit<Companies,"company_id"| "role_description" | "doc_type_description">): Promise<number>;

@@ -8,36 +8,36 @@ import {
   Alert,
   Image
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native"; 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
-import { getUserById, updateUser } from "../../apis/usersapi";
+import { getUserById, updateUser, downUser } from "../../apis/usersapi";
 
 const ProfileScreenUser = () => {
   const navigation = useNavigation<any>();
+  const route = useRoute<any>(); 
   const [user, setUser] = useState<any>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const id = await AsyncStorage.getItem("userId");
-        if (!id) return;
+  const fetchUserData = async () => {
+    try {
+      const id = await AsyncStorage.getItem("userId");
+      if (!id) return;
 
-        const userData = await getUserById(Number(id));
-        setUser(userData);
+      const userData = await getUserById(Number(id));
+      setUser(userData);
 
-        if (userData?.profile_picture) {
-          
-          setProfileImage(`${userData.profile_picture}?t=${Date.now()}`);
-        }
-      } catch (error) {
-        console.error("Error obteniendo usuario:", error);
+      if (userData?.profile_picture) {
+        setProfileImage(`${userData.profile_picture}?t=${Date.now()}`);
       }
-    };
+    } catch (error) {
+      console.error("Error obteniendo usuario:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchUserData();
-  }, []);
+  }, [route.params?.refresh]);
 
   const handlePickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -56,7 +56,7 @@ const ProfileScreenUser = () => {
         formData.append("profile_picture", {
           uri: result.assets[0].uri,
           type: "image/jpeg",
-          name: "${user.document_number}.jpg",
+          name: `${user.document_number}.jpg`,
         } as any);
 
         const updatedUser = await updateUser(Number(id), formData);
@@ -68,6 +68,39 @@ const ProfileScreenUser = () => {
       }
     }
   };
+
+  const handleDownUser = async () => {
+  try {
+    Alert.alert(
+      "Confirmar",
+      "¿Estás seguro de que quieres dar de baja tu cuenta?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Sí, dar de baja",
+          onPress: async () => {
+            const id = await AsyncStorage.getItem("userId");
+            if (!id) return;
+
+            await downUser(Number(id));
+
+            Alert.alert("Cuenta dada de baja", "Tu cuenta ha sido deshabilitada.");
+
+            await AsyncStorage.clear();
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Login" }],
+            });
+          },
+        },
+      ]
+    );
+  } catch (error) {
+    console.error("Error dando de baja al usuario:", error);
+    Alert.alert("Error", "No se pudo dar de baja la cuenta.");
+  }
+};
+
 
   const handleLogout = async () => {
     Alert.alert(
@@ -88,7 +121,7 @@ const ProfileScreenUser = () => {
   };
 
   const handleEditProfile = () => {
-    navigation.navigate("EditProfileUser");
+    navigation.navigate("EditProfileUser", { refresh: true });
   };
 
   const handleOptionPress = (option: string) => {
@@ -197,13 +230,11 @@ const ProfileScreenUser = () => {
             <Text style={styles.optionText}>Ayuda</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={styles.optionButton}
-            onPress={() => handleOptionPress("Eliminar Cuenta")}
+          <TouchableOpacity
+          style={[styles.button, { backgroundColor: "#e43f3fff" }]}
+          onPress={handleDownUser}
           >
-            <Text style={[styles.optionText, styles.deleteText]}>
-              Eliminar Cuenta
-            </Text>
+          <Text style={styles.buttonText}>Dar de baja mi cuenta</Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
@@ -226,7 +257,7 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 24, fontWeight: "bold", color: "#FFFFFF" },
   scrollView: { flex: 1, padding: 20 },
   profileSection: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#ffffffff",
     borderRadius: 10,
     padding: 20,
     marginBottom: 20,
@@ -293,6 +324,18 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   logoutText: { color: "#FFFFFF", fontWeight: "bold" },
+  button: {
+  padding: 15,
+  borderRadius: 8,
+  alignItems: "center",
+  marginTop: 15,
+  },
+  buttonText: {
+  color: "#fff",
+  fontWeight: "bold",
+  fontSize: 16,
+  },
+
 });
 
 export default ProfileScreenUser;

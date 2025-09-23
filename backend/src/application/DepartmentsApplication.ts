@@ -1,5 +1,5 @@
-import { Departments } from "../domain/Departments"
-import { DepartmentsPort } from '../domain/DepartmentsPort';
+import { Departments } from "../domain/entities/Departments"
+import { DepartmentsPort } from '../domain/port/DepartmentsPort';
 
 export class DepartmentsApplication {
     private port: DepartmentsPort;

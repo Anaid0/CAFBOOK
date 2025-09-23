@@ -1,5 +1,5 @@
 import { RolesApplication } from "../../application/RolesApplication";
-import { Roles } from "../../domain/Roles";
+import { Roles } from "../../domain/entities/Roles";
 import {Request, Response} from "express";
 import { Validators } from "../config/validations";
 

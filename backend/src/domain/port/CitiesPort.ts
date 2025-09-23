@@ -1,4 +1,4 @@
-import { Cities } from "./Cities";
+import { Cities } from "../entities/Cities";
 export interface CitiesPort{
      createCity(city: Omit<Cities,"city_id" | "department_name">): Promise<number>;
      updateCity(city_id:number, cities:Partial<Cities>):Promise<boolean>;

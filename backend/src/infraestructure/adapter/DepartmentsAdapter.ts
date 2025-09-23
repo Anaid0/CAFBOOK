@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
-import { Departments } from '../../domain/Departments';
-import { DepartmentsPort } from "../../domain/DepartmentsPort";
+import { Departments } from '../../domain/entities/Departments';
+import { DepartmentsPort } from "../../domain/port/DepartmentsPort";
 import { DepartmentsEntity } from '../entities/DepartmentsEntity';
 import { AppDataSource } from "../config/con_data_bases";
 

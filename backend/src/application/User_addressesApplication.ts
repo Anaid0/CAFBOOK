@@ -1,5 +1,5 @@
-import { User_addresses } from '../domain/User_addresses';
-import { User_addressPort } from '../domain/User_addressesPort';
+import { User_addresses } from '../domain/entities/User_addresses';
+import { User_addressPort } from '../domain/port/User_addressesPort';
 
 export class User_addressApplication {
     private port: User_addressPort;

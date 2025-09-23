@@ -1,4 +1,4 @@
-import { Posts } from "./Posts";
+import { Posts } from "../entities/Posts";
 export interface PostsPort {
     createPost(post: Omit<Posts, "post_id" | "user_email" | "post_category_description" | "deleted_at">): Promise<number>;
     updatePost(post_id: number, post: Partial<Posts>): Promise<boolean>;
@@ -11,5 +11,6 @@ export interface PostsPort {
     getPostByPostUserId(user_id: number): Promise<Posts[]>;
     getPostByPostUserEmail(user_email: string): Promise<Posts[]>;
     restorePost(post_id: number): Promise<boolean>;
+    getPostByUserIdAndCategoryId(user_id: number, post_category: number): Promise<Posts[]>;
   }
   //

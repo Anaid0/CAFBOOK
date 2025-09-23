@@ -30,8 +30,6 @@ const EditProfileUser = () => {
   const [documentNumber, setDocumentNumber] = useState("");
   const [email, setEmail] = useState("");
   const [docType, setDocType] = useState<number | null>(null);
-
-  // Opciones de documento
   const [docTypes, setDocTypes] = useState<{ label: string; value: number }[]>([]);
 
   useEffect(() => {
@@ -66,36 +64,37 @@ const EditProfileUser = () => {
   }, []);
 
   const handleSave = async () => {
-    if (!firstName || !lastName || !documentNumber || !email || !docType) {
-      Alert.alert("Error", "Todos los campos son obligatorios.");
-      return;
-    }
+  if (!firstName || !lastName || !documentNumber || !email || !docType) {
+    Alert.alert("Error", "Todos los campos son obligatorios.");
+    return;
+  }
 
-    try {
-      setSaving(true);
-      const id = await AsyncStorage.getItem("userId");
-      if (!id) return;
+  try {
+    setSaving(true);
+    const id = await AsyncStorage.getItem("userId");
+    if (!id) return;
 
-      const updatedData: any = {
-        first_name: firstName,
-        last_name: lastName,
-        document_number: documentNumber,
-        email,
-        doc_type_id: docType,
-      };
+    const updatedData: any = {
+      first_name: firstName,
+      last_name: lastName,
+      document_number: documentNumber,
+      email,
+      doc_type_id: docType,
+    };
 
-      const updatedUser = await updateUser(Number(id), updatedData);
-      setUser(updatedUser);
+    const updatedUser = await updateUser(Number(id), updatedData);
 
-      Alert.alert("Éxito", "Perfil actualizado correctamente");
-      navigation.goBack();
-    } catch (error) {
-      console.error("Error actualizando perfil:", error);
-      Alert.alert("Error", "No se pudo actualizar el perfil.");
-    } finally {
-      setSaving(false);
-    }
-  };
+    await AsyncStorage.setItem("userData", JSON.stringify(updatedUser));
+
+    Alert.alert("Éxito", "Perfil actualizado correctamente");
+    navigation.navigate("ProfileScreenUser", { refresh: true });
+  } catch (error) {
+    console.error("Error actualizando perfil:", error);
+    Alert.alert("Error", "No se pudo actualizar el perfil.");
+  } finally {
+    setSaving(false);
+  }
+};
 
   if (loading) {
     return (

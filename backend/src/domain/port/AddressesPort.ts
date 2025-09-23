@@ -1,4 +1,4 @@
-import { Addresses } from '../domain/Addresses';
+import { Addresses } from '../entities/Addresses';
 export interface AddressesPort{
      createAddress(address: Omit<Addresses,"address_id" | "city_name">): Promise<number>;
      updateAddress(address_id:number, cities:Partial<Addresses>):Promise<boolean>;

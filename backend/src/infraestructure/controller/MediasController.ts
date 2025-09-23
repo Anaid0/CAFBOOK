@@ -1,5 +1,5 @@
 import { MediasApplication } from "../../application/MediasApplication";
-import { Medias } from "../../domain/Medias";
+import { Medias } from "../../domain/entities/Medias";
 import { Request, Response } from "express";
 import { Validators } from "../config/validations";
 

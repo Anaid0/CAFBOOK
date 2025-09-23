@@ -1,4 +1,4 @@
-import { Company_addresses } from "./Company_addresses";
+import { Company_addresses } from "../entities/Company_addresses";
 export interface Company_addressPort {
     createCompanyAddress(companyaddress: Omit<Company_addresses, "company_address_id" | "bussines_name" | "address_street">): Promise<number>;
     updateCompanyAddress(company_address_id: number, companyaddress: Partial<Company_addresses>): Promise<boolean>;
