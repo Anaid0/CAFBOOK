@@ -20,7 +20,7 @@ export class User_phonesAdapter implements User_phonesPort {
       phone_id: entity.phone_id.phone_id,
       phone_number: entity.phone_id.number,
       user_id: entity.user_id.user_id,
-      user_name: `${entity.user_id.firts_name} ${entity.user_id.last_name}`,
+      user_name: `${entity.user_id.first_name} ${entity.user_id.last_name}`,
       user_email: entity.user_id.email
     };
   }

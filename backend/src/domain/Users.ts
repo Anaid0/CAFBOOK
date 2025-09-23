@@ -2,7 +2,7 @@ export interface Users{
     user_id: number;
     role_id: number;
     role_description: string;
-    firts_name: string;
+    first_name: string;
     last_name: string;
     document_number: string;
     doc_type_id: number;

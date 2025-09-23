@@ -19,7 +19,7 @@ export class User_addressAdapter implements User_addressPort {
       address_id: entity.address_id.address_id,
       address_street: entity.address_id.street,
       user_id: entity.user_id.user_id,
-      user_name: `${entity.user_id.firts_name} ${entity.user_id.last_name}`
+      user_name: `${entity.user_id.first_name} ${entity.user_id.last_name}`
     };
   }
 

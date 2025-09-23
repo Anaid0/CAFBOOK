@@ -3,10 +3,9 @@ import { UsersAdapter } from "../adapter/UsersAdapter";
 import { UsersApplication } from "../../application/UsersApplication";
 import { UsersController } from "../controller/UsersController";
 import { authenticateToken } from '../web/authMiddleware';
+import { upload } from "../web/multer";
 
 const router = Router();
-import multer from "multer";
-const upload = multer({ dest: "uploads/users/" });
 
 const userAdapter = new UsersAdapter();
 const userApp = new UsersApplication(userAdapter);

@@ -8,7 +8,7 @@ export class UserEntity{
     user_id!: number;
 
     @Column({type: "character varying", length:50})
-    firts_name!: string;
+    first_name!: string;
 
     @Column({type: "character varying", length:50})
     last_name!: string;

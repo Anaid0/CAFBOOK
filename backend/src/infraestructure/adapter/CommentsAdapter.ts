@@ -17,7 +17,7 @@ export class CommentsAdapter implements CommentsPort {
     return {
       comment_id: entity.comment_id,
       user_id: entity.user_id.user_id,
-      user_name: `${entity.user_id.firts_name} ${entity.user_id.last_name}`,
+      user_name: `${entity.user_id.first_name} ${entity.user_id.last_name}`,
       post_id: entity.post_id.post_id,
       content: entity.content,
       created_at: entity.created_at,
