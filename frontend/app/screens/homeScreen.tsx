@@ -1,230 +1,202 @@
-import React, { useState } from "react";
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
   TouchableOpacity,
-  TextInput,
-  Alert
+  Alert,
+  ActivityIndicator
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { getPostsActive } from "../../apis/postsApi"; 
 
 const HomeScreen = () => {
-  const [commentTexts, setCommentTexts] = useState<{[key: number]: string}>({});
+  const navigation = useNavigation<any>();
+  const [muro, setMuro] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchmuro = async () => {
+      try {
 
-  const publications = [
-    {
-      id: 1,
-      user: "Arturo Mendoza",
-      content: "¿Qué productos puedo usar para que mi ternero pueda desarrollarse de forma rápida?",
-      comments: []
-    },
-    {
-      id: 2,
-      user: "Rosa Rodríguez",
-      content: "¿Qué productos puedo usar para empezar a cultivar trigo y también para evitar que plagas ataquen?",
-      comments: [
-        {
-          id: 1,
-          user: "Rodrigo Arenas",
-          content: "Puedes usar fungicidas y insecticidas como imidacloprid",
-          replies: []
-        }
-      ]
-    }
-  ];
+        const data = await getPostsActive();
+        setMuro(data);
+      } catch (error) {
+        console.error("Error cargando muro:", error);
+        Alert.alert("Error", "No se pudo cargar el muro");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleComment = (publicationId: number) => {
-    const comment = commentTexts[publicationId] || "";
-    if (!comment.trim()) {
-      Alert.alert("Error", "Por favor escribe un comentario");
-      return;
-    }
-    Alert.alert("Comentario agregado", "Tu comentario se ha agregado exitosamente");
-    setCommentTexts({...commentTexts, [publicationId]: ""});
-  };
+    fetchmuro();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="#1ABC9C" />
+        <Text>Cargando muro...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Muro</Text>
+        <Text style={styles.headerSubtitle}>{muro.length} muro creados</Text>
+      </View>
+
       <ScrollView style={styles.scrollView}>
-        <Text style={styles.title}>Muro Publicaciones</Text>
-        
-        {publications.map((publication) => (
-          <View key={publication.id} style={styles.publicationCard}>
-            <View style={styles.publicationHeader}>
-              <View style={styles.avatarPlaceholder}>
-                <Text style={styles.avatarText}>
-                  {publication.user.charAt(0)}
-                </Text>
-              </View>
-              <Text style={styles.userName}>{publication.user}</Text>
+        {muro.map((muro) => (
+          <View key={muro.post_id} style={styles.muroCard}>
+            <View style={styles.muroHeader}>
+              <Text style={styles.muroCategoria}>
+                {muro.post_category_description || "Sin categoría"}
+              </Text>
+              <Text style={styles.muroFecha}>{muro.created_at || "Sin fecha"}</Text>
             </View>
+
+            <Text style={styles.muroFecha}>{muro.user_email}</Text>
             
-            <Text style={styles.publicationContent}>{publication.content}</Text>
-            
-            <View style={styles.divider} />
-            
-            {publication.comments.map((comment) => (
-              <View key={comment.id} style={styles.commentContainer}>
-                <View style={styles.commentHeader}>
-                  <View style={[styles.avatarPlaceholder, styles.smallAvatar]}>
-                    <Text style={[styles.avatarText, styles.smallAvatarText]}>
-                      {comment.user.charAt(0)}
-                    </Text>
-                  </View>
-                  <Text style={styles.commentUser}>{comment.user}</Text>
-                </View>
-                <Text style={styles.commentContent}>{comment.content}</Text>
-                
-                <TouchableOpacity>
-                  <Text style={styles.moreComments}>Responder • Más comentarios</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-            
-            <View style={styles.commentInputContainer}>
-              <TextInput
-                style={styles.commentInput}
-                placeholder="Escribe un comentario..."
-                value={commentTexts[publication.id] || ""}
-                onChangeText={(text) => setCommentTexts({
-                  ...commentTexts, 
-                  [publication.id]: text
-                })}
-              />
-              <TouchableOpacity 
-                style={styles.commentButton}
-                onPress={() => handleComment(publication.id)}
-              >
-                <Text style={styles.commentButtonText}>Comentar</Text>
-              </TouchableOpacity>
-            </View>
+            <Text style={styles.muroTitulo}>{muro.tittle}</Text>
+            <Text style={styles.muroTitulo}>{muro.description}</Text>
           </View>
         ))}
       </ScrollView>
+
+      <TouchableOpacity 
+        style={styles.crearButton}
+        onPress={() => navigation.navigate("agregarScreen")}
+      >
+        <Text style={styles.crearButtonText}>+ Crear nueva publicación
+</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
   },
+  header: {
+    backgroundColor: "#1ABC9C",
+    padding: 20,
+    paddingTop: 50,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    marginBottom: 5,
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: "#FFFFFF",
+    opacity: 0.9,
+  },
   scrollView: {
     padding: 15,
+    flex: 1,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#1C2833",
-    marginBottom: 15,
-  },
-  publicationCard: {
+  muroCard: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 10,
+    borderRadius: 12,
     padding: 15,
-    marginBottom: 20,
+    marginBottom: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 3,
+    shadowRadius: 4,
     elevation: 3,
   },
-  publicationHeader: {
+  muroHeader: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 10,
   },
-  avatarPlaceholder: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#1ABC9C",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 10,
-  },
-  smallAvatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-  },
-  avatarText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  smallAvatarText: {
+  muroCategoria: {
     fontSize: 12,
+    fontWeight: "600",
+    color: "#1ABC9C",
+    backgroundColor: "#E8F8F5",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
   },
-  userName: {
+  muroFecha: {
+    fontSize: 12,
+    color: "#7F8C8D",
+  },
+  muroTitulo: {
     fontSize: 16,
+    fontWeight: "600",
+    color: "#1C2833",
+    marginBottom: 15,
+    lineHeight: 22,
+  },
+  murotats: {
+    flexDirection: "row",
+    marginBottom: 15,
+  },
+  stat: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 20,
+  },
+  statNumber: {
+    fontSize: 14,
     fontWeight: "bold",
     color: "#1C2833",
+    marginRight: 4,
   },
-  publicationContent: {
-    fontSize: 14,
-    color: "#333",
-    marginBottom: 12,
-    lineHeight: 20,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "#E0E0E0",
-    marginVertical: 10,
-  },
-  commentContainer: {
-    backgroundColor: "#F8F9F9",
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
-  },
-  commentHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 5,
-  },
-  commentUser: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#2E86C1",
-  },
-  commentContent: {
-    fontSize: 13,
-    color: "#333",
-    marginBottom: 8,
-  },
-  moreComments: {
+  statLabel: {
     fontSize: 12,
-    color: "#1ABC9C",
-    fontWeight: "500",
+    color: "#7F8C8D",
   },
-  commentInputContainer: {
+  actionsContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    marginTop: 10,
+    justifyContent: "space-between",
   },
-  commentInput: {
+  actionButton: {
     flex: 1,
-    backgroundColor: "#F8F9F9",
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    marginRight: 10,
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
+    padding: 10,
+    borderRadius: 8,
+    alignItems: "center",
+    marginHorizontal: 5,
   },
-  commentButton: {
-    backgroundColor: "#1ABC9C",
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
+  editarButton: {
+    backgroundColor: "#3498DB",
   },
-  commentButtonText: {
+  eliminarButton: {
+    backgroundColor: "#E74C3C",
+  },
+  actionButtonText: {
     color: "#FFFFFF",
-    fontSize: 12,
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  crearButton: {
+    backgroundColor: "#1ABC9C",
+    padding: 15,
+    margin: 15,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  crearButtonText: {
+    color: "#FFFFFF",
     fontWeight: "bold",
+    fontSize: 16,
   },
 });
 

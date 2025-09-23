@@ -1,43 +1,42 @@
-// app/screens/MisTutorialesScreen.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Alert
+  Alert,
+  ActivityIndicator
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getPostsByUserIdAndCategoryId } from "../../apis/postsApi"; 
 
 const MisTutorialesScreen = () => {
   const navigation = useNavigation<any>();
-  const [tutoriales, setTutoriales] = useState([
-    {
-      id: 1,
-      titulo: "Cómo cultivar maíz eficientemente",
-      vistas: 125,
-      likes: 45,
-      fecha: "15/11/2023",
-      categoria: "Agricultura"
-    },
-    {
-      id: 2,
-      titulo: "Cuidado de terneros recién nacidos",
-      vistas: 89,
-      likes: 32,
-      fecha: "02/11/2023",
-      categoria: "Ganadería"
-    },
-    {
-      id: 3,
-      titulo: "Control de plagas orgánico",
-      vistas: 156,
-      likes: 67,
-      fecha: "28/10/2023",
-      categoria: "Agricultura"
-    }
-  ]);
+  const [tutoriales, setTutoriales] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const categoriaId = 1;
+
+  useEffect(() => {
+    const fetchTutoriales = async () => {
+      try {
+        const id = await AsyncStorage.getItem("userId"); 
+        if (!id) return;
+
+        const data = await getPostsByUserIdAndCategoryId(Number(id), categoriaId);
+        setTutoriales(data);
+      } catch (error) {
+        console.error("Error cargando tutoriales:", error);
+        Alert.alert("Error", "No se pudieron cargar los tutoriales");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTutoriales();
+  }, []);
 
   const handleEditar = (id: number) => {
     navigation.navigate("editarTutorialesScreen", { id });
@@ -60,10 +59,14 @@ const MisTutorialesScreen = () => {
     );
   };
 
-  const handleCrearNuevo = () => {
-    Alert.alert("Crear", "Crear nuevo tutorial");
-    // navigation.navigate("CrearTutorial");
-  };
+  if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="#1ABC9C" />
+        <Text>Cargando tutoriales...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -74,36 +77,30 @@ const MisTutorialesScreen = () => {
 
       <ScrollView style={styles.scrollView}>
         {tutoriales.map((tutorial) => (
-          <View key={tutorial.id} style={styles.tutorialCard}>
+          <View key={tutorial.post_id} style={styles.tutorialCard}>
             <View style={styles.tutorialHeader}>
-              <Text style={styles.tutorialCategoria}>{tutorial.categoria}</Text>
-              <Text style={styles.tutorialFecha}>{tutorial.fecha}</Text>
+              <Text style={styles.tutorialCategoria}>
+                {tutorial.post_category_description || "Sin categoría"}
+              </Text>
+              <Text style={styles.tutorialFecha}>{tutorial.created_at || "Sin fecha"}</Text>
             </View>
+
+            <Text style={styles.tutorialFecha}>{tutorial.user_email}</Text>
             
-            <Text style={styles.tutorialTitulo}>{tutorial.titulo}</Text>
-            
-            <View style={styles.tutorialStats}>
-              <View style={styles.stat}>
-                <Text style={styles.statNumber}>{tutorial.vistas}</Text>
-                <Text style={styles.statLabel}>vistas</Text>
-              </View>
-              <View style={styles.stat}>
-                <Text style={styles.statNumber}>{tutorial.likes}</Text>
-                <Text style={styles.statLabel}>likes</Text>
-              </View>
-            </View>
+            <Text style={styles.tutorialTitulo}>{tutorial.tittle}</Text>
+            <Text style={styles.tutorialTitulo}>{tutorial.description}</Text>
 
             <View style={styles.actionsContainer}>
               <TouchableOpacity 
                 style={[styles.actionButton, styles.editarButton]}
-                onPress={() => handleEditar(tutorial.id)}
+                onPress={() => handleEditar(tutorial.post_id)}
               >
                 <Text style={styles.actionButtonText}>Editar</Text>
               </TouchableOpacity>
               
               <TouchableOpacity 
                 style={[styles.actionButton, styles.eliminarButton]}
-                onPress={() => handleEliminar(tutorial.id)}
+                onPress={() => handleEliminar(tutorial.post_id)}
               >
                 <Text style={styles.actionButtonText}>Eliminar</Text>
               </TouchableOpacity>
@@ -123,6 +120,11 @@ const MisTutorialesScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",

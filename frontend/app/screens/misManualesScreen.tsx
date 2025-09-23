@@ -1,48 +1,48 @@
 // app/screens/MisManualesScreen.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Alert
+  Alert,
+  ActivityIndicator
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getPostsByUserIdAndCategoryId } from "../../apis/postsApi";
 
 const MisManualesScreen = () => {
   const navigation = useNavigation<any>();
-  const [manuales, setManuales] = useState([
-    {
-      id: 1,
-      titulo: "Manual de Agricultura Sostenible",
-      descargas: 234,
-      paginas: 45,
-      fecha: "20/11/2023",
-      formato: "PDF"
-    },
-    {
-      id: 2,
-      titulo: "Guía de Nutrición Animal",
-      descargas: 167,
-      paginas: 32,
-      fecha: "10/11/2023",
-      formato: "PDF"
-    },
-    {
-      id: 3,
-      titulo: "Técnicas de Riego Eficiente",
-      descargas: 189,
-      paginas: 28,
-      fecha: "05/11/2023",
-      formato: "PDF"
-    }
-  ]);
+  const [manuales, setManuales] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleEditar = (id: number) => {
-    navigation.navigate("editarManualesScreen", { id });
-  };
+   const categoriaId= 2;
 
+   useEffect(() => {
+    const fetchManuales = async () => {
+      try {
+        const id = await AsyncStorage.getItem("userId"); 
+        if (!id) return;
+
+        const data = await getPostsByUserIdAndCategoryId(Number(id), categoriaId);
+        setManuales(data);
+      } catch (error) {
+        console.error("Error cargando manuales:", error);
+        Alert.alert("Error", "No se pudieron cargar los manuales");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchManuales();
+  }, []);
+   
+     const handleEditar = (id: number) => {
+       navigation.navigate("editarmanualesScreen", { id });
+     };
+   
   const handleEliminar = (id: number) => {
     Alert.alert(
       "Eliminar Manual",
@@ -59,51 +59,49 @@ const MisManualesScreen = () => {
       ]
     );
   };
+  
+  if (loading) {
+      return (
+        <View style={styles.loader}>
+          <ActivityIndicator size="large" color="#1ABC9C" />
+          <Text>Cargando manuales...</Text>
+        </View>
+      );
+    }
 
-  const handleDescargar = (manual: any) => {
-    Alert.alert("Descargar", `Descargando: ${manual.titulo}`);
-  };
-
-  return (
+ return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Mis Manuales</Text>
+        <Text style={styles.headerTitle}>Mis manuales</Text>
         <Text style={styles.headerSubtitle}>{manuales.length} manuales creados</Text>
       </View>
 
       <ScrollView style={styles.scrollView}>
         {manuales.map((manual) => (
-          <View key={manual.id} style={styles.manualCard}>
+          <View key={manual.post_id} style={styles.manualCard}>
             <View style={styles.manualHeader}>
-              <Text style={styles.manualFormato}>{manual.formato}</Text>
-              <Text style={styles.manualFecha}>{manual.fecha}</Text>
+              <Text style={styles.manualCategoria}>
+                {manual.post_category_description || "Sin categoría"}
+              </Text>
+              <Text style={styles.manualFecha}>{manual.created_at || "Sin fecha"}</Text>
             </View>
+
+            <Text style={styles.manualFecha}>{manual.user_email}</Text>
             
-            <Text style={styles.manualTitulo}>{manual.titulo}</Text>
-            
-            <View style={styles.manualInfo}>
-              <Text style={styles.manualPaginas}>{manual.paginas} páginas</Text>
-              <Text style={styles.manualDescargas}>{manual.descargas} descargas</Text>
-            </View>
+            <Text style={styles.manualTitulo}>{manual.tittle}</Text>
+            <Text style={styles.manualTitulo}>{manual.description}</Text>
 
             <View style={styles.actionsContainer}>
               <TouchableOpacity 
-                style={[styles.actionButton, styles.descargarButton]}
-                onPress={() => handleDescargar(manual)}
-              >
-                <Text style={styles.actionButtonText}>Descargar</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
                 style={[styles.actionButton, styles.editarButton]}
-                onPress={() => handleEditar(manual.id)}
+                onPress={() => handleEditar(manual.post_id)}
               >
                 <Text style={styles.actionButtonText}>Editar</Text>
               </TouchableOpacity>
               
               <TouchableOpacity 
                 style={[styles.actionButton, styles.eliminarButton]}
-                onPress={() => handleEliminar(manual.id)}
+                onPress={() => handleEliminar(manual.post_id)}
               >
                 <Text style={styles.actionButtonText}>Eliminar</Text>
               </TouchableOpacity>
@@ -116,13 +114,17 @@ const MisManualesScreen = () => {
         style={styles.crearButton}
         onPress={() => navigation.navigate("agregarScreen")}
       >
-        <Text style={styles.crearButtonText}>+ Crear Nuevo Manual</Text>
+        <Text style={styles.crearButtonText}>+ Crear Nuevo manual</Text>
       </TouchableOpacity>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
@@ -164,11 +166,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
   },
-  manualFormato: {
+  manualCategoria: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#E74C3C",
-    backgroundColor: "#FDEDEC",
+    color: "#1ABC9C",
+    backgroundColor: "#E8F8F5",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -184,19 +186,24 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     lineHeight: 22,
   },
-  manualInfo: {
+  manualStats: {
     flexDirection: "row",
-    justifyContent: "space-between",
     marginBottom: 15,
   },
-  manualPaginas: {
-    fontSize: 14,
-    color: "#7F8C8D",
+  stat: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 20,
   },
-  manualDescargas: {
+  statNumber: {
     fontSize: 14,
-    color: "#1ABC9C",
-    fontWeight: "600",
+    fontWeight: "bold",
+    color: "#1C2833",
+    marginRight: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: "#7F8C8D",
   },
   actionsContainer: {
     flexDirection: "row",
@@ -207,10 +214,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     alignItems: "center",
-    marginHorizontal: 4,
-  },
-  descargarButton: {
-    backgroundColor: "#27AE60",
+    marginHorizontal: 5,
   },
   editarButton: {
     backgroundColor: "#3498DB",
@@ -221,7 +225,7 @@ const styles = StyleSheet.create({
   actionButtonText: {
     color: "#FFFFFF",
     fontWeight: "600",
-    fontSize: 12,
+    fontSize: 14,
   },
   crearButton: {
     backgroundColor: "#1ABC9C",
@@ -236,5 +240,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
 export default MisManualesScreen;
