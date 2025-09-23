@@ -8,3 +8,4 @@ export interface MediasPort {
     getMediaByMediaTypeId(media_type_id: number): Promise<Medias[]>;
     getMediaByPostId(post_id: number): Promise<Medias[]>;
   }
+  //

@@ -5,31 +5,34 @@ import {
   StyleSheet, 
   ScrollView, 
   TouchableOpacity,
-  Alert
+  Alert,
+  Image
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getUserById } from "../../apis/usersapi";
+import { getUserById, updateUser } from "../../apis/usersapi";
+import { Plus } from "lucide-react-native";
+import * as ImagePicker from "expo-image-picker";
 
 const ProfileScreenUser = () => {
   const navigation = useNavigation<any>();
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const id = await AsyncStorage.getItem("userId");
-        if (!id) return;
-
-        const userData = await getUserById(Number(id));
-        setUser(userData);
-      } catch (error) {
-        console.error("Error obteniendo usuario:", error);
-      }
-    };
-
     fetchUserData();
   }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const id = await AsyncStorage.getItem("userId");
+      if (!id) return;
+
+      const userData = await getUserById(Number(id));
+      setUser(userData);
+    } catch (error) {
+      console.error("Error obteniendo usuario:", error);
+    }
+  };
 
   const handleLogout = async () => {
     Alert.alert(
@@ -48,9 +51,40 @@ const ProfileScreenUser = () => {
       ]
     );
   };
-  
+
   const handleEditProfile = () => {
     navigation.navigate("EditProfile");
+  };
+
+  const handleAddPhoto = async () => {
+    try {
+      // Pedir permisos
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permiso requerido", "Necesitas permitir acceso a tus fotos.");
+        return;
+      }
+
+      // Abrir galería
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+
+      if (result.canceled) return;
+
+      const imageUri = result.assets[0].uri;
+
+      if (user) {
+        await updateUser(user.user_id, { profile_url: imageUri });
+        await fetchUserData();
+      }
+    } catch (error) {
+      console.error("Error subiendo foto:", error);
+      Alert.alert("Error", "No se pudo actualizar la foto de perfil");
+    }
   };
 
   const handleOptionPress = (option: string) => {
@@ -78,11 +112,21 @@ const ProfileScreenUser = () => {
           </TouchableOpacity>
           
           <View style={styles.userInfo}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>
-                {user?.firts_name?.charAt(0) || "?"}
-              </Text>
+            <View style={styles.avatarWrapper}>
+              {user?.profile_url ? (
+                <Image source={{ uri: user.profile_url }} style={styles.avatarImage} />
+              ) : (
+                <View style={styles.avatarCircle}>
+                  <Plus size={40} color="white" />
+                </View>
+              )}
+
+              {/* Botón flotante para agregar/cambiar foto */}
+              <TouchableOpacity style={styles.addPhotoButton} onPress={handleAddPhoto}>
+                <Plus size={20} color="white" />
+              </TouchableOpacity>
             </View>
+
             <Text style={styles.userName}>
               {user ? `${user.firts_name} ${user.last_name}` : "Cargando..."}
             </Text>
@@ -195,11 +239,31 @@ const styles = StyleSheet.create({
   },
   editText: { color: "#1ABC9C", fontWeight: "bold", marginBottom: 15, alignSelf: "flex-end" },
   userInfo: { alignItems: "center" },
-  avatar: {
-    width: 80, height: 80, borderRadius: 40, backgroundColor: "#1ABC9C",
-    justifyContent: "center", alignItems: "center", marginBottom: 10,
+  avatarWrapper: {
+    position: "relative",
+    marginBottom: 10,
   },
-  avatarText: { color: "#FFFFFF", fontSize: 32, fontWeight: "bold" },
+  avatarCircle: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "#1ABC9C",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  avatarImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  addPhotoButton: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    backgroundColor: "#1ABC9C",
+    borderRadius: 20,
+    padding: 6,
+  },
   userName: { fontSize: 20, fontWeight: "bold", color: "#1C2833" },
   optionsSection: {
     backgroundColor: "#FFFFFF",

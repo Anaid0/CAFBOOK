@@ -7,3 +7,4 @@ export interface Crop_typesPort{
     getCrop_typeById(crop_type_id:number): Promise<Crop_types | null>;
     getCrop_typeByDescription(description:string): Promise <Crop_types | null>; 
 }
+//

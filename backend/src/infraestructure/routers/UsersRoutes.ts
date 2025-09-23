@@ -5,6 +5,8 @@ import { UsersController } from "../controller/UsersController";
 import { authenticateToken } from '../web/authMiddleware';
 
 const router = Router();
+import multer from "multer";
+const upload = multer({ dest: "uploads/users/" });
 
 const userAdapter = new UsersAdapter();
 const userApp = new UsersApplication(userAdapter);
@@ -51,7 +53,7 @@ router.get("/users/email/:email", async (Request, Response)=>{
     }
 });
 
-router.put("/users/:id", async(Request, Response)=>{
+router.put("/users/:id", upload.single("profile_image"), async(Request, Response)=>{
     try{
         await userController.updateUser(Request, Response);
     }catch(error){

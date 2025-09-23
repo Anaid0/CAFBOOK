@@ -4,7 +4,7 @@ const isWeb = typeof window !== "undefined" && window.document;
 
 export const API_URL = isWeb 
   ? "http://localhost:4200/api"   // Para web
-  : "http://192.168.1.2:4200/api"; // Para Android (IP de tu PC en la misma red)
+  : "http:192.168.2.30:4200/api"; // Para Android (IP de tu PC en la misma red)
 
 
 export const loginUser = async (email: string, password: string) => {
@@ -33,10 +33,11 @@ export const getUserByEmail = async (email: string) => {
   return res.data;
 };
 
-export const updateUser = async (id: number, userData: any) => {
-  const res = await axios.put(`${API_URL}/users/${id}`, userData);
+export const updateUser = async (id: number, userData: any, config?: any) => {
+  const res = await axios.put(`${API_URL}/users/${id}`, userData, config);
   return res.data;
 };
+
 
 export const downUser = async (id: number) => {
   const res = await axios.put(`${API_URL}/users/down/${id}`);

@@ -8,3 +8,4 @@ export interface AdminPort{
     getAdminByEmail(email: string): Promise<Admin | null>;
     getAdminById(admin_id: number): Promise<Admin | null>;
 }
+//

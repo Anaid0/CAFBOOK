@@ -52,13 +52,15 @@ export class UsersController{
 
             if(!Validators.password(password))
                 return response.status(400).json({message:"La contraseña debe tener entre 6 y 25 caracteres, incluyendo al menos una letra y un número"});
+
+            const photo_url = request.file ? request.file.path : null;
         
-            const user: Omit<Users, "user_id" | "role_description" | "doc_type_description" | "photo_url"> = {
-                firts_name, last_name, document_number, doc_type_id, email, password, role_id: 1, status: 1, created_at: new Date()
+            const user: Omit<Users, "user_id" | "role_description" | "doc_type_description"> = {
+                firts_name, last_name, document_number, doc_type_id, email, password, photo_url, role_id: 1, status: 1, created_at: new Date()
             };
             const user_id = await this.app.createUser(user);
 
-            return response.status(201).json({message:"Usuario creado exitosamente:", user_id});
+            return response.status(201).json({message:"Usuario creado exitosamente:", user_id, photo_url});
         }catch(error){
 
             if(error instanceof Error){
@@ -156,6 +158,10 @@ export class UsersController{
             if(isNaN(userId)) return response.status(400).json({message:"Error en parámetro"});
             
             let { firts_name, last_name, document_number, email, password, doc_type_id, } = request.body;
+            let photo_url: string | null = null;
+            if (request.file) {
+                photo_url = request.file.path; 
+            }
 
              // Validaciones antes de actualizar
             if (firts_name && !Validators.name(firts_name)) 
@@ -176,10 +182,12 @@ export class UsersController{
             if (password && !Validators.password(password))
                 return response.status(400).json({message:"La contraseña debe tener al menos 6 caracteres, incluyendo al menos una letra y un número"});
       
-      const updated = await this.app.updateUser(userId,{firts_name, last_name, document_number, email, password, doc_type_id, status: 1});
+      const updated = await this.app.updateUser(userId,{firts_name, last_name, document_number, email, password, doc_type_id, photo_url: photo_url,status: 1});
       if(!updated) return response.status(404).json({message: "Usuario no encontrado o sin cambios"});
 
-      return response.status(200).json({message:"Usuaurio actualizaco exitosamente"})
+      return response.status(200).json({message:"Usuaurio actualizaco exitosamente",
+        photo_url: photo_url ?? "sin cambios en la foto"
+      });
  
         }catch(error){
             if(error instanceof Error){

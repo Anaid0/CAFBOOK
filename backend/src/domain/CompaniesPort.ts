@@ -9,3 +9,4 @@ export interface CompaniesPort{
     getCompanyById(company_id:number): Promise<Companies | null>;
     getCompanyByEmail(email: string): Promise<Companies | null>;
 }
+//

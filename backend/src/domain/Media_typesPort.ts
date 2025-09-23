@@ -7,3 +7,4 @@ export interface Media_typesPort{
      getMedia_typeByDescription(description: string): Promise<Media_types | null>;
      getAllMedia_types(): Promise <Media_types[]>;
 }
+//

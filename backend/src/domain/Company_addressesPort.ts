@@ -9,3 +9,4 @@ export interface Company_addressPort {
     getCompanyAddressByBussinesName(bussines_name:string): Promise <Company_addresses[]>;
     getCompanyAddressByDepartmentName(department_name:string): Promise <Company_addresses[]>;
   }
+  //

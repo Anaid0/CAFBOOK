@@ -13,7 +13,7 @@ const companyApp = new CompaniesApplication(companyAdapter);
 const companyController = new CompaniesController(companyApp);
 
 
-router.post("/login", async(request, response)=>{
+router.post("/companies/login", async(request, response)=>{
     await companyController.login(request, response)
 });
 
@@ -53,6 +53,7 @@ router.get("/companies/email/:email", async (Request, Response)=>{
         Response.status(400).json({message: "Error en la obtención de correo"});
     }
 });
+
 router.put("/companies/:id", upload.single("profile_image"), async(Request, Response)=>{
     try{
         await companyController.updateCompany(Request, Response);

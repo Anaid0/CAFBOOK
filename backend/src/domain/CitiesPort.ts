@@ -9,3 +9,4 @@ export interface CitiesPort{
      getCityByDepartmentId(department_id:number): Promise <Cities[]>;
      getCityByDepartmentName(department_name:string): Promise <Cities[]>;
 }
+//

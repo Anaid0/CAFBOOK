@@ -6,3 +6,4 @@ export interface Medias{
     file_url: string;
     uploaded_at: Date;
 }
+//

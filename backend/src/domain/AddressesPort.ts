@@ -9,3 +9,4 @@ export interface AddressesPort{
      getAddressByCityName(city_name:string): Promise<Addresses[]>;
      getAddressByCityId(city_id:number): Promise<Addresses[]>;
 }
+//

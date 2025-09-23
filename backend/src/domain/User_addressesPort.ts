@@ -9,3 +9,4 @@ export interface User_addressPort {
     getUserAddressByUserEmail(email:string): Promise <User_addresses[]>;
     getUserAddressByDepartmentName(department_name:string): Promise <User_addresses[]>;
   }
+  //
