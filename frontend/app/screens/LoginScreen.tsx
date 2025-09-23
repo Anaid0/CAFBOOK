@@ -43,14 +43,27 @@ const LoginScreen = () => {
 
       // Manejar la respuesta (puede ser response.data o response directamente)
       const data = response.data || response;
-      const { token, id } = data;
+      const { token, id, role } = data;
 
-      if (token && id) {
-        console.log("Login exitoso:", { token, id });
+      if (token && id && role) {
+        console.log("Login exitoso:", { token, id, role });
+        
+        // Guardar en AsyncStorage
         await AsyncStorage.setItem("userToken", token);
         await AsyncStorage.setItem("userId", id.toString());
-        navigation.navigate("Main", { userId: id, token });
-        
+        await AsyncStorage.setItem("userRole", role);
+
+        // 🔎 Validación de roles
+        if (userType === "user" && role === "user") {
+          navigation.navigate("MainUser", { userId: id, token });
+        } else if (userType === "company" && role === "company") {
+          navigation.navigate("MainCompany", { companyId: id, token });
+        } else {
+          Alert.alert(
+            "Error",
+            `Estás intentando iniciar sesión como ${userType}, pero tu cuenta es de tipo ${role}.`
+          );
+        }
       } else {
         Alert.alert("Error", "Credenciales incorrectas");
       }
