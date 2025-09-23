@@ -35,7 +35,7 @@ const RegisterScreen = () => {
   const [docTypes, setDocTypes] = useState<{ label: string; value: number }[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [role, setRole] = useState<number>(1); // 1 = User, 2 = Company
+  const [role, setRole] = useState<number>(1); 
   const [docType, setDocType] = useState<number>(1);
 
   // Campos comunes
