@@ -34,3 +34,4 @@ export const updateCropType = async (id: number, cropTypeData: any) => {
 export const deleteCropType = async (id: number) => {
   return await axios.delete(`${API_URL}/crop_types/${id}`);
 };
+
