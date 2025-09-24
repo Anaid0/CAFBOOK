@@ -3,7 +3,7 @@ const isWeb = typeof window !== "undefined" && window.document;
 
 export const API_URL = isWeb 
   ? "http://localhost:4200/api"   // Para web
-  : "http:192.168.2.30:4200/api"; // Para Android (IP de tu PC en la misma red)
+  : "http://10.233.33.254:4200/api"; // Para Android (IP de tu PC en la misma red)
 
 export const createPostCategory = async (categoryData: any) => {
   const res = await axios.post(`${API_URL}/post_categories`, categoryData);

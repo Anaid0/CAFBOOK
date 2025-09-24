@@ -5,7 +5,7 @@ const isWeb = typeof window !== "undefined" && window.document;
 
 export const API_URL = isWeb 
   ? "http://localhost:4200/api"   // Para web
-  : "http://192.168.1.2:4200/api"; 
+  : "http://10.233.33.254:4200/api"; 
 
 export const createRole = async (roleData: any) => {
   const res = await axios.post(`${API_URL}/roles`, roleData);

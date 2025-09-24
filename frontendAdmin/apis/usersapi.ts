@@ -4,7 +4,7 @@ const isWeb = typeof window !== "undefined" && window.document;
 
 export const API_URL = isWeb 
   ? "http://localhost:4200/api"
-  : "http://192.168.1.2:4200/api";
+  : "http://10.233.33.254:4200/api";
 
 export const loginUser = async (email: string, password: string) => {
   const res = await axios.post(`${API_URL}/login`, { email, password });
