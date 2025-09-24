@@ -1,7 +1,10 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:4200";
+const isWeb = typeof window !== "undefined" && window.document;
 
+export const API_URL = isWeb 
+  ? "http://localhost:4200/api"   // Para web
+  : "http:192.168.2.30:4200/api"; // Para Android (IP de tu PC en la misma red)
 
 export const createCropType = async (cropTypeData: any) => {
   return await axios.post(`${API_URL}/crop_types`, cropTypeData);
