@@ -4,7 +4,7 @@ const isWeb = typeof window !== "undefined" && window.document;
 
 export const API_URL = isWeb 
   ? "http://localhost:4200/api"   // Para web
-  : "http:192.168.2.30:4200/api"; // Para Android (IP de tu PC en la misma red)
+  : "http://192.168.1.2:4200/api"; // Para Android (IP de tu PC en la misma red)
 
 export const createPost = async (postData: any) => {
   const res = await axios.post(`${API_URL}/posts`, postData);
@@ -41,11 +41,6 @@ export const getPostsByCategoryId = async (categoryId: number) => {
   return res.data;
 };
 
-export const getAllPostsByCategoryId = async (categoryId: number) => {
-  const res = await axios.get(`${API_URL}/posts/category/all/${categoryId}`);
-  return res.data;
-};
-
 export const getPostsByCategoryName = async (name: string) => {
   const res = await axios.get(`${API_URL}/posts/category/name/${name}`);
   return res.data;
@@ -58,11 +53,6 @@ export const getPostsByUserIdAndCategoryId = async (userId: number, categoryId: 
 
 export const updatePost = async (id: number, postData: any) => {
   const res = await axios.put(`${API_URL}/posts/${id}`, postData);
-  return res.data;
-};
-
-export const restorePost = async (id: number) => {
-  const res = await axios.put(`${API_URL}/posts/restore/${id}`);
   return res.data;
 };
 

@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-
-
-
-
-
-// Iconos (puedes reemplazar con tus propios iconos)
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 
 // Tipos para nuestros cultivos
@@ -18,10 +13,14 @@ type Cultivo = {
   estado: 'saludable' | 'en-riesgo' | 'enfermo' | 'cosechado';
   ubicacion: string;
   fechaSiembra: string;
+  coordenadas: {
+    latitude: number;
+    longitude: number;
+  };
   imagen?: string;
 };
 
-// Datos de ejemplo para los cultivos
+// Datos de ejemplo para los cultivos con coordenadas
 const cultivosData: Cultivo[] = [
   {
     id: '1',
@@ -31,6 +30,7 @@ const cultivosData: Cultivo[] = [
     estado: 'saludable',
     ubicacion: 'Parcela A',
     fechaSiembra: '2023-05-15',
+    coordenadas: { latitude: 4.6097, longitude: -74.0817 }
   },
   {
     id: '2',
@@ -40,6 +40,7 @@ const cultivosData: Cultivo[] = [
     estado: 'en-riesgo',
     ubicacion: 'Parcela B',
     fechaSiembra: '2023-06-10',
+    coordenadas: { latitude: 4.6098, longitude: -74.0818 }
   },
   {
     id: '3',
@@ -49,6 +50,7 @@ const cultivosData: Cultivo[] = [
     estado: 'saludable',
     ubicacion: 'Parcela C',
     fechaSiembra: '2023-04-22',
+    coordenadas: { latitude: 4.6096, longitude: -74.0816 }
   },
   {
     id: '4',
@@ -58,6 +60,7 @@ const cultivosData: Cultivo[] = [
     estado: 'enfermo',
     ubicacion: 'Parcela D',
     fechaSiembra: '2023-05-30',
+    coordenadas: { latitude: 4.6099, longitude: -74.0819 }
   },
   {
     id: '5',
@@ -67,12 +70,16 @@ const cultivosData: Cultivo[] = [
     estado: 'cosechado',
     ubicacion: 'Parcela E',
     fechaSiembra: '2023-03-18',
+    coordenadas: { latitude: 4.6095, longitude: -74.0815 }
   },
 ];
+
+type Vista = 'lista' | 'mapa';
 
 const CultivosScreen: React.FC<BottomTabScreenProps<any>> = ({ navigation }) => {
   const [cultivos] = useState<Cultivo[]>(cultivosData);
   const [filtro, setFiltro] = useState<string>('todos');
+  const [vistaActual, setVistaActual] = useState<Vista>('lista');
   type IoniconName = keyof typeof Ionicons.glyphMap;
 
   // Filtrar cultivos según el estado seleccionado
@@ -102,14 +109,145 @@ const CultivosScreen: React.FC<BottomTabScreenProps<any>> = ({ navigation }) => 
     }
   };
 
+  // Calcular región inicial del mapa que contenga todos los cultivos
+  const getRegionInicial = () => {
+    if (cultivosFiltrados.length === 0) {
+      return {
+        latitude: 4.6097,
+        longitude: -74.0817,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      };
+    }
+
+    let minLat = cultivosFiltrados[0].coordenadas.latitude;
+    let maxLat = cultivosFiltrados[0].coordenadas.latitude;
+    let minLng = cultivosFiltrados[0].coordenadas.longitude;
+    let maxLng = cultivosFiltrados[0].coordenadas.longitude;
+
+    cultivosFiltrados.forEach(cultivo => {
+      minLat = Math.min(minLat, cultivo.coordenadas.latitude);
+      maxLat = Math.max(maxLat, cultivo.coordenadas.latitude);
+      minLng = Math.min(minLng, cultivo.coordenadas.longitude);
+      maxLng = Math.max(maxLng, cultivo.coordenadas.longitude);
+    });
+
+    const latitudeDelta = (maxLat - minLat) * 1.5;
+    const longitudeDelta = (maxLng - minLng) * 1.5;
+
+    return {
+      latitude: (minLat + maxLat) / 2,
+      longitude: (minLng + maxLng) / 2,
+      latitudeDelta: Math.max(latitudeDelta, 0.01),
+      longitudeDelta: Math.max(longitudeDelta, 0.01),
+    };
+  };
+
+  // Renderizar vista de lista
+  const renderVistaLista = () => (
+    <ScrollView style={styles.cultivosGrid}>
+      <View style={styles.gridContainer}>
+        {cultivosFiltrados.map(cultivo => (
+          <TouchableOpacity 
+            key={cultivo.id}
+            style={styles.cultivoCard}
+            onPress={() => navigation.navigate('DetalleCultivo', { cultivo })}
+          >
+            <View style={styles.cultivoHeader}>
+              <View
+                style={[
+                  styles.estadoCultivo,
+                  { backgroundColor: getColorByEstado(cultivo.estado) }
+                ]}
+              />
+              <Ionicons
+                name={getIconByTipo(cultivo.tipo)}
+                size={24}
+                color={getColorByEstado(cultivo.estado)}
+              />
+            </View>
+            
+            <Text style={styles.cultivoNombre}>{cultivo.nombre}</Text>
+            <Text style={styles.cultivoTipo}>{cultivo.tipo}</Text>
+            
+            <View style={styles.cultivoInfo}>
+              <View style={styles.infoItem}>
+                <Ionicons name="location" size={16} color="#757575" />
+                <Text style={styles.infoTexto}>{cultivo.ubicacion}</Text>
+              </View>
+              
+              <View style={styles.infoItem}>
+                <Ionicons name="resize" size={16} color="#757575" />
+                <Text style={styles.infoTexto}>{cultivo.area} ha</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </ScrollView>
+  );
+
+  // Renderizar vista de mapa
+  const renderVistaMapa = () => (
+    <View style={styles.mapaContainer}>
+      <MapView
+        style={styles.mapa}
+        provider={PROVIDER_GOOGLE}
+        initialRegion={getRegionInicial()}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
+      >
+        {cultivosFiltrados.map(cultivo => (
+          <Marker
+            key={cultivo.id}
+            coordinate={cultivo.coordenadas}
+            title={cultivo.nombre}
+            description={`${cultivo.tipo} - ${cultivo.area} ha`}
+            onPress={() => navigation.navigate('DetalleCultivo', { cultivo })}
+          >
+            <View style={styles.marcadorContainer}>
+              <View 
+                style={[
+                  styles.marcador,
+                  { backgroundColor: getColorByEstado(cultivo.estado) }
+                ]}
+              >
+                <Ionicons 
+                  name={getIconByTipo(cultivo.tipo)} 
+                  size={16} 
+                  color="#FFFFFF" 
+                />
+              </View>
+              <View style={styles.marcadorPunta} />
+            </View>
+          </Marker>
+        ))}
+      </MapView>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.titulo}>Mis Cultivos</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('AgregarCultivo')}>
-          <Ionicons name="add-circle" size={32} color="#4CAF50" />
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          {/* Botón para cambiar entre lista y mapa */}
+          <TouchableOpacity 
+            style={styles.vistaButton}
+            onPress={() => setVistaActual(vistaActual === 'lista' ? 'mapa' : 'lista')}
+          >
+            <Ionicons 
+              name={vistaActual === 'lista' ? 'map' : 'list'} 
+              size={24} 
+              color="#4CAF50" 
+            />
+          </TouchableOpacity>
+          
+          <TouchableOpacity onPress={() => navigation.navigate('AgregarCultivo')}>
+            <Ionicons name="add-circle" size={32} color="#4CAF50" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Filtros */}
@@ -168,48 +306,8 @@ const CultivosScreen: React.FC<BottomTabScreenProps<any>> = ({ navigation }) => 
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Mapa de cultivos (vista de cuadrícula) */}
-      <ScrollView style={styles.cultivosGrid}>
-        <View style={styles.gridContainer}>
-          {cultivosFiltrados.map(cultivo => (
-            <TouchableOpacity 
-              key={cultivo.id}
-              style={styles.cultivoCard}
-              onPress={() => navigation.navigate('DetalleCultivo', { cultivo })}
-            >
-              <View style={styles.cultivoHeader}>
-  <View
-    style={[
-      styles.estadoCultivo,
-      { backgroundColor: getColorByEstado(cultivo.estado) }
-    ]}
-  />
-  <Ionicons
-    name={getIconByTipo(cultivo.tipo)}
-    size={24}
-    color={getColorByEstado(cultivo.estado)}
-  />
-</View>
-
-              
-              <Text style={styles.cultivoNombre}>{cultivo.nombre}</Text>
-              <Text style={styles.cultivoTipo}>{cultivo.tipo}</Text>
-              
-              <View style={styles.cultivoInfo}>
-                <View style={styles.infoItem}>
-                  <Ionicons name="location" size={16} color="#757575" />
-                  <Text style={styles.infoTexto}>{cultivo.ubicacion}</Text>
-                </View>
-                
-                <View style={styles.infoItem}>
-                  <Ionicons name="resize" size={16} color="#757575" />
-                  <Text style={styles.infoTexto}>{cultivo.area} ha</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
+      {/* Contenido principal - Lista o Mapa */}
+      {vistaActual === 'lista' ? renderVistaLista() : renderVistaMapa()}
     </View>
   );
 };
@@ -232,6 +330,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  vistaButton: {
+    padding: 4,
   },
   titulo: {
     fontSize: 24,
@@ -326,6 +432,42 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#757575',
     marginLeft: 4,
+  },
+  mapaContainer: {
+    flex: 1,
+  },
+  mapa: {
+    width: '100%',
+    height: '100%',
+  },
+  marcadorContainer: {
+    alignItems: 'center',
+  },
+  marcador: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+  },
+  marcadorPunta: {
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderLeftWidth: 6,
+    borderRightWidth: 6,
+    borderTopWidth: 8,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderTopColor: 'currentColor',
+    marginTop: -2,
+    transform: [{ rotate: '180deg' }],
   },
 });
 
