@@ -12,6 +12,7 @@ import {
   ScrollView
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 const CodigoPasswordScreen = () => {
   const navigation = useNavigation<any>();
@@ -88,6 +89,10 @@ const CodigoPasswordScreen = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#1C2833" />
+          <Text style={styles.backButtonText}>Atrás</Text>
+        </TouchableOpacity>
         <View style={styles.content}>
           <Text style={styles.title}>Restablecer Contraseña</Text>
           <Text style={styles.subtitle}>
@@ -259,7 +264,9 @@ const styles = StyleSheet.create({
     color: "#1ABC9C",
     fontWeight: "600",
     fontSize: 14,
-  },
+  }, 
+  backButtonText: { fontSize:16, color:"#1C2833", marginLeft:5, fontWeight:"600" },
+
 });
 
 export default CodigoPasswordScreen;

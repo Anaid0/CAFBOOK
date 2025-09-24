@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-
-
-
-
-
-// Iconos (puedes reemplazar con tus propios iconos)
 import { Ionicons } from '@expo/vector-icons';
 
 // Tipos para nuestros cultivos
@@ -118,6 +112,10 @@ const CultivosScreen: React.FC<BottomTabScreenProps<any>> = ({ navigation }) => 
         showsHorizontalScrollIndicator={false}
         style={styles.filtrosContainer}
       >
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                  <Ionicons name="arrow-back" size={24} color="#1C2833" />
+                  <Text style={styles.backButtonText}>Atrás</Text>
+                </TouchableOpacity>
         <TouchableOpacity 
           style={[styles.filtro, filtro === 'todos' && styles.filtroActivo]}
           onPress={() => setFiltro('todos')}
@@ -326,7 +324,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#757575',
     marginLeft: 4,
-  },
+  }, 
+  backButton: { flexDirection:"row", alignItems:"center", marginBottom:10, padding:5 },
+  backButtonText: { fontSize:16, color:"#1C2833", marginLeft:5, fontWeight:"600" },
+
 });
 
 export default CultivosScreen;

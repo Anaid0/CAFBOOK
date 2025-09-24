@@ -9,6 +9,7 @@ import {
   ActivityIndicator
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 import { getPostsActive } from "../../apis/postsApi"; 
 
 const HomeScreen = () => {
@@ -50,6 +51,10 @@ const HomeScreen = () => {
       </View>
 
       <ScrollView style={styles.scrollView}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                  <Ionicons name="arrow-back" size={24} color="#1C2833" />
+                  <Text style={styles.backButtonText}>Atrás</Text>
+                </TouchableOpacity>
         {muro.map((muro) => (
           <View key={muro.post_id} style={styles.muroCard}>
             <View style={styles.muroHeader}>
@@ -79,6 +84,8 @@ const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
+    backButton: { flexDirection:"row", alignItems:"center", marginBottom:10, padding:5 },
+  backButtonText: { fontSize:16, color:"#1C2833", marginLeft:5, fontWeight:"600" },
   loader: {
     flex: 1,
     justifyContent: "center",

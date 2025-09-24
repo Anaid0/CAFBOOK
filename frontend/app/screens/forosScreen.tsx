@@ -9,6 +9,7 @@ import {
   ActivityIndicator
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 import { getPostsByCategoryId } from "../../apis/postsApi";
 
 const ForosScreen = () => {
@@ -51,6 +52,10 @@ const ForosScreen = () => {
       </View>
 
       <ScrollView style={styles.scrollView}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                  <Ionicons name="arrow-back" size={24} color="#1C2833" />
+                  <Text style={styles.backButtonText}>Atrás</Text>
+                </TouchableOpacity>
         {foros.map((foro) => (
           <View key={foro.post_id} style={styles.foroCard}>
             <View style={styles.foroHeader}>
@@ -79,6 +84,8 @@ const ForosScreen = () => {
 };
 
 const styles = StyleSheet.create({
+    backButton: { flexDirection:"row", alignItems:"center", marginBottom:10, padding:5 },
+  backButtonText: { fontSize:16, color:"#1C2833", marginLeft:5, fontWeight:"600" },
   loader: {
     flex: 1,
     justifyContent: "center",

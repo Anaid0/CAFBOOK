@@ -10,29 +10,37 @@ export class CompaniesController{
         this.app = app;
     }
 
-async login(req: Request, res: Response): Promise<string | Response>{
-    try {
-        const { email, password } = req.body;
-        if (!email || !password)
-            return res.status(400).json({ message: "Email y contraseña son requeridos" });
-     
-          // Validación de email
-        if (!Validators.email(email))
-            return res.status(400).json({ message: "Correo electrónico no válido" });
-     
-          // Validación de contraseña
-        if (!Validators.password(password))
-            return res.status(400).json({
-              message:"La contraseña debe tener al menos 6 caracteres y máximo 25, incluyendo al menos una letra y un número",
-            });
-     
-        const token = await this.app.login(email, password);
-        return res.status(200).json({ token });
-         
-        } catch (error) {
-          return res.status(401).json({ message: "Credenciales inválidas" });
-        }
-    }
+async login(req: Request, res: Response): Promise<Response> {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password)
+      return res.status(400).json({ message: "Email y contraseña son requeridos" });
+
+    if (!Validators.email(email))
+      return res.status(400).json({ message: "Correo electrónico no válido" });
+
+    if (!Validators.password(password))
+      return res.status(400).json({
+        message:
+          "La contraseña debe tener al menos 6 caracteres y máximo 25, incluyendo al menos una letra y un número",
+      });
+
+    // app.login ya devuelve { token, id }
+    const { token, id } = await this.app.login(email, password);
+
+    // 👇 aquí los renombras para empresa
+    return res.status(200).json({
+      companyToken: token,
+      companyId: id,
+    });
+
+  } catch (error) {
+    return res.status(401).json({ message: "Credenciales inválidas" });
+  }
+}
+
+
 
 async registerCompany(request: Request, response: Response): Promise<Response> {
     try {

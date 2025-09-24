@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNPickerSelect from "react-native-picker-select";
 import { getAllDocumentTypes } from "../../apis/documentTypesApi";
 import { getUserById, updateUser } from "../../apis/usersapi";
+import { Ionicons } from "@expo/vector-icons";
 
 const EditProfileUser = () => {
   const navigation = useNavigation<any>();
@@ -122,6 +123,10 @@ const EditProfileUser = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={styles.scroll}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#1C2833" />
+          <Text style={styles.backButtonText}>Atrás</Text>
+        </TouchableOpacity>
         <Text style={styles.title}>Editar Perfil</Text>
 
         <Text style={styles.label}>Nombres</Text>
@@ -187,6 +192,10 @@ const EditProfileUser = () => {
 };
 
 const styles = StyleSheet.create({
+  
+  backButton: { flexDirection:"row", alignItems:"center", marginBottom:10, padding:5 },
+  backButtonText: { fontSize:16, color:"#1C2833", marginLeft:5, fontWeight:"600" },
+
   container: { flex: 1, backgroundColor: "#F5F5F5" },
   scroll: { padding: 20 },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },

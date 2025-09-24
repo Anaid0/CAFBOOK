@@ -107,6 +107,8 @@ const MisTelefonosScreen = () => {
 };
 
 const styles = StyleSheet.create({
+    backButton: { flexDirection:"row", alignItems:"center", marginBottom:10, padding:5 },
+  backButtonText: { fontSize:16, color:"#1C2833", marginLeft:5, fontWeight:"600" },
   loader: { flex: 1, justifyContent: "center", alignItems: "center" },
   container: { flex: 1, backgroundColor: "#F5F5F5" },
   header: { backgroundColor: "#1ABC9C", padding: 20, paddingTop: 50 },

@@ -10,7 +10,7 @@ export class UsersController{
         this.app = app;
     }
 
-    async login(req: Request, res: Response): Promise<Response> {
+    async login(req: Request, res: Response): Promise<string | Response> {
   try {
     const { email, password } = req.body;
     if (!email || !password)
@@ -25,14 +25,17 @@ export class UsersController{
           "La contraseña debe tener al menos 6 caracteres y máximo 25, incluyendo al menos una letra y un número",
       });
 
+    // 👇 Aquí tu aplicación debería devolver también el id
     const { token, id } = await this.app.login(email, password);
 
+    // Respuesta consistente con UsersController
     return res.status(200).json({ token, id });
 
   } catch (error) {
     return res.status(401).json({ message: "Credenciales inválidas" });
   }
 }
+
 
     async registerUser(request: Request, response: Response): Promise <Response>{
         const { first_name, last_name, document_number, email, password, doc_type_id } = request.body;
