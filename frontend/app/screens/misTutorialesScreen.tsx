@@ -8,18 +8,20 @@ import {
   Alert,
   ActivityIndicator
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getPostsByUserIdAndCategoryId } from "../../apis/postsApi"; 
 
 const MisTutorialesScreen = () => {
   const navigation = useNavigation<any>();
+  const route = useRoute<any>(); 
   const [tutoriales, setTutoriales] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const categoriaId = 1;
 
   useEffect(() => {
+    
     const fetchTutoriales = async () => {
       try {
         const id = await AsyncStorage.getItem("userId"); 
@@ -36,12 +38,12 @@ const MisTutorialesScreen = () => {
     };
 
     fetchTutoriales();
-  }, []);
+  },[route.params?.refresh]);
 
-  const handleEditar = (id: number) => {
-    navigation.navigate("editarTutorialesScreen", { id });
+  const handleEditar = (postId: number) => {
+  navigation.navigate("EditarPostScreen", { postId });
   };
-
+  
   const handleEliminar = (id: number) => {
     Alert.alert(
       "Eliminar Tutorial",

@@ -17,14 +17,6 @@ export class PostsApplication {
         if (!existingPost) {
             throw new Error("El post no existe");
         }
-
-        if (post.post_category_id) {
-            const postsInCategory = await this.port.getPostByPostCategoryId(post.post_category_id);
-            const conflict = postsInCategory.find(post => post.post_id !== post_id);
-            if (conflict) {
-                throw new Error("Error al actualizar: ya existe otro post en esta categoría");
-            }
-        }
         return await this.port.updatePost(post_id, post);
     }
 
@@ -70,6 +62,10 @@ export class PostsApplication {
 
     async getPostByUserIdAndCategoryId(user_id: number, post_category: number): Promise<Posts[]> {
         return await this.port.getPostByUserIdAndCategoryId(user_id, post_category);
+    }
+
+    async getPostsByCategoryIdAndActive( category_id: number): Promise<Posts[]>{
+        return await this.port.getPostsByCategoryIdAndActive(category_id);
     }
 }
     

@@ -12,5 +12,5 @@ export interface PostsPort {
     getPostByPostUserEmail(user_email: string): Promise<Posts[]>;
     restorePost(post_id: number): Promise<boolean>;
     getPostByUserIdAndCategoryId(user_id: number, post_category: number): Promise<Posts[]>;
+    getPostsByCategoryIdAndActive( post_category: number): Promise<Posts[]>;
   }
-  //

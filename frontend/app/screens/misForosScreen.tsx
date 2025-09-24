@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getPostsByUserIdAndCategoryId } from "../../apis/postsApi"; 
+import { getPostsByUserIdAndCategoryId, restorePost, deletePost } from "../../apis/postsApi"; 
 
 const MisForosScreen = () => {
   const navigation = useNavigation<any>();
@@ -39,25 +39,58 @@ const MisForosScreen = () => {
   }, []);
 
   const handleEditar = (id: number) => {
-    navigation.navigate("editarforosScreen", { id });
+    navigation.navigate("EditarPostScreen", { id });
   };
 
-  const handleEliminar = (id: number) => {
-    Alert.alert(
-      "Eliminar foro",
-      "¿Estás seguro de que quieres eliminar este foro?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Eliminar",
-          onPress: () => {
-            setForos(foros.filter(t => t.id !== id));
-            Alert.alert("Éxito", "foro eliminado correctamente");
+const handleEliminar = (id: number) => {
+  Alert.alert(
+    "Eliminar foro",
+    "¿Estás seguro de que quieres eliminar este foro?",
+    [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Eliminar",
+        onPress: async () => {
+          try {
+            await deletePost(id);
+            setForos((prev) => prev.filter((t) => t.post_id !== id));
+            Alert.alert("Éxito", "Publicación eliminada correctamente");
+          } catch (error) {
+            console.error("Error eliminando publicación:", error);
+            Alert.alert("Error", "No se pudo eliminar la publicación");
           }
-        }
-      ]
-    );
-  };
+        },
+      },
+    ]
+  );
+};
+
+const handleRestaurar = (id: number) => {
+  Alert.alert(
+    "Restaurar publicación",
+    "¿Deseas restaurar esta publicación?",
+    [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Restaurar",
+        onPress: async () => {
+          try {
+            await restorePost(id);
+            setForos((prev) =>
+              prev.map((p) =>
+                p.post_id === id ? { ...p, status: 1, deleted_at: null } : p
+              )
+            );
+            Alert.alert("Éxito", "Publicación restaurada correctamente");
+          } catch (error) {
+            console.error("Error restaurando publicación:", error);
+            Alert.alert("Error", "No se pudo restaurar la publicación");
+          }
+        },
+      },
+    ]
+  );
+};
 
   if (loading) {
     return (
@@ -76,37 +109,55 @@ const MisForosScreen = () => {
       </View>
 
       <ScrollView style={styles.scrollView}>
-        {foros.map((foro) => (
-          <View key={foro.post_id} style={styles.foroCard}>
-            <View style={styles.foroHeader}>
-              <Text style={styles.foroCategoria}>
-                {foro.post_category_description || "Sin categoría"}
-              </Text>
-              <Text style={styles.foroFecha}>{foro.created_at || "Sin fecha"}</Text>
-            </View>
+       {foros.map((foro) => (
+  <View key={foro.post_id} style={styles.foroCard}>
+    <View style={styles.foroHeader}>
+      <Text style={styles.foroCategoria}>
+        {foro.post_category_description || "Sin categoría"}
+      </Text>
+      <Text style={styles.foroFecha}>{foro.created_at || "Sin fecha"}</Text>
+    </View>
 
-            <Text style={styles.foroFecha}>{foro.user_email}</Text>
-            
-            <Text style={styles.foroTitulo}>{foro.tittle}</Text>
-            <Text style={styles.foroTitulo}>{foro.description}</Text>
+    <Text style={styles.foroFecha}>{foro.user_email}</Text>
 
-            <View style={styles.actionsContainer}>
-              <TouchableOpacity 
-                style={[styles.actionButton, styles.editarButton]}
-                onPress={() => handleEditar(foro.post_id)}
-              >
-                <Text style={styles.actionButtonText}>Editar</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={[styles.actionButton, styles.eliminarButton]}
-                onPress={() => handleEliminar(foro.post_id)}
-              >
-                <Text style={styles.actionButtonText}>Eliminar</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ))}
+    {foro.status === 0 && (
+      <Text style={[styles.foroFecha, { color: "red", fontWeight: "bold" }]}>
+        ELIMINADO {foro.deleted_at ? `- ${foro.deleted_at}` : ""}
+      </Text>
+    )}
+
+    <Text style={styles.foroTitulo}>{foro.tittle}</Text>
+    <Text style={styles.foroTitulo}>{foro.description}</Text>
+
+    <View style={styles.actionsContainer}>
+      {foro.status === 1 ? (
+        <>
+          <TouchableOpacity 
+            style={[styles.actionButton, styles.editarButton]}
+            onPress={() => handleEditar(foro.post_id)}
+          >
+            <Text style={styles.actionButtonText}>Editar</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={[styles.actionButton, styles.eliminarButton]}
+            onPress={() => handleEliminar(foro.post_id)}
+          >
+            <Text style={styles.actionButtonText}>Eliminar</Text>
+          </TouchableOpacity>
+        </>
+      ) : (
+        <TouchableOpacity 
+          style={[styles.actionButton, { backgroundColor: "#27AE60" }]} 
+          onPress={() => handleRestaurar(foro.post_id)}
+        >
+          <Text style={styles.actionButtonText}>Restaurar</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  </View>
+))}
+
       </ScrollView>
 
       <TouchableOpacity 

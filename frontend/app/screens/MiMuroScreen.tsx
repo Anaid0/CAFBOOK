@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getPostsByUserIdAndCategoryId } from "../../apis/postsApi"; 
+import { getPostsByUserIdAndCategoryId, deletePost, restorePost } from "../../apis/postsApi"; 
 
 const MiMuroScreen = () => {
   const navigation = useNavigation<any>();
@@ -39,25 +39,58 @@ const MiMuroScreen = () => {
   }, []);
 
   const handleEditar = (id: number) => {
-    navigation.navigate("editarmuroScreen", { id });
+    navigation.navigate("EditarPostScreen", { id });
   };
 
-  const handleEliminar = (id: number) => {
-    Alert.alert(
-      "Eliminar muro",
-      "¿Estás seguro de que quieres eliminar este muro?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Eliminar",
-          onPress: () => {
-            setMuro(muro.filter(t => t.id !== id));
-            Alert.alert("Éxito", "eliminado de correctamente");
+const handleEliminar = (id: number) => {
+  Alert.alert(
+    "Eliminar muro",
+    "¿Estás seguro de que quieres eliminar este muro?",
+    [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Eliminar",
+        onPress: async () => {
+          try {
+            await deletePost(id);
+            setMuro((prev) => prev.filter((t) => t.post_id !== id));
+            Alert.alert("Éxito", "Publicación eliminada correctamente");
+          } catch (error) {
+            console.error("Error eliminando publicación:", error);
+            Alert.alert("Error", "No se pudo eliminar la publicación");
           }
-        }
-      ]
-    );
-  };
+        },
+      },
+    ]
+  );
+};
+
+const handleRestaurar = (id: number) => {
+  Alert.alert(
+    "Restaurar publicación",
+    "¿Deseas restaurar esta publicación?",
+    [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Restaurar",
+        onPress: async () => {
+          try {
+            await restorePost(id);
+            setMuro((prev) =>
+              prev.map((p) =>
+                p.post_id === id ? { ...p, status: 1, deleted_at: null } : p
+              )
+            );
+            Alert.alert("Éxito", "Publicación restaurada correctamente");
+          } catch (error) {
+            console.error("Error restaurando publicación:", error);
+            Alert.alert("Error", "No se pudo restaurar la publicación");
+          }
+        },
+      },
+    ]
+  );
+};
 
   if (loading) {
     return (
@@ -77,37 +110,53 @@ const MiMuroScreen = () => {
 
       <ScrollView style={styles.scrollView}>
         {muro.map((muro) => (
-          <View key={muro.post_id} style={styles.muroCard}>
-            <View style={styles.muroHeader}>
-              <Text style={styles.muroCategoria}>
-                {muro.post_category_description || "Sin categoría"}
-              </Text>
-              <Text style={styles.muroFecha}>{muro.created_at || "Sin fecha"}</Text>
-            </View>
+  <View key={muro.post_id} style={styles.muroCard}>
+    <View style={styles.muroHeader}>
+      <Text style={styles.muroCategoria}>
+        {muro.post_category_description || "Sin categoría"}
+      </Text>
+      <Text style={styles.muroFecha}>{muro.created_at || "Sin fecha"}</Text>
+    </View>
 
-            <Text style={styles.muroFecha}>{muro.user_email}</Text>
-            
-            <Text style={styles.muroTitulo}>{muro.tittle}</Text>
-            <Text style={styles.muroTitulo}>{muro.description}</Text>
+    <Text style={styles.muroFecha}>{muro.user_email}</Text>
 
-            <View style={styles.actionsContainer}>
-              <TouchableOpacity 
-                style={[styles.actionButton, styles.editarButton]}
-                onPress={() => handleEditar(muro.post_id)}
-              >
-                <Text style={styles.actionButtonText}>Editar</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={[styles.actionButton, styles.eliminarButton]}
-                onPress={() => handleEliminar(muro
-.post_id)}
-              >
-                <Text style={styles.actionButtonText}>Eliminar</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ))}
+    {muro.status === 0 && (
+      <Text style={[styles.muroFecha, { color: "red", fontWeight: "bold" }]}>
+        ELIMINADO {muro.deleted_at ? `- ${muro.deleted_at}` : ""}
+      </Text>
+    )}
+
+    <Text style={styles.muroTitulo}>{muro.tittle}</Text>
+    <Text style={styles.muroTitulo}>{muro.description}</Text>
+
+    <View style={styles.actionsContainer}>
+      {muro.status === 1 ? (
+        <>
+          <TouchableOpacity 
+            style={[styles.actionButton, styles.editarButton]}
+            onPress={() => handleEditar(muro.post_id)}
+          >
+            <Text style={styles.actionButtonText}>Editar</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[styles.actionButton, styles.eliminarButton]}
+            onPress={() => handleEliminar(muro.post_id)}
+          >
+            <Text style={styles.actionButtonText}>Eliminar</Text>
+          </TouchableOpacity>
+        </>
+      ) : (
+        <TouchableOpacity 
+          style={[styles.actionButton, { backgroundColor: "#27AE60" }]} 
+          onPress={() => handleRestaurar(muro.post_id)}
+        >
+          <Text style={styles.actionButtonText}>Restaurar</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  </View>
+))}
       </ScrollView>
 
       <TouchableOpacity 
