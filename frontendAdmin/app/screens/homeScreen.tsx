@@ -762,15 +762,8 @@ const HomeScreen = ({ searchTerm = "" }) => {
                   <View key={a.admin_id} style={styles.card}>
                     <Text style={styles.cardTitle}>{a.first_name} {a.last_name}</Text>
                     <Text>Email: {a.email}</Text>
-                    <Text style={[styles.statusText, a.status === 1 ? styles.activeStatus : styles.inactiveStatus]}>
-                      Estado: {a.status === 1 ? "Activo" : "Inactivo"}
-                    </Text>
                     <View style={styles.actionsContainer}>
-                      <TouchableOpacity onPress={() => handleToggleAdmin(a)}>
-                        <Text style={[styles.actionText, a.status === 1 ? styles.deleteText : styles.restoreText]}>
-                          {a.status === 1 ? "Desactivar" : "Activar"}
-                        </Text>
-                      </TouchableOpacity>
+
                       <TouchableOpacity onPress={() => handleEditItem(a)}>
                         <Text style={[styles.actionText, styles.editText]}>Editar</Text>
                       </TouchableOpacity>
@@ -806,7 +799,7 @@ const HomeScreen = ({ searchTerm = "" }) => {
                   </>
                 )}
 
-                {(activeTab === "users" || activeTab === "admins") && (
+                {(activeTab === "users") && (
                   <>
                     <TextInput 
                       placeholder="Nombre" 
@@ -820,15 +813,16 @@ const HomeScreen = ({ searchTerm = "" }) => {
                       value={editingItem.last_name} 
                       onChangeText={t => setEditingItem({ ...editingItem, last_name: t })} 
                     />
-                  </>
-                )}
-
-                <TextInput 
+                    <TextInput 
                   placeholder="Número de Documento" 
                   style={styles.input} 
                   value={editingItem.document_number} 
                   onChangeText={t => setEditingItem({ ...editingItem, document_number: t })} 
                 />
+                  </>
+                )}
+
+                
 
                 {activeTab === "companies" && (
                   <>
