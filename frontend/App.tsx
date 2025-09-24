@@ -45,8 +45,6 @@ export default function App() {
         <Stack.Screen name="MiMuroScreen" component={MiMuroScreen} />
         <Stack.Screen name="EditarPostScreen" component={EditarPostScreen} />
         <Stack.Screen name="ManualDetailScreen" component={ManualDetailScreen} />
-        <Stack.Screen name="ForoDetailScreen" component={ForoDetailScreen} />
-        <Stack.Screen name="TutorialDetailScreen" component={TutorialDetailScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>
