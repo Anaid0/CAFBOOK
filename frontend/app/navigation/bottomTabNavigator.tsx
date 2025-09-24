@@ -183,7 +183,7 @@ const BottomTabNavigator = () => {
               tabBarLabel: 'Cultivos',
               tabBarIcon: ({ color, size }) => (
                 <Image
-                  source={{ uri: '' }}
+                  source={{ uri: 'https://cdn-icons-png.flaticon.com/512/135/135761.png' }}
                   style={{ width: size, height: size, tintColor: color }}
                 />
               ),
