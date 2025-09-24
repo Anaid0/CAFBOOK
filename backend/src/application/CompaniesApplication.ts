@@ -10,28 +10,29 @@ export class CompaniesApplication{
         this.port = port;
     }
 
-    async login(email:string, password:string):Promise<string>{
-            const existingCompany = await this.port.getCompanyByEmail(email);
-            if(!existingCompany){  
-                throw new Error("Credenciales Inválidas");
-            }
-    
-            const passwordMath= await bcrypt.compare(password, existingCompany.password);
-            if(!passwordMath){
-                throw new Error("Invalid Credencials")
-            }
+    async login(email: string, password: string): Promise<{ token: string; id: number }> {
+  const existingCompany = await this.port.getCompanyByEmail(email);
+  if (!existingCompany) {  
+    throw new Error("Credenciales inválidas");
+  }
 
-            if(existingCompany.status === 0){
-                throw new Error("Usuario deshabilitado, comunicate con el admin para recuperarla")
-            }
-    
-            const token = AuthApplication.generateToken({
-                id: existingCompany.company_id,
-                email: existingCompany.email
-            });
-    
-            return token; 
-        }
+  const passwordMatch = await bcrypt.compare(password, existingCompany.password);
+  if (!passwordMatch) {
+    throw new Error("Credenciales inválidas");
+  }
+
+  if (existingCompany.status === 0) {
+    throw new Error("Usuario deshabilitado, comunícate con el admin para recuperarla");
+  }
+
+  const token = AuthApplication.generateToken({
+    id: existingCompany.company_id,
+    email: existingCompany.email
+  });
+
+  // 👇 Devolvemos token + id igual que UsersApplication
+  return { token, id: existingCompany.company_id };
+}
         
     async createCompany(company: Omit<Companies,"company_id"| "role_description" | "doc_type_description">): Promise<number>{
         const existingCompany = await this.port.getCompanyByEmail(company.email);

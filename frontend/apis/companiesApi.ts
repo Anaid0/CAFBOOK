@@ -7,7 +7,10 @@ export const API_URL = isWeb
   : "http://192.168.1.2:4200/api";
 
 export const loginCompany = async (email: string, password: string) => {
-  const res = await axios.post(`${API_URL}/companies/login`, { email, password });
+  const res = await axios.post(`${API_URL}/companies/login`, {
+    email,
+    password,
+  });
   return res.data;
 };
 

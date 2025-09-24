@@ -32,7 +32,6 @@ const LoginScreen = () => {
     try {
       let response;
 
-      // Intentar login según el tipo seleccionado
       if (userType === "user") {
         response = await loginUser(email, password);
       } else {
@@ -41,19 +40,38 @@ const LoginScreen = () => {
 
       setIsLoading(false);
 
-      // Manejar la respuesta (puede ser response.data o response directamente)
       const data = response.data || response;
-      const { token, id } = data;
+      console.log("Respuesta login:", data);
 
-      if (token && id) {
-        console.log("Login exitoso:", { token, id });
+      if (userType === "user") {
+        const { token, id } = data;
+        if (token && id) {
+          await AsyncStorage.setItem("userToken", token);
+          await AsyncStorage.setItem("userId", id.toString());
 
-        await AsyncStorage.setItem("userToken", token);
-        await AsyncStorage.setItem("userId", id.toString());
-
-        navigation.navigate("Main", { userId: id, token });
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Main", params: { userId: id, token } }],
+          });
+        } else {
+          Alert.alert("Error", "Credenciales de usuario incorrectas");
+        }
       } else {
-        Alert.alert("Error", "Credenciales incorrectas");
+        // ✅ Ajuste según tu API
+        const companyToken = data.companyToken;
+        const companyId = data.companyId;
+
+        if (companyToken && companyId) {
+          await AsyncStorage.setItem("companyToken", companyToken);
+          await AsyncStorage.setItem("companyId", companyId.toString());
+
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Main", params: { companyId, token: companyToken } }],
+          });
+        } else {
+          Alert.alert("Error", "Credenciales de empresa incorrectas");
+        }
       }
     } catch (error: any) {
       setIsLoading(false);
