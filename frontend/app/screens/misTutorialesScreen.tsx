@@ -11,6 +11,7 @@ import {
 import { useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getPostsByUserIdAndCategoryId } from "../../apis/postsApi"; 
+import { Ionicons } from "@expo/vector-icons";
 
 const MisTutorialesScreen = () => {
   const navigation = useNavigation<any>();
@@ -43,7 +44,7 @@ const MisTutorialesScreen = () => {
   const handleEditar = (postId: number) => {
   navigation.navigate("EditarPostScreen", { postId });
   };
-  
+
   const handleEliminar = (id: number) => {
     Alert.alert(
       "Eliminar Tutorial",
@@ -78,6 +79,10 @@ const MisTutorialesScreen = () => {
       </View>
 
       <ScrollView style={styles.scrollView}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                  <Ionicons name="arrow-back" size={24} color="#1C2833" />
+                  <Text style={styles.backButtonText}>Atrás</Text>
+                </TouchableOpacity>
         {tutoriales.map((tutorial) => (
           <View key={tutorial.post_id} style={styles.tutorialCard}>
             <View style={styles.tutorialHeader}>
@@ -122,6 +127,8 @@ const MisTutorialesScreen = () => {
 };
 
 const styles = StyleSheet.create({
+    backButton: { flexDirection:"row", alignItems:"center", marginBottom:10, padding:5 },
+  backButtonText: { fontSize:16, color:"#1C2833", marginLeft:5, fontWeight:"600" },
   loader: {
     flex: 1,
     justifyContent: "center",

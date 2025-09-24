@@ -5,6 +5,7 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
 import { createPost } from "../../apis/postsApi";
+import { Ionicons } from "@expo/vector-icons";
 import { getPostCategories } from "../../apis/postCategoriesApi"; 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -19,7 +20,6 @@ const AgregarScreen = () => {
     const fetchCategories = async () => {
       try {
         const categories = await getPostCategories();
-        // Suponemos que cada categoría viene con { post_category_id, description }
         const formatted = categories.map((c: any) => ({
           label: c.description,
           value: c.post_category_id,
@@ -57,7 +57,7 @@ const AgregarScreen = () => {
       const res = await createPost(postData);
       console.log("Post creado:", res);
       Alert.alert("Éxito", "Publicación creada correctamente");
-      // Resetear campos
+      
       setTitle("");
       setDescription("");
       setPostCategoryId(docTypes.length > 0 ? docTypes[0].value : undefined);
@@ -71,6 +71,10 @@ const AgregarScreen = () => {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#1C2833" />
+          <Text style={styles.backButtonText}>Atrás</Text>
+        </TouchableOpacity>
         <Text style={styles.label}>Tipo de Publicación *</Text>
         <View style={styles.pickerContainer}>
           {docTypes.length > 0 ? (
@@ -116,6 +120,9 @@ const AgregarScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F5F5F5" },
   scrollView: { padding: 20 },
+   backButton: { flexDirection:"row", alignItems:"center", marginBottom:10, padding:5 },
+  backButtonText: { fontSize:16, color:"#1C2833", marginLeft:5, fontWeight:"600" },
+  logoContainer: { alignItems:"center", marginBottom:30 },
   label: { fontSize: 16, fontWeight: "600", marginBottom: 8, marginTop: 15 },
   pickerContainer: { backgroundColor: "#F8F9F9", borderRadius: 8, borderWidth: 1, borderColor: "#E0E0E0", marginBottom: 15, paddingHorizontal: 5, paddingVertical: 2 },
   input: { backgroundColor: "#F8F9F9", borderRadius: 8, padding: 15, marginBottom: 15, borderWidth: 1, borderColor: "#E0E0E0" },
