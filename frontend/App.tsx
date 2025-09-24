@@ -15,7 +15,10 @@ import homeScreen from "./app/screens/homeScreen";
 import EditProfileUser from "./app/screens/editProfileUser";
 import ProfileScreenUser from "./app/screens/profileScreenUser";
 import MiMuroScreen from "./app/screens/MiMuroScreen";
-
+import EditarPostScreen from "./app/screens/editPost";
+import ManualDetailScreen from "./app/screens/ManualDetailScreen";
+import MisTelefonosScreen from "./app/screens/misTelefonosScreen";
+import MisDireccionesScreen from "./app/screens/misDireccionesScreen";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -39,6 +42,10 @@ export default function App() {
         <Stack.Screen name="EditProfileUser" component={EditProfileUser} />
         <Stack.Screen name="ProfileScreenUser" component={ProfileScreenUser} />
         <Stack.Screen name="MiMuroScreen" component={MiMuroScreen} />
+        <Stack.Screen name="EditarPostScreen" component={EditarPostScreen} />
+        <Stack.Screen name="ManualDetailScreen" component={ManualDetailScreen} />
+        <Stack.Screen name="MisTelefonosScreen" component={MisTelefonosScreen} />
+        <Stack.Screen name="MisDireccionesScreen" component={MisDireccionesScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>

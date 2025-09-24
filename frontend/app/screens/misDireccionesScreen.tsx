@@ -1,3 +1,4 @@
+// app/screens/MisDireccionesScreen.tsx
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -9,45 +10,51 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { getPhones, deletePhone } from "../../apis/phonesApi";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getAllAddresses, deleteAddress } from "../../apis/addressesApi";
 
-const MisTelefonosScreen = () => {
+const MisDireccionesScreen = () => {
   const navigation = useNavigation<any>();
-  const [telefonos, setTelefonos] = useState<any[]>([]);
+  const [direcciones, setDirecciones] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchTelefonos = async () => {
+    const fetchDirecciones = async () => {
       try {
-        const data = await getPhones();
-        setTelefonos(data);
+        const id = await AsyncStorage.getItem("userId");
+        if (!id) return;
+
+        const res = await getAllAddresses();
+        setDirecciones(res.data);
       } catch (error) {
-        console.error("Error cargando teléfonos:", error);
-        Alert.alert("Error", "No se pudieron cargar los teléfonos");
+        console.error("Error cargando direcciones:", error);
+        Alert.alert("Error", "No se pudieron cargar las direcciones");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTelefonos();
+    fetchDirecciones();
   }, []);
 
   const handleEliminar = (id: number) => {
     Alert.alert(
-      "Eliminar Teléfono",
-      "¿Estás seguro de que quieres eliminar este teléfono?",
+      "Eliminar Dirección",
+      "¿Estás seguro de que quieres eliminar esta dirección?",
       [
         { text: "Cancelar", style: "cancel" },
         {
           text: "Eliminar",
           onPress: async () => {
             try {
-              await deletePhone(id);
-              setTelefonos((prev) => prev.filter((t) => t.phone_id !== id));
-              Alert.alert("Éxito", "Teléfono eliminado correctamente");
+              await deleteAddress(id);
+              setDirecciones((prev) =>
+                prev.filter((d) => d.address_id !== id)
+              );
+              Alert.alert("Éxito", "Dirección eliminada correctamente");
             } catch (error) {
-              console.error("Error eliminando teléfono:", error);
-              Alert.alert("Error", "No se pudo eliminar el teléfono");
+              console.error("Error eliminando dirección:", error);
+              Alert.alert("Error", "No se pudo eliminar la dirección");
             }
           },
         },
@@ -59,34 +66,43 @@ const MisTelefonosScreen = () => {
     return (
       <View style={styles.loader}>
         <ActivityIndicator size="large" color="#1ABC9C" />
-        <Text>Cargando teléfonos...</Text>
+        <Text>Cargando direcciones...</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Mis teléfonos</Text>
-        <Text style={styles.headerSubtitle}>{telefonos.length} teléfonos guardados</Text>
+        <Text style={styles.headerTitle}>Mis direcciones</Text>
+        <Text style={styles.headerSubtitle}>
+          {direcciones.length} direcciones guardadas
+        </Text>
       </View>
 
+      {/* Lista */}
       <ScrollView style={styles.scrollView}>
-        {telefonos.map((tel) => (
-          <View key={tel.phone_id} style={styles.phoneCard}>
-            <View style={styles.phoneHeader}>
-              <Text style={styles.phoneCategoria}>
-                {tel.number_type_id || "Sin tipo"}
+        {direcciones.map((dir) => (
+          <View key={dir.address_id} style={styles.card}>
+            <View style={styles.cardHeader}>
+              <Text style={styles.cardCategoria}>
+                {dir.city_name || "Sin ciudad"}
               </Text>
-              <Text style={styles.phoneFecha}>{tel.created_at || "Sin fecha"}</Text>
+              <Text style={styles.cardFecha}>
+                {dir.postal_code || "Sin código postal"}
+              </Text>
             </View>
 
-            <Text style={styles.phoneTitulo}>{tel.number}</Text>
+            <Text style={styles.cardDetalle}>{dir.street}</Text>
+            {dir.vereda && (
+              <Text style={styles.cardDetalle}>Vereda: {dir.vereda}</Text>
+            )}
 
             <View style={styles.actionsContainer}>
               <TouchableOpacity
                 style={[styles.actionButton, styles.eliminarButton]}
-                onPress={() => handleEliminar(tel.phone_id)}
+                onPress={() => handleEliminar(dir.address_id)}
               >
                 <Text style={styles.actionButtonText}>Eliminar</Text>
               </TouchableOpacity>
@@ -95,27 +111,30 @@ const MisTelefonosScreen = () => {
         ))}
       </ScrollView>
 
-      {/* 👇 Botón de crear nuevo teléfono */}
+      {/* Botón agregar */}
       <TouchableOpacity
         style={styles.crearButton}
-        onPress={() => navigation.navigate("AgregarTelefonoScreen")}
+        onPress={() => navigation.navigate("AgregarDireccionScreen")}
       >
-        <Text style={styles.crearButtonText}>+ Crear Nuevo teléfono</Text>
+        <Text style={styles.crearButtonText}>+ Agregar Dirección</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-    backButton: { flexDirection:"row", alignItems:"center", marginBottom:10, padding:5 },
-  backButtonText: { fontSize:16, color:"#1C2833", marginLeft:5, fontWeight:"600" },
   loader: { flex: 1, justifyContent: "center", alignItems: "center" },
   container: { flex: 1, backgroundColor: "#F5F5F5" },
   header: { backgroundColor: "#1ABC9C", padding: 20, paddingTop: 50 },
-  headerTitle: { fontSize: 24, fontWeight: "bold", color: "#FFFFFF", marginBottom: 5 },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    marginBottom: 5,
+  },
   headerSubtitle: { fontSize: 14, color: "#FFFFFF", opacity: 0.9 },
   scrollView: { padding: 15, flex: 1 },
-  phoneCard: {
+  card: {
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 15,
@@ -126,13 +145,12 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  phoneHeader: {
+  cardHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
     marginBottom: 10,
   },
-  phoneCategoria: {
+  cardCategoria: {
     fontSize: 12,
     fontWeight: "600",
     color: "#1ABC9C",
@@ -141,13 +159,11 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
   },
-  phoneFecha: { fontSize: 12, color: "#7F8C8D" },
-  phoneTitulo: {
-    fontSize: 16,
-    fontWeight: "600",
+  cardFecha: { fontSize: 14, color: "#7F8C8D" },
+  cardDetalle: {
+    fontSize: 14,
     color: "#1C2833",
-    marginBottom: 15,
-    lineHeight: 22,
+    marginBottom: 5,
   },
   actionsContainer: { flexDirection: "row", justifyContent: "flex-end" },
   actionButton: {
@@ -168,4 +184,4 @@ const styles = StyleSheet.create({
   crearButtonText: { color: "#FFFFFF", fontWeight: "bold", fontSize: 16 },
 });
 
-export default MisTelefonosScreen;
+export default MisDireccionesScreen;

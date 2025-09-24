@@ -14,7 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { getPostsByUserIdAndCategoryId, restorePost, deletePost } from "../../apis/postsApi"; 
 
-const MisForosScreen = () => {
+const MisForosScreen = () =>{
   const navigation = useNavigation<any>();
   const [foros, setForos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,7 +24,7 @@ const MisForosScreen = () => {
     const fetchforos = async () => {
       try {
         const id = await AsyncStorage.getItem("userId"); 
-        if (!id) return;
+        if (!id) return; 
 
         const data = await getPostsByUserIdAndCategoryId(Number(id), categoriaId);
         setForos(data);
