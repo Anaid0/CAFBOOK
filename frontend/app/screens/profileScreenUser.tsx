@@ -131,9 +131,13 @@ const ProfileScreenUser = () => {
       navigation.navigate("MisManuales");
     } else if (option === "Mis Foros") {
       navigation.navigate("MisForos");
-    } else if(option === ("Mi Muro")){
-      navigation.navigate("MiMuroScreen")
-    }else {
+    } else if(option === "Mi Muro"){
+      navigation.navigate("MiMuroScreen");
+    }else if(option ===  "Mis Telefonos"){
+      navigation.navigate("MisTelefonosScreen");
+    }else if(option === "Mis Direcciones"){
+      navigation.navigate("MisDirecciones");
+    }else{
       Alert.alert(option, `Navegando a ${option}`);
     }
   };
@@ -223,6 +227,21 @@ const ProfileScreenUser = () => {
             onPress={() => handleOptionPress("Mi Muro")}
           >
             <Text style={styles.optionText}>Mi muro</Text>
+          </TouchableOpacity>
+
+          
+          <TouchableOpacity 
+            style={styles.optionButton}
+            onPress={() => handleOptionPress("Mis Telefonos")}
+          >
+            <Text style={styles.optionText}>Mis Teléfonos</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.optionButton}
+            onPress={() => handleOptionPress("Mis Direcciones")}
+          >
+            <Text style={styles.optionText}>Mis Direcciones</Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
