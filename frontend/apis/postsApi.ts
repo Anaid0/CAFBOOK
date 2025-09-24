@@ -56,6 +56,11 @@ export const updatePost = async (id: number, postData: any) => {
   return res.data;
 };
 
+export const restorePost = async (id: number) => {
+  const res = await axios.put(`${API_URL}/posts/restore/${id}`);
+  return res.data;
+};
+
 export const deletePost = async (id: number) => {
   const res = await axios.delete(`${API_URL}/posts/${id}`);
   return res.data;

@@ -135,7 +135,7 @@ const ProfileScreenUser = () => {
     } else if(option === "Mi Muro"){
       navigation.navigate("MiMuroScreen");
     }else if(option ===  "Mis Telefonos"){
-      navigation.navigate("MisTelefonosScreen");
+      navigation.navigate("TelefonosScreen");
     }else if(option === "Mis Direcciones"){
       navigation.navigate("MisDireccionesScreen");
     }else{

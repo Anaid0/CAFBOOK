@@ -3,7 +3,6 @@ import { User_phones } from '../../domain/entities/User_phones';
 import { User_phonesPort } from "../../domain/port/User_PhonesPort";
 import { User_phonesEntity } from "../entities/User_phonesEntity";
 import { AppDataSource } from "../config/con_data_bases";
-import { number } from 'joi';
 import { UserEntity } from "../entities/UsersEntity";
 import { PhonesEntity } from "../entities/PhonesEntity";
 
@@ -137,6 +136,17 @@ export class User_phonesAdapter implements User_phonesPort {
     } catch (error) {
         console.error("Error fetching phones by user id", error);
         throw new Error("Error fetching phones by user id");
+    }
+  }
+
+  async getUserPhoneByNumber(number: string): Promise<User_phones | null> {
+     try {
+         const userPhones = await this.userPhonesRepository.find({ relations: ["user_id", "phone_id"] });
+  const filtered = userPhones.find(up => up.phone_id.number === number); 
+  return filtered ? this.toDomain(filtered) : null;
+    } catch (error) {
+        console.error("Error fetching phones by user email", error);
+        throw new Error("Error fetching phones by user email");
     }
   }
 

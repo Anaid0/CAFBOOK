@@ -5,6 +5,7 @@ export interface User_phonesPort {
     deleteUserPhone(user_phone: number): Promise<boolean>;
     getAllUserPhones(): Promise<User_phones[]>;
     getUserPhoneById(user_phone: number): Promise<User_phones | null>;
+    getUserPhoneByNumber(number: string): Promise<User_phones | null>;
     getUserPhoneByPhoneId(phone_id: number): Promise<User_phones[]>;
     getUserPhonesByUserEmail(email:string): Promise <User_phones[]>;
     getUserPhonesByUserId(user_id:number): Promise <User_phones[]>;
