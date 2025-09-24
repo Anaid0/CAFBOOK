@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { loginUser } from "../../apis/usersapi";
 import { loginCompany } from "../../apis/companiesApi";
+import { Ionicons } from "@expo/vector-icons";
 
 const LoginScreen = () => {
   const navigation = useNavigation<any>();
@@ -87,6 +88,11 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
+
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color="#1C2833" />
+                <Text style={styles.backButtonText}>Atrás</Text>
+              </TouchableOpacity>
       <View style={styles.logoContainer}>
         <Image
           source={require("../../assets/images/logoCAFBOOKK.png")}
@@ -199,6 +205,8 @@ const LoginScreen = () => {
 };
 
 const styles = StyleSheet.create({
+    backButton: { flexDirection:"row", alignItems:"center", marginBottom:10, padding:5 },
+  backButtonText: { fontSize:16, color:"#1C2833", marginLeft:5, fontWeight:"600" },
   container: {
     flex: 1,
     backgroundColor: "#A9DFBF",

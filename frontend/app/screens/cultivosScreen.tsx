@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 
 // Tipos para nuestros cultivos
@@ -256,6 +255,10 @@ const CultivosScreen: React.FC<BottomTabScreenProps<any>> = ({ navigation }) => 
         showsHorizontalScrollIndicator={false}
         style={styles.filtrosContainer}
       >
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                  <Ionicons name="arrow-back" size={24} color="#1C2833" />
+                  <Text style={styles.backButtonText}>Atrás</Text>
+                </TouchableOpacity>
         <TouchableOpacity 
           style={[styles.filtro, filtro === 'todos' && styles.filtroActivo]}
           onPress={() => setFiltro('todos')}
@@ -432,42 +435,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#757575',
     marginLeft: 4,
-  },
-  mapaContainer: {
-    flex: 1,
-  },
-  mapa: {
-    width: '100%',
-    height: '100%',
-  },
-  marcadorContainer: {
-    alignItems: 'center',
-  },
-  marcador: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-  },
-  marcadorPunta: {
-    width: 0,
-    height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: 6,
-    borderRightWidth: 6,
-    borderTopWidth: 8,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderTopColor: 'currentColor',
-    marginTop: -2,
-    transform: [{ rotate: '180deg' }],
   },
 });
 

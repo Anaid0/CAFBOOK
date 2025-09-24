@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getPostsByCategoryId } from "../../apis/postsApi";
+import { Ionicons } from "@expo/vector-icons";
 
-const ManualesScreen = ({ userId }: { userId: number }) => {
+const ManualesScreen = () => {
   const navigation = useNavigation<any>();
+  const route = useRoute<any>(); 
   const [manuales, setManuales] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<number | null>(null);
 
   const categoriaId = 2;
 
   useEffect(() => {
+    const fetchUserId = async () => {
+      const id = await AsyncStorage.getItem("userId");
+      if (id) setUserId(Number(id));
+    };
+
     const fetchManuales = async () => {
       try {
         const data = await getPostsByCategoryId(categoriaId);
@@ -23,8 +32,14 @@ const ManualesScreen = ({ userId }: { userId: number }) => {
       }
     };
 
+    fetchUserId();
     fetchManuales();
-  }, []);
+  }, [route.params?.refresh]);
+
+  const goToManualDetail = (manualId: number) => {
+    if (!userId) return Alert.alert("Error", "No se encontró el ID de usuario");
+    navigation.navigate("ManualDetailScreen", { postId: manualId, userId });
+  };
 
   if (loading) {
     return (
@@ -43,11 +58,15 @@ const ManualesScreen = ({ userId }: { userId: number }) => {
       </View>
 
       <ScrollView style={styles.scrollView}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                  <Ionicons name="arrow-back" size={24} color="#1C2833" />
+                  <Text style={styles.backButtonText}>Atrás</Text>
+                </TouchableOpacity>
         {manuales.map((manual) => (
           <TouchableOpacity
             key={manual.post_id}
             style={styles.manualCard}
-            onPress={() => navigation.navigate("ManualDetailScreen", { manual, userId })}
+            onPress={() => goToManualDetail(manual.post_id)}
           >
             <Text style={styles.manualTitulo}>{manual.tittle}</Text>
             <Text style={styles.manualDescripcion}>{manual.description}</Text>
@@ -60,6 +79,8 @@ const ManualesScreen = ({ userId }: { userId: number }) => {
 };
 
 const styles = StyleSheet.create({
+    backButton: { flexDirection:"row", alignItems:"center", marginBottom:10, padding:5 },
+  backButtonText: { fontSize:16, color:"#1C2833", marginLeft:5, fontWeight:"600" },
   loader: { flex: 1, justifyContent: "center", alignItems: "center" },
   container: { flex: 1, backgroundColor: "#F5F5F5" },
   header: { backgroundColor: "#1ABC9C", padding: 20, paddingTop: 50 },

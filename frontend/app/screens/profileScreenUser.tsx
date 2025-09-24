@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native"; 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { getUserById, updateUser, downUser } from "../../apis/usersapi";
 
@@ -131,7 +132,7 @@ const ProfileScreenUser = () => {
       navigation.navigate("MisManuales");
     } else if (option === "Mis Foros") {
       navigation.navigate("MisForos");
-    } else if(option === ("Mi Muro")){
+    } else if(option === "Mi Muro"){
       navigation.navigate("MiMuroScreen")
     }else {
       Alert.alert(option, `Navegando a ${option}`);
@@ -145,6 +146,10 @@ const ProfileScreenUser = () => {
       </View>
 
       <ScrollView style={styles.scrollView}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                  <Ionicons name="arrow-back" size={24} color="#1C2833" />
+                  <Text style={styles.backButtonText}>Atrás</Text>
+                </TouchableOpacity>
         <View style={styles.profileSection}>
           <TouchableOpacity onPress={handleEditProfile}>
             <Text style={styles.editText}>Editar Cuenta</Text>
@@ -254,6 +259,8 @@ const ProfileScreenUser = () => {
 };
 
 const styles = StyleSheet.create({
+    backButton: { flexDirection:"row", alignItems:"center", marginBottom:10, padding:5 },
+  backButtonText: { fontSize:16, color:"#1C2833", marginLeft:5, fontWeight:"600" },
   container: { flex: 1, backgroundColor: "#F5F5F5" },
   header: { backgroundColor: "#1ABC9C", padding: 20, alignItems: "center" },
   headerTitle: { fontSize: 24, fontWeight: "bold", color: "#FFFFFF" },

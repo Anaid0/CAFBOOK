@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { getPostsByCategoryId } from "../../apis/postsApi"; 
+import { Ionicons } from "@expo/vector-icons";
 
 const TutorialesScreen = () => {
  const navigation = useNavigation<any>();
@@ -52,6 +53,10 @@ const TutorialesScreen = () => {
       </View>
 
       <ScrollView style={styles.scrollView}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                  <Ionicons name="arrow-back" size={24} color="#1C2833" />
+                  <Text style={styles.backButtonText}>Atrás</Text>
+                </TouchableOpacity>
         {tutoriales.map((tutorial) => (
           <View key={tutorial.post_id} style={styles.tutorialCard}>
             <View style={styles.tutorialHeader}>
@@ -80,6 +85,8 @@ const TutorialesScreen = () => {
 };
 
 const styles = StyleSheet.create({
+    backButton: { flexDirection:"row", alignItems:"center", marginBottom:10, padding:5 },
+  backButtonText: { fontSize:16, color:"#1C2833", marginLeft:5, fontWeight:"600" },
   loader: {
     flex: 1,
     justifyContent: "center",

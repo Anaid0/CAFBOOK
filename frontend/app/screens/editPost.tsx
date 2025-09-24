@@ -12,6 +12,7 @@ import {
   Platform
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 import RNPickerSelect from "react-native-picker-select";
 import { getPostCategories } from "../../apis/postCategoriesApi";
 import { updatePost, getPostById } from "../../apis/postsApi";
@@ -98,6 +99,10 @@ const EditarPostScreen = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={styles.scroll}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                  <Ionicons name="arrow-back" size={24} color="#1C2833" />
+                  <Text style={styles.backButtonText}>Atrás</Text>
+                </TouchableOpacity>
         <Text style={styles.label}>Tipo de Publicación *</Text>
         <RNPickerSelect
           onValueChange={(value) => setSelectedCategory(value)}
@@ -140,6 +145,8 @@ const EditarPostScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  backButton: { flexDirection:"row", alignItems:"center", marginBottom:10, padding:5 },
+  backButtonText: { fontSize:16, color:"#1C2833", marginLeft:5, fontWeight:"600" },
   container: { flex: 1, backgroundColor: "#F5F5F5" },
   scroll: { padding: 20 },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
@@ -187,7 +194,8 @@ const pickerSelectStyles = {
     paddingRight: 30,
     backgroundColor: "#FFFFFF",
     marginBottom: 15
-  }
+  },
+
 };
 
 export default EditarPostScreen;
