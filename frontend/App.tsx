@@ -17,6 +17,8 @@ import ProfileScreenUser from "./app/screens/profileScreenUser";
 import MiMuroScreen from "./app/screens/MiMuroScreen";
 import EditarPostScreen from "./app/screens/editPost";
 import ManualDetailScreen from "./app/screens/ManualDetailScreen";
+import ForoDetailScreen from "./app/screens/FotoDetailSreen";
+import TutorialDetailScreen from "./app/screens/TutorialDetailScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +45,8 @@ export default function App() {
         <Stack.Screen name="MiMuroScreen" component={MiMuroScreen} />
         <Stack.Screen name="EditarPostScreen" component={EditarPostScreen} />
         <Stack.Screen name="ManualDetailScreen" component={ManualDetailScreen} />
+        <Stack.Screen name="ForoDetailScreen" component={ForoDetailScreen} />
+        <Stack.Screen name="TutorialDetailScreen" component={TutorialDetailScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>
