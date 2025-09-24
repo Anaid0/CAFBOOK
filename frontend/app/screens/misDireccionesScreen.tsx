@@ -1,100 +1,187 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import { Ionicons } from '@expo/vector-icons';
+// app/screens/MisDireccionesScreen.tsx
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getAllAddresses, deleteAddress } from "../../apis/addressesApi";
 
-// Tipo de dirección sin id (se genera automáticamente en el backend)
-type Direccion = {
-  calle: string;
-  vereda?: string;
-  codigo_postal: string;
-  ciudad_id: number;
-  ciudad_nombre: string;
-};
+const MisDireccionesScreen = () => {
+  const navigation = useNavigation<any>();
+  const [direcciones, setDirecciones] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-// Datos de ejemplo
-const direccionesData: Direccion[] = [
-  {
-    calle: "Calle 123 #45-67",
-    vereda: "Vereda Norte",
-    codigo_postal: "110111",
-    ciudad_id: 101,
-    ciudad_nombre: "Bogotá"
-  },
-  {
-    calle: "Carrera 9 #10-11",
-    codigo_postal: "760001",
-    ciudad_id: 202,
-    ciudad_nombre: "Cali"
-  },
-  {
-    calle: "Av. Principal Km 5",
-    vereda: "Vereda El Carmen",
-    codigo_postal: "050021",
-    ciudad_id: 303,
-    ciudad_nombre: "Medellín"
-  },
-];
+  useEffect(() => {
+    const fetchDirecciones = async () => {
+      try {
+        const id = await AsyncStorage.getItem("userId");
+        if (!id) return;
 
-const MisDireccionesScreen: React.FC<BottomTabScreenProps<any>> = ({ navigation }) => {
-  const [direcciones] = useState<Direccion[]>(direccionesData);
+        const res = await getAllAddresses();
+        setDirecciones(res.data);
+      } catch (error) {
+        console.error("Error cargando direcciones:", error);
+        Alert.alert("Error", "No se pudieron cargar las direcciones");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDirecciones();
+  }, []);
+
+  const handleEliminar = (id: number) => {
+    Alert.alert(
+      "Eliminar Dirección",
+      "¿Estás seguro de que quieres eliminar esta dirección?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Eliminar",
+          onPress: async () => {
+            try {
+              await deleteAddress(id);
+              setDirecciones((prev) =>
+                prev.filter((d) => d.address_id !== id)
+              );
+              Alert.alert("Éxito", "Dirección eliminada correctamente");
+            } catch (error) {
+              console.error("Error eliminando dirección:", error);
+              Alert.alert("Error", "No se pudo eliminar la dirección");
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="#1ABC9C" />
+        <Text>Cargando direcciones...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.titulo}>Mis Direcciones</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('AgregarDireccion')}>
-          <Ionicons name="add-circle" size={32} color="#4CAF50" />
-        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Mis direcciones</Text>
+        <Text style={styles.headerSubtitle}>
+          {direcciones.length} direcciones guardadas
+        </Text>
       </View>
 
-      {/* Lista de direcciones */}
-      <ScrollView style={styles.direccionesList}>
-        {direcciones.map((direccion, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.direccionCard}
-            onPress={() => navigation.navigate('DetalleDireccion', { direccion })}
-          >
-            <View style={styles.direccionHeader}>
-              <Ionicons name="home" size={22} color="#4CAF50" />
-              <Text style={styles.direccionCiudad}>{direccion.ciudad_nombre}</Text>
+      {/* Lista */}
+      <ScrollView style={styles.scrollView}>
+        {direcciones.map((dir) => (
+          <View key={dir.address_id} style={styles.card}>
+            <View style={styles.cardHeader}>
+              <Text style={styles.cardCategoria}>
+                {dir.city_name || "Sin ciudad"}
+              </Text>
+              <Text style={styles.cardFecha}>
+                {dir.postal_code || "Sin código postal"}
+              </Text>
             </View>
 
-            <Text style={styles.direccionTexto}>{direccion.calle}</Text>
-
-            {direccion.vereda && (
-              <Text style={styles.direccionTexto}>Vereda: {direccion.vereda}</Text>
+            <Text style={styles.cardDetalle}>{dir.street}</Text>
+            {dir.vereda && (
+              <Text style={styles.cardDetalle}>Vereda: {dir.vereda}</Text>
             )}
 
-            <Text style={styles.direccionTexto}>Código Postal: {direccion.codigo_postal}</Text>
-          </TouchableOpacity>
+            <View style={styles.actionsContainer}>
+              <TouchableOpacity
+                style={[styles.actionButton, styles.eliminarButton]}
+                onPress={() => handleEliminar(dir.address_id)}
+              >
+                <Text style={styles.actionButtonText}>Eliminar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         ))}
       </ScrollView>
+
+      {/* Botón agregar */}
+      <TouchableOpacity
+        style={styles.crearButton}
+        onPress={() => navigation.navigate("AgregarDireccionScreen")}
+      >
+        <Text style={styles.crearButtonText}>+ Agregar Dirección</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F5F5' },
-  header: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8,
-    backgroundColor: '#FFFFFF', elevation: 2,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1, shadowRadius: 2,
+  loader: { flex: 1, justifyContent: "center", alignItems: "center" },
+  container: { flex: 1, backgroundColor: "#F5F5F5" },
+  header: { backgroundColor: "#1ABC9C", padding: 20, paddingTop: 50 },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    marginBottom: 5,
   },
-  titulo: { fontSize: 24, fontWeight: 'bold', color: '#333333' },
-  direccionesList: { flex: 1, padding: 8 },
-  direccionCard: {
-    backgroundColor: '#FFFFFF', borderRadius: 12, padding: 12, marginBottom: 12,
-    elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1, shadowRadius: 2,
+  headerSubtitle: { fontSize: 14, color: "#FFFFFF", opacity: 0.9 },
+  scrollView: { padding: 15, flex: 1 },
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  direccionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
-  direccionCiudad: { fontSize: 16, fontWeight: 'bold', color: '#333333', marginLeft: 8 },
-  direccionTexto: { fontSize: 14, color: '#555555', marginBottom: 4 },
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  cardCategoria: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#1ABC9C",
+    backgroundColor: "#E8F8F5",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  cardFecha: { fontSize: 14, color: "#7F8C8D" },
+  cardDetalle: {
+    fontSize: 14,
+    color: "#1C2833",
+    marginBottom: 5,
+  },
+  actionsContainer: { flexDirection: "row", justifyContent: "flex-end" },
+  actionButton: {
+    padding: 10,
+    borderRadius: 8,
+    alignItems: "center",
+    marginHorizontal: 5,
+  },
+  eliminarButton: { backgroundColor: "#E74C3C" },
+  actionButtonText: { color: "#FFFFFF", fontWeight: "600", fontSize: 14 },
+  crearButton: {
+    backgroundColor: "#1ABC9C",
+    padding: 15,
+    margin: 15,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  crearButtonText: { color: "#FFFFFF", fontWeight: "bold", fontSize: 16 },
 });
 
 export default MisDireccionesScreen;

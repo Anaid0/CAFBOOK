@@ -137,7 +137,7 @@ const ProfileScreenUser = () => {
     }else if(option ===  "Mis Telefonos"){
       navigation.navigate("MisTelefonosScreen");
     }else if(option === "Mis Direcciones"){
-      navigation.navigate("MisDirecciones");
+      navigation.navigate("MisDireccionesScreen");
     }else{
       Alert.alert(option, `Navegando a ${option}`);
     }
