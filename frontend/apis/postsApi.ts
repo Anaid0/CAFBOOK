@@ -41,6 +41,11 @@ export const getPostsByCategoryId = async (categoryId: number) => {
   return res.data;
 };
 
+export const getAllPostsByCategoryId = async (categoryId: number) => {
+  const res = await axios.get(`${API_URL}/posts/category/all/${categoryId}`);
+  return res.data;
+};
+
 export const getPostsByCategoryName = async (name: string) => {
   const res = await axios.get(`${API_URL}/posts/category/name/${name}`);
   return res.data;
@@ -53,6 +58,11 @@ export const getPostsByUserIdAndCategoryId = async (userId: number, categoryId: 
 
 export const updatePost = async (id: number, postData: any) => {
   const res = await axios.put(`${API_URL}/posts/${id}`, postData);
+  return res.data;
+};
+
+export const restorePost = async (id: number) => {
+  const res = await axios.put(`${API_URL}/posts/restore/${id}`);
   return res.data;
 };
 

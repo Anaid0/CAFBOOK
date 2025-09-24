@@ -58,28 +58,35 @@ export class PostsAdapter implements PostsPort {
     }
   }
 
-  async updatePost(post_id: number, post: Partial<Posts>): Promise<boolean> {
-    try {
-      const existing = await this.postsRepository.findOne({ where: { post_id } });
-      if (!existing) {
-        throw new Error("Post no encontrado");
-      }
+async updatePost(post_id: number, post: Partial<Posts>): Promise<boolean> {
+  try {
+    const existing = await this.postsRepository.findOne({ where: { post_id }, relations: ["post_category_id", "user_id"] });
+    if (!existing) throw new Error("Post no encontrado");
 
-      Object.assign(existing, {
-        tittle: post.tittle ?? existing.tittle,
-        description: post.description ?? existing.description,
-        post_category_id: post.post_category_id ?? existing.post_category_id,
-        user_id: post.user_id ?? existing.user_id,
-        creates_at: post.created_at ?? existing.created_at,
-      });
-
-      await this.postsRepository.save(existing);
-      return true;
-    } catch (error) {
-      console.error("Error actualizando post:", error);
-      throw new Error("Error actualizando post");
+    if (post.post_category_id) {
+      const category = new Post_categoriesEntity();
+      category.post_category_id = post.post_category_id;
+      existing.post_category_id = category;
     }
+
+    if (post.user_id) {
+      const user = new UserEntity();
+      user.user_id = post.user_id;
+      existing.user_id = user;
+    }
+
+    existing.tittle = post.tittle ?? existing.tittle;
+    existing.description = post.description ?? existing.description;
+    existing.created_at = post.created_at ?? existing.created_at;
+
+    await this.postsRepository.save(existing);
+    return true;
+  } catch (error) {
+    console.error("Error actualizando post:", error);
+    throw new Error("Error actualizando post");
   }
+}
+
 
   async deletePost(post_id: number): Promise<boolean> {
     try {
@@ -199,10 +206,27 @@ async getPostByPostUserEmail(user_email: string): Promise<Posts[]> {
 async getPostByUserIdAndCategoryId(user_id: number, post_category: number): Promise<Posts[]> {
   try {
     const entities = await this.postsRepository.find({
-      relations: ["user_id", "post_category_id"],
+      relations: ["post_category_id"],
     });
 
     const filtered = entities.filter(PostsEntity =>PostsEntity.user_id.user_id === user_id &&
+    PostsEntity.post_category_id.post_category_id === post_category
+    );
+
+    return filtered.map(entity => this.toDomain(entity));
+  } catch (error) {
+    console.error("Error obteniendo posts por user_id y post_category:", error);
+    throw new Error("Error obteniendo posts por user_id y post_category");
+  }
+}
+
+async getPostsByCategoryIdAndActive(post_category: number): Promise<Posts[]> {
+  try {
+    const entities = await this.postsRepository.find({
+      relations: ["post_category_id"],
+    });
+
+    const filtered = entities.filter(PostsEntity =>PostsEntity.status === 1 &&
     PostsEntity.post_category_id.post_category_id === post_category
     );
 

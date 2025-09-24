@@ -168,6 +168,25 @@ export class PostsController {
   }
 }
 
+async searchPostByCategoryIdAndActive(request: Request, response: Response): Promise<Response> {
+  try {
+    const categoryId = parseInt(request.params.categoryId);
+    if (isNaN(categoryId)) {
+      return response.status(400).json({ error: "ID de la categoria no válido" });
+    }
+
+    const posts = await this.app.getPostsByCategoryIdAndActive(categoryId);
+
+    if (!posts || posts.length === 0) {
+      return response.status(404).json({ message: "No se encontraron posts activo para esa categoria" });
+    }
+
+    return response.status(200).json(posts);
+  } catch (error) {
+    console.error("Error en searchPostByUserIdAndCategoryId:", error);
+    return response.status(500).json({ message: "Error en el servidor" });
+  }
+}
 
   async searchPostByUserId(request: Request, response: Response): Promise<Response> {
     try {
@@ -266,7 +285,7 @@ export class PostsController {
         return response.status(400).json({ message: "Error en parámetro" });
       }
 
-      const { tittle, description, post_category_id, user_id, creates_at } = request.body;
+      let { tittle, description, post_category_id, user_id, created_at } = request.body;
 
       if (tittle && !Validators.tittle(tittle)) {
         return response.status(400).json({ message: "Título inválido" });
@@ -284,16 +303,16 @@ export class PostsController {
         return response.status(400).json({ message: "ID de usuario inválido" });
       }
 
-      if (creates_at && !Validators.date(creates_at)) {
+      if (created_at && !Validators.date(created_at)) {
         return response.status(400).json({ message: "Fecha inválida" });
       }
 
       const updated = await this.app.updatePost(postId, {
-        tittle,
-        description,
-        post_category_id,
-        user_id,
-        created_at: new Date
+      tittle,
+      description,
+      post_category_id,
+      user_id,
+      created_at: new Date()
       });
 
       if (!updated) {

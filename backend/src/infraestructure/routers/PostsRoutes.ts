@@ -63,9 +63,9 @@ router.get("/posts/user/email/:email", async (Request, Response) => {
   }
 });
 
-router.get("/posts/category/:id", async (Request, Response) => {
+router.get("/posts/category/:categoryId", async (Request, Response) => {
   try {
-    await postsController.searchPostByPostCategoryId(Request, Response);
+    await postsController.searchPostByCategoryIdAndActive(Request, Response);
   } catch (error) {
     console.error("Error obteniendo posts por categoría: " + error);
     Response.status(400).json({ message: "Error obteniendo posts por categoría" });
@@ -84,6 +84,15 @@ router.get("/posts/category/name/:name", async (Request, Response) => {
 router.get("/posts/user/:userId/category/:categoryId", async (Request, Response) => {
   try {
     await postsController.searchPostByUserIdAndCategoryId(Request, Response);
+  } catch (error) {
+    console.error("Error obteniendo posts por categoría y user: " + error);
+    Response.status(400).json({ message: "Error obteniendo posts por categoría y por user" });
+  }
+});
+
+router.get("/posts/category/all/all", async (Request, Response) => {
+  try {
+    await postsController.allPosts(Request, Response);
   } catch (error) {
     console.error("Error obteniendo posts por categoría y user: " + error);
     Response.status(400).json({ message: "Error obteniendo posts por categoría y por user" });
