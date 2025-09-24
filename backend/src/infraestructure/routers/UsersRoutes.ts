@@ -23,6 +23,7 @@ router.post("/users", async(Request, Response)=>{
         Response.status(400).json({message:"Error en la creación del usuario"});
     }
 });
+;
 
 router.get("/users", authenticateToken, async(Request, Response)=>{
     try{
