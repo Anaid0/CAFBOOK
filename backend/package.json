@@ -5,7 +5,10 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "test:coverage": "jest --coverage",
+    "sonar:scanner": "sonar-scanner",
+    "test:sonar": "npm run test:coverage && npm run sonar:scanner"
   },
   "keywords": [],
   "author": "",
@@ -15,10 +18,13 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
+    "jest": "^29.0.0",
+    "jest-sonar-reporter": "^2.0.0",
     "nodemon": "^3.1.10",
-    "ts-node": "^10.9.2",
+    "ts-jest": "^29.4.4",
     "typescript": "^5.9.2"
   },
   "dependencies": {
@@ -28,6 +34,7 @@
     "express": "^5.1.0",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
+    "k6": "^0.0.0",
     "multer": "^2.0.2",
     "node-cron": "^4.2.1",
     "pg": "^8.16.3",

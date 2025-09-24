@@ -3,8 +3,8 @@ import axios from "axios";
 const isWeb = typeof window !== "undefined" && window.document;
 
 export const API_URL = isWeb 
-  ? "http://localhost:4200/api"
-  : "http://192.168.1.2:4200/api";
+  ? "http://localhost:4200/api"   // Para web
+  : "http://10.233.33.254:4200/api"; // Para Android (IP de tu PC en la misma red)
 
 // 🔹 Login Admin
 export const loginAdmin = async (email: string, password: string) => {

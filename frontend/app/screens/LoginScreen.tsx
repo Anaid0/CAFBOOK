@@ -140,6 +140,8 @@ const LoginScreen = () => {
       </View>
 
       <TextInput
+      id="login-email"
+      data-cy="email"
         style={styles.input}
         placeholder="Correo Electrónico"
         value={email}
@@ -149,6 +151,8 @@ const LoginScreen = () => {
       />
 
       <TextInput
+      id="login-password"
+      data-cy="password"
         style={styles.input}
         placeholder="Contraseña"
         secureTextEntry
@@ -164,8 +168,10 @@ const LoginScreen = () => {
       </TouchableOpacity>
 
       <TouchableOpacity
+        id="login-submint"
         style={[styles.loginButton, isLoading && styles.disabledButton]}
         onPress={handleLogin}
+        data-cy="login-submit"
         disabled={isLoading}
       >
         {isLoading ? (

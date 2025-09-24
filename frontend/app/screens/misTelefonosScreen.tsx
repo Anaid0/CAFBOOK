@@ -1,31 +1,31 @@
-// app/screens/MisTelefonosScreen.tsx
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  ActivityIndicator,
+import React, { useEffect, useState } from "react";
+import { 
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator 
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getPhones, deletePhone } from "../../apis/phonesApi";
+import { getUserPhones, deleteUserPhone } from "../../apis/usersPhonesApi";
 
-const MisTelefonosScreen = () => {
+const TelefonosScreen = () => {
   const navigation = useNavigation<any>();
   const [telefonos, setTelefonos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<number | null>(null);
 
   useEffect(() => {
-    const fetchTelefonos = async () => {
+    const fetchUserPhones = async () => {
       try {
-        const id = await AsyncStorage.getItem("userId");
-        if (!id) return;
+        const storedUserId = await AsyncStorage.getItem("userId");
+        if (!storedUserId) {
+          Alert.alert("Error", "Usuario no autenticado");
+          return;
+        }
+        setUserId(Number(storedUserId));
 
-        const data = await getPhones();
-        setTelefonos(data);
+        const phones = await getUserPhones();
+        const userPhones = phones.filter((p: any) => p.user_id === Number(storedUserId));
+        setTelefonos(userPhones);
       } catch (error) {
         console.error("Error cargando teléfonos:", error);
         Alert.alert("Error", "No se pudieron cargar los teléfonos");
@@ -34,18 +34,19 @@ const MisTelefonosScreen = () => {
       }
     };
 
-    fetchTelefonos();
+    fetchUserPhones();
   }, []);
 
-  const handleEliminar = (id: number) => {
+  const handleEliminar = (userPhoneId: number) => {
     Alert.alert("Eliminar Teléfono", "¿Estás seguro de que quieres eliminar este teléfono?", [
       { text: "Cancelar", style: "cancel" },
       {
         text: "Eliminar",
+        style: "destructive",
         onPress: async () => {
           try {
-            await deletePhone(id);
-            setTelefonos((prev) => prev.filter((t) => t.phone_id !== id));
+            await deleteUserPhone(userPhoneId);
+            setTelefonos((prev) => prev.filter((t) => t.user_phone_id !== userPhoneId));
             Alert.alert("Éxito", "Teléfono eliminado correctamente");
           } catch (error) {
             console.error("Error eliminando teléfono:", error);
@@ -58,7 +59,7 @@ const MisTelefonosScreen = () => {
 
   if (loading) {
     return (
-      <View style={styles.loader}>
+      <View style={styles.centered}>
         <ActivityIndicator size="large" color="#1ABC9C" />
         <Text>Cargando teléfonos...</Text>
       </View>
@@ -68,53 +69,59 @@ const MisTelefonosScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Mis teléfonos</Text>
-        <Text style={styles.headerSubtitle}>{telefonos.length} teléfonos guardados</Text>
+        <Text style={styles.headerTitle}>Mis Teléfonos</Text>
+        <Text style={styles.headerSubtitle}>{telefonos.length} teléfonos registrados</Text>
       </View>
 
       <ScrollView style={styles.scrollView}>
-        {telefonos.map((tel) => (
-          <View key={tel.phone_id} style={styles.card}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardCategoria}>
-                {tel.number_type?.description || "Sin tipo"}
-              </Text>
-              <Text style={styles.cardFecha}>{tel.number}</Text>
-            </View>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#1C2833" />
+          <Text style={styles.backButtonText}>Atrás</Text>
+        </TouchableOpacity>
 
-            <View style={styles.actionsContainer}>
-              <TouchableOpacity
-                style={[styles.actionButton, styles.eliminarButton]}
-                onPress={() => handleEliminar(tel.phone_id)}
-              >
-                <Text style={styles.actionButtonText}>Eliminar</Text>
-              </TouchableOpacity>
+        {telefonos.length === 0 && (
+          <Text style={{ textAlign: "center", marginTop: 20 }}>No tienes teléfonos registrados</Text>
+        )}
+
+        {telefonos.map((t) => (
+          <View key={t.user_phone_id} style={styles.phoneCard}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.phoneNumber}>{t.phone.number}</Text>
+              <Text style={styles.phoneType}>{t.phone_type.description}</Text>
             </View>
+            <TouchableOpacity onPress={() => handleEliminar(t.user_phone_id)}>
+              <Ionicons name="trash" size={24} color="#E74C3C" />
+            </TouchableOpacity>
           </View>
         ))}
-      </ScrollView>
 
-      <TouchableOpacity
-        style={styles.crearButton}
-        onPress={() => navigation.navigate("AgregarTelefonoScreen")}
-      >
-        <Text style={styles.crearButtonText}>+ Agregar Teléfono</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate("AgregarTelefonoScreen")}
+        >
+          <Text style={styles.addButtonText}>+ Agregar Teléfono</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  loader: { flex: 1, justifyContent: "center", alignItems: "center" },
   container: { flex: 1, backgroundColor: "#F5F5F5" },
   header: { backgroundColor: "#1ABC9C", padding: 20, paddingTop: 50 },
   headerTitle: { fontSize: 24, fontWeight: "bold", color: "#FFFFFF", marginBottom: 5 },
   headerSubtitle: { fontSize: 14, color: "#FFFFFF", opacity: 0.9 },
   scrollView: { padding: 15, flex: 1 },
-  card: {
+  backButton: { flexDirection: "row", alignItems: "center", marginBottom: 15 },
+  backButtonText: { fontSize: 16, color: "#1C2833", marginLeft: 5, fontWeight: "600" },
+  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
+  phoneCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     backgroundColor: "#FFFFFF",
-    borderRadius: 12,
     padding: 15,
+    borderRadius: 12,
     marginBottom: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -122,29 +129,17 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  cardHeader: { flexDirection: "row", justifyContent: "space-between", marginBottom: 10 },
-  cardCategoria: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#1ABC9C",
-    backgroundColor: "#E8F8F5",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  cardFecha: { fontSize: 14, color: "#7F8C8D" },
-  actionsContainer: { flexDirection: "row", justifyContent: "flex-end" },
-  actionButton: { padding: 10, borderRadius: 8, alignItems: "center", marginHorizontal: 5 },
-  eliminarButton: { backgroundColor: "#E74C3C" },
-  actionButtonText: { color: "#FFFFFF", fontWeight: "600", fontSize: 14 },
-  crearButton: {
+  phoneNumber: { fontSize: 16, fontWeight: "600", color: "#1C2833" },
+  phoneType: { fontSize: 14, color: "#7F8C8D", marginTop: 3 },
+  addButton: {
     backgroundColor: "#1ABC9C",
     padding: 15,
-    margin: 15,
     borderRadius: 8,
     alignItems: "center",
+    marginTop: 10,
+    marginBottom: 30,
   },
-  crearButtonText: { color: "#FFFFFF", fontWeight: "bold", fontSize: 16 },
+  addButtonText: { color: "#FFFFFF", fontWeight: "bold", fontSize: 16 },
 });
 
-export default MisTelefonosScreen;
+export default TelefonosScreen;
