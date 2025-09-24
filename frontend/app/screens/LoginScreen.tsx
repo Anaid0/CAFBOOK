@@ -36,7 +36,7 @@ const LoginScreen = () => {
       if (userType === "user") {
         response = await loginUser(email, password);
       } else {
-        response = await loginCompany({ email, password });
+        response = await loginCompany(email, password);
       }
 
       setIsLoading(false);

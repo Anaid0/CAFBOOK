@@ -6,36 +6,43 @@ export const API_URL = isWeb
   ? "http://localhost:4200/api"   // Para web
   : "http://192.168.1.2:4200/api";
 
-export const loginCompany = async (credentials: any) => {
-  return await axios.post(`${API_URL}/login`, credentials);
+export const loginCompany = async (email: string, password: string) => {
+  const res = await axios.post(`${API_URL}/companies/login`, { email, password });
+  return res.data;
 };
 
 
 export const createCompany = async (companyData: any) => {
-  return await axios.post(`${API_URL}/companies`, companyData);
+  const res = await axios.post(`${API_URL}/companies`, companyData);
+  return res.data;
 };
 
 
 export const getAllCompanies = async () => {
-  return await axios.get(`${API_URL}/companies`);
+  const res = await axios.get(`${API_URL}/companies`);
+  return res.data;
 };
 
 
 export const getCompanyById = async (id: number) => {
-  return await axios.get(`${API_URL}/companies/${id}`);
+  const res = await axios.get(`${API_URL}/companies/${id}`);
+  return res.data;
 };
 
 
 export const getCompanyByEmail = async (email: string) => {
-  return await axios.get(`${API_URL}/companies/email/${email}`);
+  const res = await axios.get(`${API_URL}/companies/email/${email}`);
+  return res.data;
 };
 
 
 export const updateCompany = async (id: number, companyData: any) => {
-  return await axios.put(`${API_URL}/companies/${id}`, companyData);
+  const res = await axios.put(`${API_URL}/companies/${id}`, companyData);
+  return res.data;
 };
 
 
 export const downCompany = async (id: number) => {
-  return await axios.put(`${API_URL}/companies/down/${id}`);
+  const res = await axios.put(`${API_URL}/companies/down/${id}`);
+  return res.data;
 };
