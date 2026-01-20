@@ -3,8 +3,8 @@ import axios from "axios";
 const isWeb = typeof window !== "undefined" && window.document;
 
 export const API_URL = isWeb 
-  ? "http://localhost:4200/api"   // Para web
-  : "http://10.233.33.254:4200/api";
+  ? "http://localhost:4200/api"
+  : "http://10.72.32.254:4200/api";
 
 export const loginCompany = async (email: string, password: string) => {
   const res = await axios.post(`${API_URL}/companies/login`, {

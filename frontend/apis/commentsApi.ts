@@ -3,8 +3,8 @@ import axios from "axios";
 const isWeb = typeof window !== "undefined" && window.document;
 
 export const API_URL = isWeb 
-  ? "http://localhost:4200/api"   // Para web
-  : "http://10.233.33.254:4200/api"; // Para Android (IP de tu PC en la misma red)
+  ? "http://localhost:4200/api"
+  : "http://10.72.32.254:4200/api";// Para Android (IP de tu PC en la misma red)
 
 export const createComment = async (id: number, commentData: any) => {
   return await axios.post(`${API_URL}/comments/${id}`, commentData);

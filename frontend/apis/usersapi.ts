@@ -3,8 +3,8 @@ import axios from "axios";
 const isWeb = typeof window !== "undefined" && window.document;
 
 export const API_URL = isWeb 
-  ? "http://localhost:4200/api"   // Para web
-  : "http://10.233.33.254:4200/api"; // Para Android (IP de tu PC en la misma red)
+  ? "http://localhost:4200/api"
+  : "http://10.72.32.254:4200/api"; // Para Android (IP de tu PC en la misma red)
 
 export const loginUser = async (email: string, password: string) => {
   const res = await axios.post(`${API_URL}/login`, { email, password });

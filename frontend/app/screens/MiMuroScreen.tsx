@@ -9,13 +9,14 @@ import {
   Alert,
   ActivityIndicator
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { getPostsByUserIdAndCategoryId, deletePost, restorePost } from "../../apis/postsApi"; 
 
 const MiMuroScreen = () => {
   const navigation = useNavigation<any>();
+  const route = useRoute<any>(); 
   const [muro, setMuro] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -37,7 +38,7 @@ const MiMuroScreen = () => {
     };
 
     fetchmuro();
-  }, []);
+  },[route.params?.refresh]);
 
   const handleEditar = (id: number) => {
     navigation.navigate("EditarPostScreen", { id });

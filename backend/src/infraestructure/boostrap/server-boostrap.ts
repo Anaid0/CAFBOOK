@@ -14,7 +14,7 @@ export class ServerBoostrap{
             const server = http.createServer(this.app);
             const PORT = envs.PORT || 4200;
     
-            server.listen(PORT)
+            server.listen(PORT, "0.0.0.0")
             .on("listening",()=>{
                 console.log(`Server is running on port ${PORT}`);
                 resolve(true);

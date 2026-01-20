@@ -1,4 +1,4 @@
-import { Router, Request } from 'express';
+import { Router } from 'express';
 import { PostsAdapter } from "../adapter/PostsAdapter";
 import { PostsApplication } from "../../application/PostsApplication";
 import { PostsController } from "../controller/PostsController";
@@ -9,130 +9,123 @@ const postsAdapter = new PostsAdapter();
 const postsApp = new PostsApplication(postsAdapter);
 const postsController = new PostsController(postsApp);
 
-router.post("/posts", async (Request, Response) => {
+// Crear post
+router.post("/posts", async (req, res) => {
   try {
-    await postsController.registerPost(Request, Response);
+    await postsController.registerPost(req, res);
   } catch (error) {
     console.error("Error creando post: " + error);
-    Response.status(400).json({ message: "Error creando post" });
+    res.status(400).json({ message: "Error creando post" });
   }
 });
 
-router.get("/posts/all", async (Request, Response) => {
+// Obtener TODOS los posts (incluye eliminados)
+router.get("/posts/all", async (req, res) => {
   try {
-    await postsController.allPosts(Request, Response);
+    await postsController.allPosts(req, res);
   } catch (error) {
-    console.error("Error obteniendo posts" + error);
-    Response.status(400).json({ message: "Error obteniendo post por ID" });
+    console.error("Error obteniendo posts: " + error);
+    res.status(400).json({ message: "Error obteniendo posts" });
   }
 });
 
-router.get("/posts", async (Request, Response) => {
+// Obtener posts activos
+router.get("/posts", async (req, res) => {
   try {
-    await postsController.allPostsActive(Request, Response);
+    await postsController.allPostsActive(req, res);
   } catch (error) {
-    console.error("Error obteniendo posts eliminados" + error);
-    Response.status(400).json({ message: "Error obteniendo post por ID" });
+    console.error("Error obteniendo posts activos: " + error);
+    res.status(400).json({ message: "Error obteniendo posts activos" });
   }
 });
 
-router.get("/posts/:id", async (Request, Response) => {
+// Buscar post por ID
+router.get("/posts/:id", async (req, res) => {
   try {
-    await postsController.searchPostById(Request, Response);
-  } catch (error) {
-    console.error("Error obteniendo post por ID: " + error);
-    Response.status(400).json({ message: "Error obteniendo post por ID" });
-  }
-});
-
-router.get("/posts/user/:id", async (Request, Response) => {
-  try {
-    await postsController.searchPostByUserId(Request, Response);
+    await postsController.searchPostById(req, res);
   } catch (error) {
     console.error("Error obteniendo post por ID: " + error);
-    Response.status(400).json({ message: "Error obteniendo post por ID" });
+    res.status(400).json({ message: "Error obteniendo post por ID" });
   }
 });
 
-router.get("/posts/user/email/:email", async (Request, Response) => {
+// Posts por ID de usuario
+router.get("/posts/user/:id", async (req, res) => {
   try {
-    await postsController.searchPostByUserEmail(Request, Response);
+    await postsController.searchPostByUserId(req, res);
   } catch (error) {
-    console.error("Error obteniendo post por ID: " + error);
-    Response.status(400).json({ message: "Error obteniendo post por email" });
+    console.error("Error obteniendo posts por usuario: " + error);
+    res.status(400).json({ message: "Error obteniendo posts por usuario" });
   }
 });
 
-router.get("/posts/category/:categoryId", async (Request, Response) => {
+// Posts por email de usuario
+router.get("/posts/user/email/:email", async (req, res) => {
   try {
-    await postsController.searchPostByCategoryIdAndActive(Request, Response);
+    await postsController.searchPostByUserEmail(req, res);
+  } catch (error) {
+    console.error("Error obteniendo posts por email: " + error);
+    res.status(400).json({ message: "Error obteniendo posts por email" });
+  }
+});
+
+// Posts por categoría (solo activos)
+router.get("/posts/category/:categoryId", async (req, res) => {
+  try {
+    await postsController.searchPostByCategoryIdAndActive(req, res);
   } catch (error) {
     console.error("Error obteniendo posts por categoría: " + error);
-    Response.status(400).json({ message: "Error obteniendo posts por categoría" });
+    res.status(400).json({ message: "Error obteniendo posts por categoría" });
   }
 });
 
-router.get("/posts/category/name/:name", async (Request, Response) => {
+// Posts por nombre de categoría
+router.get("/posts/category/name/:name", async (req, res) => {
   try {
-    await postsController.searchPostByPostCategoryDescription(Request, Response);
+    await postsController.searchPostByPostCategoryDescription(req, res);
   } catch (error) {
-    console.error("Error obteniendo posts por categoría: " + error);
-    Response.status(400).json({ message: "Error obteniendo posts por categoría" });
+    console.error("Error obteniendo posts por nombre de categoría: " + error);
+    res.status(400).json({ message: "Error obteniendo posts por nombre de categoría" });
   }
 });
 
-router.get("/posts/user/:userId/category/:categoryId", async (Request, Response) => {
+// Posts por user + category
+router.get("/posts/user/:userId/category/:categoryId", async (req, res) => {
   try {
-    await postsController.searchPostByUserIdAndCategoryId(Request, Response);
+    await postsController.searchPostByUserIdAndCategoryId(req, res);
   } catch (error) {
-    console.error("Error obteniendo posts por categoría y user: " + error);
-    Response.status(400).json({ message: "Error obteniendo posts por categoría y por user" });
+    console.error("Error obteniendo posts por categoría y usuario: " + error);
+    res.status(400).json({ message: "Error obteniendo posts por categoría y usuario" });
   }
 });
 
-router.get("/posts/category/all/all", async (Request, Response) => {
+// Actualizar post
+router.put("/posts/:id", async (req, res) => {
   try {
-    await postsController.allPosts(Request, Response);
-  } catch (error) {
-    console.error("Error obteniendo posts por categoría y user: " + error);
-    Response.status(400).json({ message: "Error obteniendo posts por categoría y por user" });
-  }
-});
-
-router.put("/posts/:id", async (Request, Response) => {
-  try {
-    await postsController.updatePost(Request, Response);
+    await postsController.updatePost(req, res);
   } catch (error) {
     console.error("Error actualizando post: " + error);
-    Response.status(400).json({ message: "Error actualizando post" });
+    res.status(400).json({ message: "Error actualizando post" });
   }
 });
 
-router.put("/posts/restore/:id", async (Request, Response) => {
+// Restaurar post
+router.put("/posts/restore/:id", async (req, res) => {
   try {
-    await postsController.restorePost(Request, Response);
+    await postsController.restorePost(req, res);
   } catch (error) {
-    console.error("Error actualizando post: " + error);
-    Response.status(400).json({ message: "Error actualizando post" });
+    console.error("Error restaurando post: " + error);
+    res.status(400).json({ message: "Error restaurando post" });
   }
 });
 
-router.delete("/posts/:id", async (Request, Response) => {
+// Eliminar (baja lógica)
+router.delete("/posts/:id", async (req, res) => {
   try {
-    await postsController.downPost(Request, Response);
+    await postsController.downPost(req, res);
   } catch (error) {
     console.error("Error eliminando post: " + error);
-    Response.status(400).json({ message: "Error eliminando post" });
-  }
-});
-
-
-router.get("/posts", async (Request, Response) => {
-  try {
-    await postsController.allPostsActive(Request, Response);
-  } catch (error) {
-    console.error("Error obteniendo todos los posts: " + error);
-    Response.status(400).json({ message: "Error obteniendo todos los posts" });
+    res.status(400).json({ message: "Error eliminando post" });
   }
 });
 
